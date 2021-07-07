@@ -28,8 +28,12 @@ class MemberRoleTest {
                 sex = "여자";
             }
             int ranDate=(int) (Math.random() * 30) + 1;
+
             int ranMonth=(int) (Math.random() * 2) + 1;
-            int ranYear=(int) (Math.random() * 50) + 1960;
+            int ranYear=(int) (Math.random() * 50) + 60;
+
+            int ranNum=(int) (Math.random() * 9999) + 1;
+
 
             String randomBirth = Integer.toString(ranDate) +
                     Integer.toString(ranMonth) +
@@ -40,8 +44,21 @@ class MemberRoleTest {
                     .email("aaa"+i+"@aaa.aa")
                     .name("이름..."+i)
                     .gender(sex)
-                    .birth("90")
+                    .birth(randomBirth)
+                    .phone("010-0000-"+Integer.toString(ranNum))
+                    .address("서울시 종로구 냠냠"+i+"동")
+                    .detailAddress("i번지")
                     .build();
+            member.addMemberRole(MemberRole.GENERAL);
+
+            if(i>100){
+                member.addMemberRole(MemberRole.AUTHOR);
+            }
+            if(i>290){
+                member.addMemberRole(MemberRole.ADMIN);
+            }
+            memberRepository.save(member);
+
 
         });
 
