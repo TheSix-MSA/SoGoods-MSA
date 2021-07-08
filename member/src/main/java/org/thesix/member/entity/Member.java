@@ -15,6 +15,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Member {
 
     @Id
@@ -57,7 +58,7 @@ public class Member {
     private LocalDateTime loginDate;
 
     @Builder.Default
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     private Set<MemberRole> roleSet = new HashSet<>();
 
     public void addMemberRole(MemberRole role) {
