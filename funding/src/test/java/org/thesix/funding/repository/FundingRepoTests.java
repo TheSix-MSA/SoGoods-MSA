@@ -153,9 +153,44 @@ public class FundingRepoTests {
     public void getList3(){
 
         List<Object[]> result = fundingRepository.getFundingById(2L);
+        Optional<Object> result2 = favoriteRepository.findByFundingId(2L);
 
-        System.out.println();
+    }
 
+    /**
+     * 펀딩 글 내용을 수정하는 테스트
+     */
+    @Test
+    public void testModify(){
+
+        Optional<Funding> result = fundingRepository.findById(2L);
+        result.ifPresent(funding -> {
+
+            LocalDateTime ldt = LocalDateTime.now();
+            ldt.plusYears(3);
+
+            funding.changeTitle("change Title");
+            funding.changeContent("change Content");
+            funding.changeDueDate(ldt);
+
+            fundingRepository.save(funding);
+        });
+
+    }
+
+    /**
+     * 펀딩 글을 삭제 상태로 바꾸는 테스트
+     */
+    @Test
+    public void testRemove(){
+
+        Optional<Funding> result = fundingRepository.findById(2L);
+
+        result.ifPresent(result1->{
+            System.out.println(result1);
+            result1.changeRemoved(true);
+            fundingRepository.save(result1);
+        });
     }
 
 
