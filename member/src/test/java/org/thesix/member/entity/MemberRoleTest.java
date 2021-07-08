@@ -28,16 +28,24 @@ class MemberRoleTest {
                 sex = "여자";
             }
             int ranDate=(int) (Math.random() * 30) + 1;
-
             int ranMonth=(int) (Math.random() * 2) + 1;
-            int ranYear=(int) (Math.random() * 50) + 60;
+            int ranYear=(int) (Math.random() * 49) + 50;
+            String ranMonthStr = Integer.toString(ranMonth);
+            String ranDateStr = Integer.toString(ranDate);
+            if(ranMonthStr.length()<2){
+                ranMonthStr = "0" + ranMonthStr;
+            }
+            if(ranDateStr.length()<2){
+                ranDateStr = "0" + ranDateStr;
+            }
+
 
             int ranNum=(int) (Math.random() * 9999) + 1;
 
 
-            String randomBirth = Integer.toString(ranDate) +
-                    Integer.toString(ranMonth) +
-                    Integer.toString(ranYear);
+            String randomBirth = Integer.toString(ranYear) +
+                    ranMonthStr +
+                    ranDateStr;
 
 
             Member member = Member.builder()
@@ -47,7 +55,7 @@ class MemberRoleTest {
                     .birth(randomBirth)
                     .phone("010-0000-"+Integer.toString(ranNum))
                     .address("서울시 종로구 냠냠"+i+"동")
-                    .detailAddress("i번지")
+                    .detailAddress(i+"번지")
                     .build();
             member.addMemberRole(MemberRole.GENERAL);
 
@@ -63,4 +71,7 @@ class MemberRoleTest {
         });
 
     }
+
+
+
 }
