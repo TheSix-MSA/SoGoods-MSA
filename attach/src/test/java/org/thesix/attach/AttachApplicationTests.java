@@ -8,6 +8,7 @@ class AttachApplicationTests {
 
     @Test
     void contextLoads() {
+        System.out.println("TEST");
     }
 
 }
