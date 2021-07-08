@@ -18,9 +18,9 @@ configurations {
 repositories {
     mavenCentral()
 }
-ext {
-    set('springCloudVersion', "2020.0.2")
-}
+//ext {
+//    set('springCloudVersion', "2020.0.2")
+//}
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -38,13 +38,13 @@ dependencies {
     implementation 'com.querydsl:querydsl-jpa'
 
     //eureka-client
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+//    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 }
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-    }
-}
+//dependencyManagement {
+//    imports {
+//        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+//    }
+//}
 
 test {
     useJUnitPlatform()
