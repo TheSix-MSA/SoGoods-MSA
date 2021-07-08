@@ -21,6 +21,7 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     compileOnly 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
@@ -33,3 +34,4 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
