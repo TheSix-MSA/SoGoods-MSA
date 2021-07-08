@@ -11,6 +11,10 @@ public interface MemberService {
 
     String readUser(String email);
 
+    String delete(String email);
+
+    MemberDTO modify(MemberDTO dto);
+
     /**
      *
      * @param dto 가입입력정보

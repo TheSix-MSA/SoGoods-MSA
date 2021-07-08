@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.thesix.member.dto.MemberDTO;
 import org.thesix.member.repository.MemberRepository;
 
 import java.util.Optional;
@@ -80,6 +81,38 @@ class MemberRoleTest {
         member.ifPresent(member1 -> {
             log.info(member1);
         });
+
+
+    }
+
+    @Test
+    public void testDelete(){
+        Member member = Member.builder()
+                .email("aaa100@aaa.aa")
+                .build();
+
+
+        memberRepository.delete(member);
+
+    }
+
+    @Test
+    public void testModify(){
+        Optional<Member> result = memberRepository.findById("aaa101@aaa.aa");
+
+        result.ifPresent(member -> {
+
+            member = Member.builder()
+                    .email("aaa101@aaa.aa")
+                    .address("바뀐제목입니다")
+                    .birth("001112")
+                    .build();
+
+            Member save = memberRepository.save(member);
+
+            log.info(save);
+        });
+
 
 
     }

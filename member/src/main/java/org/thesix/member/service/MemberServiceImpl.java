@@ -42,4 +42,16 @@ public class MemberServiceImpl implements MemberService{
         };
         return null;
     }
+
+    @Override
+    public String delete(String email) {
+        Member member = Member.builder().email(email).build();
+        memberRepository.delete(member);
+        return email;
+    }
+
+    @Override
+    public MemberDTO modify(MemberDTO dto) {
+        return null;
+    }
 }
