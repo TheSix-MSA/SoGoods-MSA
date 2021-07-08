@@ -19,12 +19,20 @@ public class FundingController {
 
     private final FundingService fundingService;
 
+//    @GetMapping("/list")
+//    public ResponseEntity<String> getList(FundingRequestDTO fundingRequestDTO){
+//
+//        log.info(fundingRequestDTO);
+//
+//        //return ResponseEntity.ok(fundingService.getSearchList(fundingRequestDTO));
+//        return ResponseEntity.ok().body("200");
+//    }
+
     @GetMapping("/list")
-    public ResponseEntity<String> getList(FundingRequestDTO fundingRequestDTO){
+    public ResponseEntity<ListResponseDTO<ListFundingDTO>> getList(FundingRequestDTO fundingRequestDTO){
 
         log.info(fundingRequestDTO);
 
-        //return ResponseEntity.ok(fundingService.getSearchList(fundingRequestDTO));
-        return ResponseEntity.ok().body("200");
+        return ResponseEntity.ok(fundingService.getSearchList(fundingRequestDTO));
     }
 }

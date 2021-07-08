@@ -30,15 +30,15 @@ public class FundingServiceImple implements FundingService {
      */
     public ListResponseDTO<ListFundingDTO> getSearchList(FundingRequestDTO dto){
 
-        Pageable pageable = dto.getPageable();
-
-        Page<Object[]> result = fundingRepository.getListSearch(dto.getKeyword(), dto.getType(), pageable);
-
-        // Function<T,R> : 객체 T를 R로 매핑
+//        Pageable pageable = dto.getPageable();
+//
+//        Page<Object[]> result = fundingRepository.getListSearch(dto.getKeyword(), dto.getType(), pageable);
+//
+//        // Function<T,R> : 객체 T를 R로 매핑
 //        Function<Funding, FundingDTO> fn = (todo) -> entityToDTO(todo);
 //
 //        List<FundingDTO> dtoList = result.getContent().stream()
-//                .map()
+//                .map(fn)
 //                .collect(Collectors.toList());
 //
 //        PageMaker pageMaker = new PageMaker(dto.getPage(), dto.getSize(), (int) result.getTotalElements());
@@ -49,8 +49,8 @@ public class FundingServiceImple implements FundingService {
 //                .dtoList(dtoList)
 //                .pageMaker(pageMaker)
 //                .listRequestDTO(dto).build();
-
- //       log.info(listResult);
+//
+//        log.info(listResult);
 
         return null;
     }
