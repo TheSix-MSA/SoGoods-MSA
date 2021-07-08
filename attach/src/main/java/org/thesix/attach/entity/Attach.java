@@ -3,6 +3,8 @@ package org.thesix.attach.entity;
 import lombok.*;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
 
@@ -15,10 +17,11 @@ import java.time.LocalDateTime;
 public class Attach {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ano;
 
     //파일명
-    private String original_name;
+    private String originalName;
 
     //uuid
     private String uuid;
@@ -27,11 +30,11 @@ public class Attach {
     private boolean main;
 
     //등록일
-    private LocalDateTime regdate;
+    private LocalDateTime regDate;
 
-    private String tablename;
+    private String tableName;
 
-    private Long key_value;
+    private Long keyValue;
 
 
 }

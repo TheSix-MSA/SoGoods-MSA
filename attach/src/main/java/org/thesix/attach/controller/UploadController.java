@@ -1,5 +1,6 @@
 package org.thesix.attach.controller;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.coobird.thumbnailator.Thumbnailator;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.thesix.attach.dto.AttachConfimRequestDTO;
@@ -31,10 +33,15 @@ import java.util.UUID;
  * @author 도원진
  */
 @RestController
+
 @Log4j2
+@RequestMapping("/attach")
 public class UploadController {
     @Value("${spring.servlet.multipart.location}")
     private String uploadPath;
+
+
+
 
     /**
      * 클라이언트에서 전종해준 파일의 업로드 처리
@@ -100,25 +107,7 @@ public class UploadController {
         log.info(resultDTOList);
         log.info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
-        String tableName = requestDTO.getTableName();
-        String keyValue = requestDTO.getKeyValue();
-        String mainFileName = requestDTO.getMainFileName();
 
-        for(String tempFileName : requestDTO.getFileNameList()){
-            //tempFile은 uuid + 원본파일명 의 값을 갖는다.
-
-            //날짜 폴더 생성
-            //String folderPath = makeFolder()
-
-            //저장할 파일 이름 중간에 "_"
-            String tempPath = uploadPath + File.separator + "temp" + File.separator + tempFileName;
-            String savedPath = uploadPath + File.separator + "saved" + File.separator + tempFileName;
-
-            Files.copy(Paths.get(tempPath), Paths.get(savedPath));
-            new File(tempPath).delete();
-
-
-        }
 
         //클라이언트가 업로드 된 이미지에 접근할 수 있도록 정보 응답
         return new ResponseEntity<String>("STRING", HttpStatus.OK);
