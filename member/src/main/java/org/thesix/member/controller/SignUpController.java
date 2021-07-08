@@ -2,6 +2,7 @@ package org.thesix.member.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.thesix.member.dto.MemberDTO;
 import org.thesix.member.entity.MemberRole;
@@ -15,13 +16,18 @@ public class SignUpController {
 
     private final MemberService memberService;
 
+    /**
+     *
+     * @param dto 회원가입정보(멤버의 DTO)
+     * @return String email 이메일
+     */
     @PutMapping("/signup")
-    public String SignUp(@RequestBody MemberDTO dto){
+    public ResponseEntity<String> SignUp(@RequestBody MemberDTO dto){
 
         dto.addMemberRole(MemberRole.GENERAL);
         String email = memberService.regist(dto);
 
-        return "{'email':'"+email+"'}";
+        return ResponseEntity.ok(email);
     }
 
     @GetMapping("/getUser/{email}")
