@@ -44,12 +44,12 @@ public class RepliesServiceImpl implements RepliesService {
     @Override
     @Transactional
     public RepliesResponseDTO saveReply(RepliesRequestDTO dto) {
-        log.info(dto);
         Replies entity = DtoToEntity(dto);
-        log.info(entity);
-
         entity = repository.save(DtoToEntity(dto));
-        entity.changeGroupId(entity.getRno());
+        if(dto.getGroupId() == null){
+            entity.changeGroupId(entity.getRno());
+        }
+
         RepliesResponseDTO resDto = entityToDTO(entity);
 
         return resDto;
