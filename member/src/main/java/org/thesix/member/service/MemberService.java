@@ -9,6 +9,8 @@ public interface MemberService {
     // 회원가입등록
     String regist(MemberDTO dto);
 
+    String readUser(String email);
+
     /**
      *
      * @param dto 가입입력정보
@@ -25,7 +27,7 @@ public interface MemberService {
                 .detailAddress(dto.getDetailAddress())
                 .removed(dto.isRemoved())
                 .banned(dto.isBanned())
-                .provider(dto.getPriveder())
+                .provider(dto.getProvider())
                 .social(dto.isSocial())
                 .regDate(dto.getRegDate())
                 .loginDate(dto.getLoginDate())
@@ -33,5 +35,24 @@ public interface MemberService {
                 .build();
 
         return member;
+    }
+
+    default MemberDTO entityToMeberDTO(Member member) {
+        return MemberDTO.builder()
+                .email(member.getEmail())
+                .name(member.getName())
+                .gender(member.getGender())
+                .birth(member.getBirth())
+                .phone(member.getPhone())
+                .address(member.getAddress())
+                .detailAddress(member.getDetailAddress())
+                .removed(member.isRemoved())
+                .banned(member.isBanned())
+                .provider(member.getProvider())
+                .social(member.isSocial())
+                .regDate(member.getRegDate())
+                .loginDate(member.getLoginDate())
+                .roleSet(member.getRoleSet())
+                .build();
     }
 }

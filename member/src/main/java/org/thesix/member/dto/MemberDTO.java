@@ -24,7 +24,7 @@ public class MemberDTO {
     private String detailAddress;
     private boolean removed;
     private boolean banned;
-    private String priveder;
+    private String provider;
     private boolean social;
     private LocalDateTime regDate;
     private LocalDateTime loginDate;

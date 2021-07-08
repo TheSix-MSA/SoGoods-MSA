@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.thesix.member.repository.MemberRepository;
 
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -69,6 +70,17 @@ class MemberRoleTest {
 
 
         });
+
+    }
+
+    @Test
+    public void testRead(){
+
+        Optional<Member> member = memberRepository.findById("aaa90@aaa.aa");
+        member.ifPresent(member1 -> {
+            log.info(member1);
+        });
+
 
     }
 
