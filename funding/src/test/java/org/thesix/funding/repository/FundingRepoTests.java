@@ -1,15 +1,20 @@
 package org.thesix.funding.repository;
 
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.thesix.funding.dto.ListFundingDTO;
+import org.thesix.funding.entity.Favorite;
 import org.thesix.funding.entity.Funding;
 import org.thesix.funding.entity.Product;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -21,22 +26,24 @@ public class FundingRepoTests {
     private FundingRepository fundingRepository;
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private FavoriteRepository favoriteRepository;
 
     /**
-     *  펀딩 글 등록(insert) 테스트
+     * 펀딩 글 등록(insert) 테스트
      */
     @Test
-    public void testInsertFunding(){
-        IntStream.rangeClosed(1,100).forEach(i->{
+    public void testInsertFunding() {
+        IntStream.rangeClosed(1, 100).forEach(i -> {
 
             LocalDateTime ldt = LocalDateTime.now();
             ldt.plusYears(1);
 
             Funding funding = Funding.builder()
-                    .title("제목.."+i)
+                    .title("제목.." + i)
                     .writer("작성자" + i)
-                    .email("user"+i+"@aaa.com")
-                    .content("내용...."+i)
+                    .email("user" + i + "@aaa.com")
+                    .content("내용...." + i)
                     .dueDate(ldt)
                     .success(false)
                     .removed(false)
@@ -50,18 +57,18 @@ public class FundingRepoTests {
      * 펀딩 제품 등록(insert) 테스트
      */
     @Test
-    public void testInsertProduct(){
+    public void testInsertProduct() {
 
-        IntStream.rangeClosed(1,200).forEach(i->{
+        IntStream.rangeClosed(1, 200).forEach(i -> {
 
-            long fno = (int)(Math.random()*100) + 1;
+            long fno = (int) (Math.random() * 100) + 1;
 
             Funding funding = Funding.builder()
                     .fno(fno).build();
 
             Product product = Product.builder()
-                    .name("제품.."+i)
-                    .des(i+"번 굿즈입니다.")
+                    .name("제품.." + i)
+                    .des(i + "번 굿즈입니다.")
                     .price(1000)
                     .funding(funding).build();
 
@@ -70,21 +77,86 @@ public class FundingRepoTests {
     }
 
     /**
-     *  요청한 펀딩 fno와 일치하는 제품 리스트를 읽어오는 테스트
+     * 펀딩 찜 등록(insert) 테스트
      */
     @Test
-    public void testList1(){
+    public void testInsertFavorite(){
 
-        Optional<Product[]> result = productRepository.findByFundingId(5L);
+        IntStream.rangeClosed(1, 200).forEach(i -> {
 
-        result.ifPresent(product -> System.out.println(Arrays.stream(product).collect(Collectors.toList())));
+            long fno = (int) (Math.random() * 100) + 1;
+
+            Funding funding = Funding.builder()
+                    .fno(fno).build();
+
+            Favorite favorite = Favorite.builder()
+                    .mark(true)
+                    .actor("사용자.."+i)
+                    .funding(funding).build();
+
+            favoriteRepository.save(favorite);
+
+        });
     }
 
-    
+    /**
+     * 요청한 펀딩 fno와 일치하는 제품 리스트를 읽어오는 테스트
+     */
     @Test
-    public void getList2(){
+    public void testList1() {
+
+        Optional<Object[]> result = productRepository.findByFundingId(5L);
+
+        result.ifPresent(result1-> System.out.println(Arrays.stream(result1).collect(Collectors.toList())));
+    }
 
 
+    /**
+     * 펀딩 글 목록만 가져오는 테스트
+     * Object[] : Funding, count(Favorite), count(Product)
+     */
+    @Test
+    public void getList2() {
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<Object[]> result = fundingRepository.getData(pageable);
+
+        result.getContent().forEach(arr -> System.out.println(Arrays.toString(arr)));
 
     }
+
+    /**
+     * 글목록 + 검색 + 페이징 기능 테스트
+     * Object[] : Funding객체, count(Product), count(Favorite)  + 제품 대표이미지 어케 처리???
+     */
+    @Test
+    public void testGetSearchList(){
+
+        Pageable pageable = PageRequest.of(0,10);
+
+        String keyword = "10";
+        String type = "tcw";
+
+        Page<Object[]> list = fundingRepository.getListSearch(keyword, type, pageable);
+
+        list.getContent().forEach(list1-> System.out.println(Arrays.toString(list1)));
+
+    }
+
+
+    /**
+     * 펀딩 글 하나만 가져오는 테스트
+     * 제품 이미지 리스트, 제품정보, 글 정보
+     */
+    @Test
+    public void getList3(){
+
+        List<Object[]> result = fundingRepository.getFundingById(2L);
+
+        System.out.println();
+
+    }
+
+
 }

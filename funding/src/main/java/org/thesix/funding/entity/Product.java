@@ -12,7 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(exclude = "funding")
-@Table(name ="tbl_product")
+@Table(name = "tbl_product", indexes = @Index(name = "idx_funding", columnList = "funding_fno"))
 public class Product {
 
     @Id

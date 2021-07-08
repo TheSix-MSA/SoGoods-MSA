@@ -1,22 +1,18 @@
-package org.thesix.funding.entity;
+package org.thesix.funding.dto;
 
-import lombok.*;
-import org.thesix.funding.common.entity.BaseEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
+@Data
 @Builder
-@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-@Table(name = "tbl_funding")
-public class Funding extends BaseEntity {
+public class FundingDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long fno;  // 펀딩 식별번호
 
     private String title;  // 펀딩글 제목
@@ -27,12 +23,11 @@ public class Funding extends BaseEntity {
 
     private String content;  // 펀딩글 내용
 
+    private LocalDateTime regDate; // 펀딩글 등록일
+
     private LocalDateTime dueDate;  // 펀딩 만료일
 
     private boolean success;  // 펀딩 성공여부
 
     private boolean removed;  // 펀딩 삭제여부
-
-    private int totalAmount; // 토탈 모금 금액
-
 }
