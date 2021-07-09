@@ -24,6 +24,7 @@ public class FundingDTO {
 
     private String content;  // 펀딩글 내용
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime regDate; // 펀딩글 등록일
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -32,4 +33,6 @@ public class FundingDTO {
     private boolean success;  // 펀딩 성공여부
 
     private boolean removed;  // 펀딩 삭제여부
+
+    private long totalAmount; // 총 모금액
 }

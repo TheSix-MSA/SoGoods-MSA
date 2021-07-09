@@ -33,7 +33,7 @@ public class Funding extends BaseEntity {
 
     private boolean removed;  // 펀딩 삭제여부
 
-    private int totalAmount; // 토탈 모금 금액
+    private long totalAmount; // 토탈 모금 금액
 
 
     /**
@@ -55,4 +55,5 @@ public class Funding extends BaseEntity {
     public void changeRemoved(boolean removed){
         this.removed = removed;
     }
+
 }

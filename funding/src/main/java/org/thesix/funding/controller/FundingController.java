@@ -1,15 +1,11 @@
 package org.thesix.funding.controller;
 
-import jdk.jshell.Snippet;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.thesix.funding.common.dto.ListResponseDTO;
-import org.thesix.funding.dto.FundingDTO;
-import org.thesix.funding.dto.FundingRegisterDTO;
-import org.thesix.funding.dto.FundingRequestDTO;
-import org.thesix.funding.dto.ListFundingDTO;
+import org.thesix.funding.dto.*;
 import org.thesix.funding.service.FundingService;
 
 @RestController
@@ -22,13 +18,11 @@ public class FundingController {
 
     /**
      * 글 정보를 입력받아 저장하는 메서드
-     * @param fundingDTO
+     * @param registerDTO
      * @return ResponseEntity<FundingDTO>
      */
-    @PostMapping("/register")
+    @PostMapping("/")
     public ResponseEntity<FundingDTO> register(@RequestBody FundingRegisterDTO registerDTO){
-
-        log.info(registerDTO);
 
         return ResponseEntity.ok(fundingService.register(registerDTO));
     }
@@ -41,26 +35,37 @@ public class FundingController {
     @GetMapping("/list")
     public ResponseEntity<ListResponseDTO<ListFundingDTO>> getList(FundingRequestDTO fundingRequestDTO){
 
-        log.info(fundingRequestDTO);
-
         return ResponseEntity.ok(fundingService.getSearchList(fundingRequestDTO));
     }
 
     /**
      * 지정한 글 번호를 받아 세부화면에 필요한 정보를 불러올 메서드 -- 미완
      * @param fno
-     * @return
+     * @return ResponseEntity<FundingResponseDTO>
      */
-    @GetMapping("/read/{fno}")
-    public ResponseEntity<ListFundingDTO> getFundingData(@PathVariable Long fno){
+    @GetMapping("/{fno}")
+    public ResponseEntity<FundingResponseDTO> getFundingData(@PathVariable Long fno){
 
         return ResponseEntity.ok(fundingService.getData(fno));
     }
 
-    @GetMapping("/update/{fno}")
-    public ResponseEntity<FundingDTO> Modify(@PathVariable Long fno){
+    /**
+     * 펀딩 글을 수정하는 메서드 (제목, 내용, 만기일만 수정가능)
+     * @param fno
+     * @param registerDTO
+     * @return ResponseEntity<FundingResponseDTO>
+     */
+    @PutMapping("/{fno}")
+    public ResponseEntity<FundingResponseDTO> Modify(@PathVariable Long fno, @RequestBody FundingRegisterDTO registerDTO){
 
-        return ResponseEntity.ok().body(null);
+        return ResponseEntity.ok().body(fundingService.modify(fno, registerDTO));
+    }
+
+    @DeleteMapping("/{fno}")
+    public ResponseEntity<FundingResponseDTO> changeRemoved(@PathVariable Long fno){
+
+        return ResponseEntity.ok(fundingService.remove(fno));
+
     }
 
 
