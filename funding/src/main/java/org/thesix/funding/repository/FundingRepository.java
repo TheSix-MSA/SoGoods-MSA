@@ -2,6 +2,7 @@ package org.thesix.funding.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.thesix.funding.dto.ListFundingDTO;
@@ -21,6 +22,10 @@ public interface FundingRepository extends JpaRepository<Funding, Long>, Funding
     Page<Object[]> getData(Pageable pageable);
 
 
+    @Query("select f, count(distinct fa) " +
+            "from Funding f join fetch Favorite fa on f.fno=fa.funding.fno " +
+            "where f.fno=:fno")
+    Optional<Object[]> getFundingById(Long fno);
 
 
 

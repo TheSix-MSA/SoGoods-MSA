@@ -14,8 +14,8 @@ public class ListFundingDTO {
 
     private FundingDTO fundingDTO;  // 펀딩 글 객체
 
-    private ProductDTO productDTO;  // 제품 객체
+    private long productCnt;  // 제품 객체
 
-    private Favorite favorite;  // 찜 여부
+    private long favoriteCnt;  // 찜 여부
 
 }

@@ -144,17 +144,16 @@ public class FundingRepoTests {
 
     }
 
-
     /**
      * 펀딩 글 하나만 가져오는 테스트
-     * 제품 이미지 리스트, 제품정보, 글 정보
+     * 필요한 데이터 : 제품 이미지 리스트, 제품정보, 글 정보
      */
     @Test
     public void getList3(){
 
-        List<Object[]> result = fundingRepository.getFundingById(2L);
-        Optional<Object> result2 = favoriteRepository.findByFundingId(2L);
-
+        Optional<Object[]> result1 = fundingRepository.getFundingById(2L);
+        Object result2 = productRepository.getProductById(2L);
+        result1.ifPresent(result-> System.out.println(Arrays.toString(result)));
     }
 
     /**

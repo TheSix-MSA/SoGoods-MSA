@@ -84,6 +84,8 @@ public class FundingSearchImpl extends QuerydslRepositorySupport implements Fund
 
         List<Object[]> arrList = list.stream().map(tuple1-> tuple1.toArray()).collect(Collectors.toList());
 
+        System.out.println(arrList);
+
         long totalCount = tuple.fetchCount();
 
         return new PageImpl<>(arrList, pageable, totalCount);
