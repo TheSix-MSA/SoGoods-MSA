@@ -3,6 +3,7 @@ package org.thesix.member.util;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.thesix.member.dto.RefreshDTO;
 import org.thesix.member.service.RefreshTokenService;
 
@@ -13,7 +14,8 @@ import java.util.Date;
 public class JWTUtil {
 
     //토큰 시크릿키
-    private String secretKey = "1234";
+    @Value("{org.secret.key}")
+    private String secretKey;
 
     //토큰 만료시간 (1분)
     private long expiredDate = 1;
@@ -36,9 +38,7 @@ public class JWTUtil {
                 .compact();
     }
 
-
     /**
-     *
      *
      * @param email 인자는 pk값인 email이다.
      * @return RefreshDTO 주어진 이메일로 RefreshToken에 사용할 값을 가지고있는 DTO를 생성한다.

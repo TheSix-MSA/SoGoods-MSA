@@ -2,8 +2,11 @@ package org.thesix.member.service;
 
 import org.thesix.member.dto.MemberDTO;
 import org.thesix.member.dto.RefreshDTO;
+import org.thesix.member.dto.RequestListDTO;
 import org.thesix.member.entity.Member;
 import org.thesix.member.entity.RefreshToken;
+
+import java.util.List;
 
 public interface MemberService {
     // 회원가입등록
@@ -14,6 +17,8 @@ public interface MemberService {
     String delete(String email);
 
     MemberDTO modify(MemberDTO dto);
+
+    List<MemberDTO> readList(RequestListDTO dto);
 
     /**
      *
@@ -59,4 +64,6 @@ public interface MemberService {
                 .roleSet(member.getRoleSet())
                 .build();
     }
+
+
 }

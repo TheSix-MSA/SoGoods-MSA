@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.5.2'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
+    id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
 }
 
 group = 'org.thesix'
@@ -37,10 +38,11 @@ dependencies {
     implementation group: 'org.springframework.boot', name: 'spring-boot-devtools', version: '2.5.2'
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.7'
-        // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
     implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
-// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
+//  https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.5.2'
+    implementation 'com.querydsl:querydsl-jpa'
 
     //eureka-client
 //    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
@@ -54,4 +56,23 @@ dependencies {
 //}
 test {
     useJUnitPlatform()
+}
+
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+
+sourceSets {
+    main.java.srcDir querydslDir
+}
+
+configurations {
+    querydsl.extendsFrom compileClasspath
+}
+
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
 }

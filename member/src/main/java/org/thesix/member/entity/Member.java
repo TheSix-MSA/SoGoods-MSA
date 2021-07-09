@@ -2,7 +2,6 @@ package org.thesix.member.entity;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,7 +14,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(exclude = "roleSet")
 public class Member {
 
     @Id
@@ -41,6 +40,8 @@ public class Member {
     @Column(nullable = false)
     private boolean removed; //삭제여부 (0: 미삭제, 1: 삭제)
 
+
+
     @Column(nullable = false)
     private boolean banned; // 차단여부 (0: 미차단, 1: 차단)
 
@@ -58,12 +59,28 @@ public class Member {
     private LocalDateTime loginDate;
 
     @Builder.Default
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     private Set<MemberRole> roleSet = new HashSet<>();
 
     public void addMemberRole(MemberRole role) {
         roleSet.add(role);
     }
 
+    public void changeMemberInfo(Member member){
+        this.phone = member.getPhone();
+        this.address = member.getAddress();
+        this.detailAddress = member.getDetailAddress();
+    }
 
+    public void changeRemoved(boolean removed) {
+        this.removed = removed;
+    }
+
+    public void changeBanned(boolean banned) {
+        this.banned = banned;
+    }
+
+    public void changeLoginDate(LocalDateTime loginDate) {
+        this.loginDate = loginDate;
+    }
 }

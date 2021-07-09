@@ -5,22 +5,24 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.thesix.member.dto.MemberDTO;
+import org.thesix.member.dto.RequestListDTO;
 import org.thesix.member.entity.MemberRole;
 import org.thesix.member.service.MemberService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 @Log4j2
 @RequestMapping("/member")
-public class SignUpController {
+public class MemberController {
 
     private final MemberService memberService;
 
     /**
-     *
+     *회원가입
      * @param dto 회원가입정보(멤버의 DTO)
      * @return String email 이메일
      */
@@ -68,11 +70,13 @@ public class SignUpController {
     @PutMapping("/update")
     public ResponseEntity<MemberDTO> modify(@RequestBody MemberDTO dto){
 
-        memberService.modify(dto);
-
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(memberService.modify(dto));
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<List<MemberDTO>> readList(RequestListDTO dto){
 
+        return ResponseEntity.ok(memberService.readList(dto));
+    }
 
 }

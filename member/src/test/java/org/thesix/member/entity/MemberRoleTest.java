@@ -77,7 +77,7 @@ class MemberRoleTest {
     @Test
     public void testRead(){
 
-        Optional<Member> member = memberRepository.findById("aaa90@aaa.aa");
+        Optional<Member> member = memberRepository.findByEmail("aaa90@aaa.aa");
         member.ifPresent(member1 -> {
             log.info(member1);
         });
@@ -102,15 +102,17 @@ class MemberRoleTest {
 
         result.ifPresent(member -> {
 
-            member = Member.builder()
-                    .email("aaa101@aaa.aa")
-                    .address("바뀐제목입니다")
-                    .birth("001112")
+            Member temp = Member.builder()
+                    .address("수정된 어드레스")
+                    .phone("010-0000-0001")
+                    .detailAddress("수정된 디테일 어드레스")
                     .build();
 
-            Member save = memberRepository.save(member);
+            member.changeMemberInfo(temp);
 
+            Member save = memberRepository.save(member);
             log.info(save);
+
         });
 
 
