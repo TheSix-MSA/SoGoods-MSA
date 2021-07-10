@@ -4,15 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.thesix.member.entity.Member;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RefreshDTO {
+public class LoginInfoDTO {
 
-    private Member member;
+    private String email;
 
-    private long expireDate;
+    private String password;
 }

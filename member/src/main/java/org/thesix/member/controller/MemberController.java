@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.thesix.member.dto.MemberDTO;
 import org.thesix.member.dto.RequestListDTO;
+import org.thesix.member.dto.ResponseListDTO;
 import org.thesix.member.entity.MemberRole;
 import org.thesix.member.service.MemberService;
 
@@ -38,7 +39,7 @@ public class MemberController {
 
 
     /**
-     *
+     * 회원 조회
      * @param email 검색할 유저의 이메일
      * @return jsonUser 반환할 유저의 계정정보
      */
@@ -51,7 +52,7 @@ public class MemberController {
 
 
     /**
-     *
+     * 회원아이디 삭제
      * @param email 삭제할 유저의 이메일
      * @return 상태메세지
      */
@@ -67,14 +68,25 @@ public class MemberController {
         return ResponseEntity.ok(map);
     }
 
+    /**
+     * 회원정보변경
+     * @param dto
+     * @return
+     */
     @PutMapping("/update")
     public ResponseEntity<MemberDTO> modify(@RequestBody MemberDTO dto){
 
         return ResponseEntity.ok(memberService.modify(dto));
     }
 
+
+    /**
+     * 회원목록 조회
+     * @param dto page, size, 검색어, 검색타입
+     * @return 회원List, PageMaker, 요청파라미터
+     */
     @GetMapping("/list")
-    public ResponseEntity<List<MemberDTO>> readList(RequestListDTO dto){
+    public ResponseEntity<ResponseListDTO> readList(RequestListDTO dto){
 
         return ResponseEntity.ok(memberService.readList(dto));
     }

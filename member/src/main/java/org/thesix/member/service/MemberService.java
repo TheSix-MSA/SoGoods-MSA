@@ -3,6 +3,7 @@ package org.thesix.member.service;
 import org.thesix.member.dto.MemberDTO;
 import org.thesix.member.dto.RefreshDTO;
 import org.thesix.member.dto.RequestListDTO;
+import org.thesix.member.dto.ResponseListDTO;
 import org.thesix.member.entity.Member;
 import org.thesix.member.entity.RefreshToken;
 
@@ -18,7 +19,7 @@ public interface MemberService {
 
     MemberDTO modify(MemberDTO dto);
 
-    List<MemberDTO> readList(RequestListDTO dto);
+    ResponseListDTO readList(RequestListDTO dto);
 
     /**
      *
@@ -46,6 +47,11 @@ public interface MemberService {
         return member;
     }
 
+    /**
+     * 엔티티를 MemberDTO로 변환
+     * @param member
+     * @return MemberDTO
+     */
     default MemberDTO entityToMeberDTO(Member member) {
         return MemberDTO.builder()
                 .email(member.getEmail())

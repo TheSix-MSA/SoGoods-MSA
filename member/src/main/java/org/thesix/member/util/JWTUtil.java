@@ -5,6 +5,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.thesix.member.dto.RefreshDTO;
+import org.thesix.member.entity.Member;
 import org.thesix.member.service.RefreshTokenService;
 
 import java.nio.charset.StandardCharsets;
@@ -47,7 +48,7 @@ public class JWTUtil {
         //만료기한은 1달
         long expiredDate = System.currentTimeMillis() + (1000 * 60 * 24 * 30); //
         return RefreshDTO.builder()
-                .email(email)
+                .member(Member.builder().email(email).build())
                 .expireDate(expiredDate)
                 .build();
     }

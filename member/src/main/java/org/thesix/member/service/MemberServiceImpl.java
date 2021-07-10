@@ -8,10 +8,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.thesix.member.dto.MemberDTO;
+import org.thesix.member.dto.PageMaker;
 import org.thesix.member.dto.RequestListDTO;
+import org.thesix.member.dto.ResponseListDTO;
 import org.thesix.member.entity.Member;
 import org.thesix.member.repository.MemberRepository;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,6 +26,11 @@ public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
 
+    /**
+     * 회원등록 (암호화 수정중)
+     * @param dto
+     * @return
+     */
     @Override
     public String regist(MemberDTO dto) {
 
@@ -76,13 +84,22 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public List<MemberDTO> readList(RequestListDTO dto) {
-//        Pageable pageable = PageRequest.of(1, 10);
-//        Page<Member> memberList = memberRepository.getMemberList("1", "2", pageable);
-//        List<MemberDTO> collect = memberList.getContent().stream()
-//                .map(member -> entityToMeberDTO(member)).collect(Collectors.toList());
-//
-//        return collect;
-        return null;
+    public ResponseListDTO readList(RequestListDTO dto) {
+
+        Pageable pageable = PageRequest.of(dto.getPage(), dto.getSize());
+
+        Page<Object[]> memberList = memberRepository.getMemberList(dto.getType(), dto.getKeyword(), pageable);
+
+        List<Object[]> memberListResult = memberList.toList();
+
+        PageMaker pageMaker = new PageMaker(pageable, dto, (int) memberList.getTotalElements());
+
+
+        return   ResponseListDTO.builder()
+                .requestListDTO(dto)
+                .memberList(memberListResult)
+                .pageMaker(pageMaker)
+                .build();
+
     }
 }

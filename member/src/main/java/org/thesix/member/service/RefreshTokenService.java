@@ -10,7 +10,7 @@ public interface RefreshTokenService {
     default RefreshToken refreshDTOToEntity(RefreshDTO dto){
 
         return RefreshToken.builder()
-                .email(dto.getEmail())
+                .member(dto.getMember())
                 .expireDate(dto.getExpireDate())
                 .build();
     }
@@ -18,7 +18,7 @@ public interface RefreshTokenService {
     default RefreshDTO entityToRefreshDTO(RefreshToken token) {
 
         return RefreshDTO.builder()
-                .email(token.getEmail())
+                .member(token.getMember())
                 .expireDate(token.getExpireDate())
                 .build();
     }

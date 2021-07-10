@@ -16,6 +16,7 @@ import java.util.Set;
 public class MemberDTO {
 
     private String email;
+    private String password;
     private String name;
     private String gender;
     private String birth;

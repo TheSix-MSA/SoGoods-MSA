@@ -40,8 +40,6 @@ public class Member {
     @Column(nullable = false)
     private boolean removed; //삭제여부 (0: 미삭제, 1: 삭제)
 
-
-
     @Column(nullable = false)
     private boolean banned; // 차단여부 (0: 미차단, 1: 차단)
 

@@ -21,6 +21,14 @@ public class MemberSearchImpl extends QuerydslRepositorySupport implements Membe
         super(Member.class);
     }
 
+    /**
+     * 동적쿼리 적용 paging 회원목록리스트 반환
+     *
+     * @param type
+     * @param keyword
+     * @param pageable
+     * @return
+     */
     @Override
     public Page<Object[]> getMemberList(String type, String keyword, Pageable pageable) {
 
@@ -36,11 +44,11 @@ public class MemberSearchImpl extends QuerydslRepositorySupport implements Membe
             String[] typeArr = type.split("");
 
             for (String searchType : typeArr) {
-                if (searchType.equals("name")) {
+                if (searchType.equals("n")) {
                     condition.or(member.name.contains(keyword));
-                } else if (searchType.equals("email")) {
+                } else if (searchType.equals("e")) {
                     condition.or(member.email.contains(keyword));
-                } else if (searchType.equals("address")) {
+                } else if (searchType.equals("a")) {
                     condition.or(member.address.contains(keyword));
                 }
             }

@@ -11,6 +11,11 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member,String>, MemberSearch {
 
+    /**
+     * 회원조회
+     * @param email
+     * @return 회원조회정보
+     */
     @EntityGraph(attributePaths = {"roleSet"}, type= EntityGraph.EntityGraphType.FETCH)
     @Query("select m from Member m where m.email = :email")
     Optional<Member> findByEmail(@Param("email") String email);

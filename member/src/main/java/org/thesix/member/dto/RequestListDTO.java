@@ -12,9 +12,10 @@ import lombok.NoArgsConstructor;
 public class RequestListDTO {
 
     @Builder.Default
-    private long page=1;
+    private int page=1;
 
-    private long size;
+    @Builder.Default
+    private int size=10;
 
     private String keyword;
 

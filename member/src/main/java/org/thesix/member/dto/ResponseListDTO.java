@@ -4,15 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.thesix.member.entity.Member;
 
-@Data
+import java.util.List;
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RefreshDTO {
+@Data
+public class ResponseListDTO {
 
-    private Member member;
-
-    private long expireDate;
+    private RequestListDTO requestListDTO;
+    private PageMaker pageMaker;
+    private List<Object[]> memberList;
 }

@@ -1,11 +1,19 @@
 package org.thesix.member.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class PageMaker {
 
     private long page;
@@ -18,7 +26,7 @@ public class PageMaker {
     private boolean prev,next;
 
 
-    public void PageMaker(Pageable pageable,RequestListDTO dto, int totalCount){
+    public PageMaker(Pageable pageable,RequestListDTO dto, int totalCount){
         this.page = pageable.getPageNumber();
         this.size = pageable.getPageSize() < 10 ? 10 : pageable.getPageSize();
         this.keyword = dto.getKeyword();
@@ -27,7 +35,7 @@ public class PageMaker {
         int totalPage = (int)(Math.ceil(totalCount/(double)size));
 
         int tempEnd = (int)Math.ceil(page / 10.0) * 10;
-        this.startPage = tempEnd-10;
+        this.startPage = tempEnd-9;
         this.endPage = tempEnd < totalPage ? tempEnd : totalPage;
 
         prev = startPage > 1;

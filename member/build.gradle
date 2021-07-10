@@ -43,7 +43,8 @@ dependencies {
 //  https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.5.2'
     implementation 'com.querydsl:querydsl-jpa'
-
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    testImplementation 'org.springframework.security:spring-security-test'
     //eureka-client
 //    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
