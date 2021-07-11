@@ -21,6 +21,9 @@ public class Member {
     private String email; //이메일 (pk값)
 
     @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false)
     private String name; // 사용자 실명
 
     @Column(nullable = false)

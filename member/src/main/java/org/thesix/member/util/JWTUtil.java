@@ -11,6 +11,7 @@ import org.thesix.member.service.RefreshTokenService;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.Map;
 
 public class JWTUtil {
 
@@ -30,11 +31,12 @@ public class JWTUtil {
      * @param content login Id값 (email)
      * @return email을 JWT token화 하여 문자열로 반납.
      */
-    public String generateJWTToken(String content){
+    public String generateJWTToken(String content, Map<String,Object> role){
         return Jwts.builder()
                 .setIssuedAt(new Date())
                 .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(expiredDate).toInstant()))
-                .claim("sub", content)
+                .claim("email", content)
+                .addClaims(role)
                 .signWith(SignatureAlgorithm.HS256, secretKey.getBytes(StandardCharsets.UTF_8))
                 .compact();
     }

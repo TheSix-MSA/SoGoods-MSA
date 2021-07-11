@@ -57,6 +57,8 @@ public class MemberSearchImpl extends QuerydslRepositorySupport implements Membe
         }
 
 
+        tuple.orderBy(member.email.desc());
+
         tuple.limit(pageable.getPageSize());
         tuple.offset(pageable.getOffset());
 

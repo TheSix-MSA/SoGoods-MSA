@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.thesix.member.dto.MemberDTO;
 import org.thesix.member.repository.MemberRepository;
 
@@ -18,6 +19,9 @@ class MemberRoleTest {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private PasswordEncoder encoder;
 
     @Test
     public void testInsertMember(){
@@ -52,6 +56,7 @@ class MemberRoleTest {
 
             Member member = Member.builder()
                     .email("aaa"+i+"@aaa.aa")
+                    .password(encoder.encode(""+i))
                     .name("이름..."+i)
                     .gender(sex)
                     .birth(randomBirth)

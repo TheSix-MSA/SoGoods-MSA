@@ -6,7 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
+import org.thesix.member.entity.Member;
+import org.thesix.member.entity.MemberRole;
 import org.thesix.member.repository.MemberRepository;
+import org.thesix.member.util.JWTUtil;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @SpringBootTest
@@ -20,15 +29,30 @@ class LoginServiceImplTest {
     private PasswordEncoder encoder;
 
     @Test
-    public void testHashing(){
-        String pass = "1234";
-        String encode = encoder.encode(pass);
-        log.info(encode);
+    public void testDecoding(){
 
-        boolean check = encoder.matches(encode,pass);
-        log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        log.info(check);
+        Optional<Member> result = memberRepository.findById("aaa1@aaa.aa");
+        result.ifPresent(member ->
+        {
+            log.info(member.getPassword());
+            boolean matches = encoder.matches("2", member.getPassword());
+        });
 
+    }
+
+    @Transactional
+    @Test
+    public void testCreateToken(){
+
+        Optional<Member> result = memberRepository.findById("aaa1@aaa.aa");
+        JWTUtil util = new JWTUtil();
+
+        result.ifPresent(member -> {
+            List<MemberRole> RoleList = member.getRoleSet().stream().collect(Collectors.toList());
+
+            log.info(RoleList);
+                }
+        );
 
     }
 
