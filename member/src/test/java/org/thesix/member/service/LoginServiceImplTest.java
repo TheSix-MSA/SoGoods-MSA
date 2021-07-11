@@ -28,14 +28,19 @@ class LoginServiceImplTest {
     @Autowired
     private PasswordEncoder encoder;
 
+    @Autowired
+    private JWTUtil jwtUtil;
+
     @Test
     public void testDecoding(){
 
         Optional<Member> result = memberRepository.findById("aaa1@aaa.aa");
+
         result.ifPresent(member ->
         {
             log.info(member.getPassword());
             boolean matches = encoder.matches("2", member.getPassword());
+
         });
 
     }
@@ -45,13 +50,16 @@ class LoginServiceImplTest {
     public void testCreateToken(){
 
         Optional<Member> result = memberRepository.findById("aaa1@aaa.aa");
-        JWTUtil util = new JWTUtil();
 
         result.ifPresent(member -> {
-            List<MemberRole> RoleList = member.getRoleSet().stream().collect(Collectors.toList());
 
-            log.info(RoleList);
-                }
+            List<MemberRole> roleList = member.getRoleSet().stream().collect(Collectors.toList());
+
+            String jwtToken = jwtUtil.generateJWTToken(member.getEmail(), roleList);
+
+            log.info(jwtToken);
+
+            }
         );
 
     }

@@ -4,19 +4,23 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 import org.thesix.member.dto.RefreshDTO;
 import org.thesix.member.entity.Member;
+import org.thesix.member.entity.MemberRole;
 import org.thesix.member.service.RefreshTokenService;
 
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.Date;
-import java.util.Map;
+import java.util.List;
 
+@Component
 public class JWTUtil {
 
     //토큰 시크릿키
-    @Value("{org.secret.key}")
+    @Value("${secretKey}")
     private String secretKey;
 
     //토큰 만료시간 (1분)
@@ -28,15 +32,16 @@ public class JWTUtil {
     /**
      * 로그인시 이용할 JWT토큰을 발행한다.
      *
-     * @param content login Id값 (email)
+     * @param email login Id값 (email)
      * @return email을 JWT token화 하여 문자열로 반납.
      */
-    public String generateJWTToken(String content, Map<String,Object> role){
+    public String generateJWTToken(String email, List<MemberRole> roles){
+        System.out.println("여기는 token:" +secretKey);
         return Jwts.builder()
                 .setIssuedAt(new Date())
                 .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(expiredDate).toInstant()))
-                .claim("email", content)
-                .addClaims(role)
+                .claim("email",email)
+                .claim("role",roles)
                 .signWith(SignatureAlgorithm.HS256, secretKey.getBytes(StandardCharsets.UTF_8))
                 .compact();
     }
