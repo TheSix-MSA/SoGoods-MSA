@@ -167,11 +167,11 @@ public class FundingServiceImpl implements FundingService {
     @Override
     public FundingResponseDTO remove(Long fno) {
 
-        Funding fundingResult = fundingRepository.getById(fno);
+        Optional<Funding> fundingResult = fundingRepository.findById(fno);
 
-        if (fundingResult.isRemoved() == false) {
-            fundingResult.changeRemoved(true);
-            fundingRepository.save(fundingResult);
+        if (fundingResult.get().isRemoved() == false) {
+            fundingResult.get().changeRemoved(true);
+            fundingRepository.save(fundingResult.get());
         }
 
         Optional<Product[]> products = productRepository.getProductById(fno);
@@ -183,9 +183,9 @@ public class FundingServiceImpl implements FundingService {
             }
         }
 
-        Funding funding = fundingRepository.getById(fno);
+        Optional<Funding> funding = fundingRepository.findById(fno);
         Optional<Product[]> productList = productRepository.getProductById(fno);
-        FundingDTO dto = entityToDTO(funding);
+        FundingDTO dto = entityToDTO(funding.get());
 
         return FundingResponseDTO.builder()
                 .fundingDTO(dto)
