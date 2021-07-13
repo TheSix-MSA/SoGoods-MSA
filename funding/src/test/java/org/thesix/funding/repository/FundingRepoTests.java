@@ -1,20 +1,16 @@
 package org.thesix.funding.repository;
 
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.thesix.funding.dto.ListFundingDTO;
 import org.thesix.funding.entity.Favorite;
 import org.thesix.funding.entity.Funding;
 import org.thesix.funding.entity.Product;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -105,9 +101,9 @@ public class FundingRepoTests {
     @Test
     public void testList1() {
 
-        Optional<Object[]> result = productRepository.findByFundingId(5L);
+        Optional<Product[]> result = productRepository.getProductById(5L);
 
-        result.ifPresent(result1-> System.out.println(Arrays.stream(result1).collect(Collectors.toList())));
+        System.out.println(Arrays.stream(result.get()).collect(Collectors.toList()));
     }
 
 
@@ -144,17 +140,15 @@ public class FundingRepoTests {
 
     }
 
-
     /**
      * 펀딩 글 하나만 가져오는 테스트
-     * 제품 이미지 리스트, 제품정보, 글 정보
+     * 필요한 데이터 : 제품 이미지 리스트, 제품정보, 글 정보
      */
     @Test
     public void getList3(){
 
-        List<Object[]> result = fundingRepository.getFundingById(2L);
-        Optional<Object> result2 = favoriteRepository.findByFundingId(2L);
-
+        Optional<Funding> result1 = fundingRepository.getFundingById(2L);
+        Object result2 = productRepository.getProductById(2L);
     }
 
     /**

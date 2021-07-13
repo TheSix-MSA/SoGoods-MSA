@@ -25,7 +25,25 @@ public class Product {
 
     private int price;  // 제품 가격
 
+    private boolean removed;  // 삭제 여부
+
     @JoinColumn
     @ManyToOne(fetch = FetchType.LAZY)
     private Funding funding;
+
+    public void changeName(String name){
+        this.name = name;
+    }
+
+    public void changeDes(String des){
+        this.des = des;
+    }
+
+    public void changePrice(int price){
+        this.price = price;
+    }
+
+    public void changeRemoved(boolean removed){
+        this.removed = removed;
+    }
 }

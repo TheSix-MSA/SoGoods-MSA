@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.thesix.funding.entity.Funding;
 
 @Data
 @Builder
@@ -21,4 +20,6 @@ public class ProductDTO {
     private int price;  // 제품 가격
 
     private Long fno; // 펀딩 식별번호
+
+    private boolean removed; // 삭제 여부
 }

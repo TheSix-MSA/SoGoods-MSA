@@ -3,7 +3,6 @@ package org.thesix.funding.repository.dynamic;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.JPQLQuery;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -12,8 +11,6 @@ import org.thesix.funding.entity.Funding;
 import org.thesix.funding.entity.QFavorite;
 import org.thesix.funding.entity.QFunding;
 import org.thesix.funding.entity.QProduct;
-import org.thesix.funding.repository.FundingRepository;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,6 +70,7 @@ public class FundingSearchImpl extends QuerydslRepositorySupport implements Fund
         }
 
         tuple.where(funding.fno.gt(0L));
+        tuple.where(funding.removed.eq(false));
         tuple.groupBy(funding);
         tuple.orderBy(funding.fno.desc());
 
