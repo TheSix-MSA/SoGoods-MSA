@@ -11,7 +11,6 @@ import java.util.stream.IntStream;
 //전체 개수
 @Data
 public class PageMaker {
-
     private int page;
     private int size;
     private int totalCount;
@@ -24,6 +23,7 @@ public class PageMaker {
         this.totalCount = totalCount;
 
         int totalPage = (int)(Math.ceil(totalCount/(double)size));
+        System.out.println(totalPage);
         int tempEnd = (int)(Math.ceil(page/10.0)) * 10;
 
         int start = tempEnd - 9;

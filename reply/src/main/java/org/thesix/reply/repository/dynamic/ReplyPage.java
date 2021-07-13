@@ -5,5 +5,5 @@ import org.springframework.data.domain.Pageable;
 import org.thesix.reply.entity.Replies;
 
 public interface ReplyPage {
-    Page<Replies> getList(Pageable pageable);
+    Page<Replies> getList(Long bno, Pageable pageable);
 }
