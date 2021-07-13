@@ -4,9 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.thesix.board.dto.BoardDTO;
+import org.thesix.board.dto.BoardListDTO;
 import org.thesix.board.entity.Board;
 import org.thesix.board.repository.BoardRepository;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,12 +19,12 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
 
-    // 게시판 글등록("/board/register")
+    // 게시판 글등록("/board/{type}/register")
     @Override
-    public Long register(BoardDTO dto) {
-        Board board = dtoToEntity(dto);
-        boardRepository.save(board);
-        return board.getBno();
+    public BoardDTO register(BoardDTO dto) {
+        Board register = dtoToEntity(dto);
+        Board registerResult = boardRepository.save(register);
+        return entityToDTO(registerResult);
     }
 
     // 게시판 글수정("/board/modify/{bno}")
@@ -51,15 +54,26 @@ public class BoardServiceImpl implements BoardService {
         return null;
     }
 
-    // 게시판 특정 글조회("/board/read/{bno}")
+    // 게시판 특정 글조회("/board/read/{type}/{bno}")
     @Override
     public BoardDTO read(Long bno) {
         Optional<Board> result = boardRepository.findById(bno);
         log.info(result);
         if(result.isPresent()){
-            Board board = result.get();
-            return entityToDTO(board);
+            Board readResult = result.get();
+            return entityToDTO(readResult);
         }
         return null;
     }
+
+    @Override
+    public BoardDTO boardList(String type) {
+//        String searchType = type;
+//        List<Object[]> searchResult = boardRepository.getBoardList(searchType);
+//        for (Object[] arr : searchResult) {
+//            System.out.println(Arrays.toString(arr));
+//        }
+        return null;
+    }
+
 }

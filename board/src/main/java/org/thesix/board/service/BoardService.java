@@ -1,12 +1,15 @@
 package org.thesix.board.service;
 
 import org.thesix.board.dto.BoardDTO;
+import org.thesix.board.dto.BoardListDTO;
 import org.thesix.board.entity.Board;
+
+import java.util.List;
 
 public interface BoardService {
 
     // 게시판 글작성
-    Long register(BoardDTO dto);
+    BoardDTO register(BoardDTO dto);
 
     // 게시판 글수정
     BoardDTO modify(BoardDTO dto);
@@ -16,6 +19,9 @@ public interface BoardService {
 
     // 게시판 특정 글조회
     BoardDTO read(Long bno);
+
+    // 특정 게시판의 목록 가져오기
+    BoardDTO boardList(String type);
 
     // DTO 객체를 ENTITY로 변환
     default Board dtoToEntity(BoardDTO dto) {
@@ -45,5 +51,4 @@ public interface BoardService {
                 .build();
         return boardDTO;
     }
-
 }
