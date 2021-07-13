@@ -19,11 +19,12 @@ public class ReplyPageImpl extends QuerydslRepositorySupport implements ReplyPag
     }
 
     @Override
-    public Page<Replies> getList(Pageable pageable) {
+    public Page<Replies> getList(Long bno, Pageable pageable) {
         QReplies replies = QReplies.replies;
         JPQLQuery<Replies> query = from(replies);
 
         query.where(replies.rno.gt(0));
+        query.where(replies.keyValue.eq(bno));
         query.orderBy(replies.groupId.asc(), replies.parentId.asc());
         query.offset(pageable.getOffset());
         query.limit(pageable.getPageSize());
