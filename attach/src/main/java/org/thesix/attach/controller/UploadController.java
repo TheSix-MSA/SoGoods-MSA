@@ -1,6 +1,8 @@
 package org.thesix.attach.controller;
 
+import com.sun.jdi.InternalException;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.coobird.thumbnailator.Thumbnailator;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,17 +11,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.thesix.attach.dto.AttachConfimRequestDTO;
 import org.thesix.attach.dto.UploadResultDTO;
+import org.thesix.attach.service.AttachService;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,22 +34,23 @@ import java.util.UUID;
  * @author 도원진
  */
 @RestController
-
+//
 @Log4j2
 @RequestMapping("/attach")
+@RequiredArgsConstructor
 public class UploadController {
     @Value("${spring.servlet.multipart.location}")
     private String uploadPath;
 
-
+    private final AttachService attachService;
 
 
     /**
      * 클라이언트에서 전종해준 파일의 업로드 처리
      * @param files
      */
-    @PostMapping("/uploadTemp")
-    public ResponseEntity<List<UploadResultDTO>> uplaodTemp(MultipartFile[] files){
+    @PostMapping("/upload/temp")
+    public ResponseEntity<List<UploadResultDTO>> uplaodtemp(MultipartFile[] files){
 
         List<UploadResultDTO> resultDTOList = new ArrayList<>();
 
@@ -87,10 +89,11 @@ public class UploadController {
                 Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 100, 100);
 
                 //응답해줄 업로드 정보 추가
-                resultDTOList.add(new UploadResultDTO("temp", uuid, fileName));
+//                resultDTOList.add(new UploadResultDTO(uuid, fileName, URLEncoder.encode(fileName, "UTF-8")));
+                resultDTOList.add(new UploadResultDTO(uuid, fileName));
             }catch (IOException e){
                 e.printStackTrace();
-            }
+           }
         }
 
         //클라이언트가 업로드 된 이미지에 접근할 수 있도록 정보 응답
@@ -98,14 +101,22 @@ public class UploadController {
 
     }
 
-    @PostMapping("/uploadConfirm")
-    public ResponseEntity<String> uplaodConfirm(AttachConfimRequestDTO requestDTO) throws IOException {
+    /**
+     * 글 등록 확정시 첨부파일을 임시폴더에서 영구폴더로 이동및 데이터베이스 INSERT
+     * @param requestDTO
+     * @return
+     * @throws IOException
+     */
+    @PostMapping("/upload/confirm")
+    public ResponseEntity<String> uplaodConfirm(@RequestBody AttachConfimRequestDTO requestDTO) throws IOException {
+
+        attachService.registerConfimedImages(requestDTO);
 
         List<UploadResultDTO> resultDTOList = new ArrayList<>();
 
-        log.info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-        log.info(resultDTOList);
-        log.info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+//        log.info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+//        log.info(resultDTOList);
+//        log.info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
 
 
@@ -118,14 +129,21 @@ public class UploadController {
      * 클라이언트 이미지 요청에 대한 이미지응답
      * @param filename
      * @return
+    opt: ["temp", "saved"] 중 하나
+    API URL예시
+    http://localhost:8022/attach/display/temp?
+        filename=s_b0246ab4-c3f6-43a7-9c3f-616955046ea9_%ED%95%9C%EA%B8%80.png
      */
-    @GetMapping("/display")
-    public ResponseEntity<byte[]> getFile(String filename){
+    @GetMapping("/display/{opt}")
+    public ResponseEntity<byte[]> getFile(@PathVariable String opt, String filename){
+
         ResponseEntity<byte[]> result = null;
+
         try {
+
             String srcFileName = URLDecoder.decode(filename, "UTF-8");
 
-            File file = new File(uploadPath + File.separator + srcFileName);
+            File file = new File(uploadPath + File.separator + opt + File.separator + srcFileName);
 
             HttpHeaders headers = new HttpHeaders();
 
@@ -133,14 +151,27 @@ public class UploadController {
 
             result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file), headers, HttpStatus.OK);
 
-        }catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }catch (Exception e) {
+            throw new InternalException();
         }
+
         return result;
     }
 
+    @DeleteMapping("/removeFile")
+    public ResponseEntity<Boolean> removeFile(@RequestBody String fileName){
+        String srcFileName = null;
 
+        srcFileName = URLDecoder.decode(fileName);
 
+        File originFile   = new File(uploadPath + File.separator + "saved" + File.separator + srcFileName);
+        File thumnailFile = new File(uploadPath + File.separator + "saved" + File.separator + "s_" + srcFileName);
+
+        originFile.delete();
+        thumnailFile.delete();
+
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
 
     /**
      *  연/월 폴더생성

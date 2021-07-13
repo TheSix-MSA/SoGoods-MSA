@@ -1,6 +1,7 @@
 package org.thesix.attach.entity;
 
 import lombok.*;
+import org.thesix.common.BaseEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString
 @Getter
-public class Attach {
+public class Attach extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,9 +29,6 @@ public class Attach {
 
     //대표이미지 여부
     private boolean main;
-
-    //등록일
-    private LocalDateTime regDate;
 
     private String tableName;
 
