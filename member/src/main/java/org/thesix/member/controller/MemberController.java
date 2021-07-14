@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.thesix.member.dto.MemberDTO;
 import org.thesix.member.dto.RequestListDTO;
 import org.thesix.member.dto.ResponseListDTO;
+import org.thesix.member.entity.Member;
 import org.thesix.member.entity.MemberRole;
 import org.thesix.member.service.MemberService;
 
@@ -28,12 +29,11 @@ public class MemberController {
      * @return String email 이메일
      */
     @PutMapping("/signup")
-    public ResponseEntity<String> SignUp(@RequestBody MemberDTO dto){
-
+    public ResponseEntity<MemberDTO> SignUp(@RequestBody MemberDTO dto){
+        log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         dto.addMemberRole(MemberRole.GENERAL);
-        String email = memberService.regist(dto);
-
-        return ResponseEntity.ok(email);
+        MemberDTO resultDTO = memberService.register(dto);
+        return ResponseEntity.ok(resultDTO);
     }
 
 
@@ -44,10 +44,10 @@ public class MemberController {
      * @return jsonUser 반환할 유저의 계정정보
      */
     @GetMapping("/getUser/{email}")
-    public ResponseEntity<String> getUser(@PathVariable("email") String email){
+    public ResponseEntity<MemberDTO> getUser(@PathVariable("email") String email){
 
-        String jsonUser = memberService.readUser(email);
-        return ResponseEntity.ok(jsonUser);
+        MemberDTO dto = memberService.readUser(email);
+        return ResponseEntity.ok(dto);
     }
 
 

@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thesix.member.dto.MemberDTO;
 import org.thesix.member.dto.PageMaker;
@@ -26,21 +27,23 @@ public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
 
+    private final PasswordEncoder encoder;
+
     /**
-     * 회원등록 (암호화 수정중)
+     * 회원등록
      * @param dto
      * @return
      */
     @Override
-    public String regist(MemberDTO dto) {
-
+    public MemberDTO register(MemberDTO dto) {
+        dto.setPassword(encoder.encode(dto.getPassword()));
         Member member = memberRepository.save(memberDTOToEntity(dto));
 
-        return member.getEmail();
+        return entityToMeberDTO(member);
     }
 
     @Override
-    public String readUser(String email) {
+    public MemberDTO readUser(String email) {
 
         Optional<Member> result = memberRepository.findById(email);
         Member member = result.get();
@@ -49,10 +52,8 @@ public class MemberServiceImpl implements MemberService{
 
             MemberDTO dto = entityToMeberDTO(member);
 
-            Gson gson = new Gson();
-            String dtoStr = gson.toJson(dto);
 
-            return dtoStr;
+            return dto;
         };
         return null;
     }

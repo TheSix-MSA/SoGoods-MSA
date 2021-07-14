@@ -35,30 +35,32 @@ public class JWTUtil {
      * @param email login Id값 (email)
      * @return email을 JWT token화 하여 문자열로 반납.
      */
-    public String generateJWTToken(String email, List<MemberRole> roles){
-        System.out.println("여기는 token:" +secretKey);
+    public String generateJWTToken(String email, List<MemberRole> roles) {
+        System.out.println("여기는 token:" + secretKey);
         return Jwts.builder()
                 .setIssuedAt(new Date())
                 .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(expiredDate).toInstant()))
-                .claim("email",email)
-                .claim("roles",roles)
+                .claim("email", email)
+                .claim("roles", roles)
                 .signWith(SignatureAlgorithm.HS256, secretKey.getBytes(StandardCharsets.UTF_8))
                 .compact();
     }
 
     /**
-     *
      * @param email 인자는 pk값인 email이다.
      * @return RefreshDTO 주어진 이메일로 RefreshToken에 사용할 값을 가지고있는 DTO를 생성한다.
      */
-    public RefreshDTO makeRefreshToken(String email){
+    public String makeRefreshToken(String email) {
         //만료기한은 1달
-        long expiredDate = System.currentTimeMillis() + (1000 * 60 * 24 * 30); //
-        return RefreshDTO.builder()
-                .member(Member.builder().email(email).build())
-                .expireDate(expiredDate)
-                .build();
+        System.out.println("여기는 refreshToken:" + secretKey);
+        return Jwts.builder()
+                .setIssuedAt(new Date())
+                .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(expiredDate + 300).toInstant()))
+                .claim("email", email)
+                .claim("expireDate", Date.from(ZonedDateTime.now().plusMinutes(expiredDate + 300).toInstant()))
+                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes(StandardCharsets.UTF_8))
+                .compact();
+
+
     }
-
-
 }

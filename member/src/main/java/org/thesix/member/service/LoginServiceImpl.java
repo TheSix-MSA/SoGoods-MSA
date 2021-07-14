@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 public class LoginServiceImpl implements LoginService{
 
     private final MemberRepository memberRepository;
-    private final RefreshTokenRepository tokenRepository;
     private final PasswordEncoder encoder;
     private final JWTUtil jwtUtil;
 
@@ -34,8 +33,8 @@ public class LoginServiceImpl implements LoginService{
 
             if (matchResult) {
                 String jwtToken = jwtUtil.generateJWTToken(member.getEmail(), member.getRoleSet().stream().collect(Collectors.toList()));
-
-                return TokenDTO.builder().accessToken(jwtToken).build();
+                String refreshToken = jwtUtil.makeRefreshToken(member.getEmail());
+                return TokenDTO.builder().accessToken(jwtToken).refreshToken(refreshToken).build();
             }
         }
         return null;

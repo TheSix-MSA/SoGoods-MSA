@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.thesix.member.entity.MemberRole;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -29,7 +30,8 @@ public class MemberDTO {
     private boolean social;
     private LocalDateTime regDate;
     private LocalDateTime loginDate;
-    private Set<MemberRole> roleSet;
+    @Builder.Default
+    private Set<MemberRole> roleSet = new HashSet<>();
     public void addMemberRole(MemberRole role) {
         roleSet.add(role);
     }

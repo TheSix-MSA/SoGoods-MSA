@@ -1,5 +1,6 @@
 package org.thesix.member.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.thesix.member.dto.MemberDTO;
 import org.thesix.member.dto.RefreshDTO;
 import org.thesix.member.dto.RequestListDTO;
@@ -10,10 +11,13 @@ import org.thesix.member.entity.RefreshToken;
 import java.util.List;
 
 public interface MemberService {
-    // 회원가입등록
-    String regist(MemberDTO dto);
 
-    String readUser(String email);
+
+
+    // 회원가입등록
+    MemberDTO register(MemberDTO dto);
+
+    MemberDTO readUser(String email);
 
     String delete(String email);
 
@@ -29,6 +33,7 @@ public interface MemberService {
     default Member memberDTOToEntity(MemberDTO dto){
         Member member = Member.builder()
                 .email(dto.getEmail())
+                .password(dto.getPassword())
                 .name(dto.getName())
                 .gender(dto.getGender())
                 .birth(dto.getBirth())
@@ -55,6 +60,7 @@ public interface MemberService {
     default MemberDTO entityToMeberDTO(Member member) {
         return MemberDTO.builder()
                 .email(member.getEmail())
+                .password(member.getPassword())
                 .name(member.getName())
                 .gender(member.getGender())
                 .birth(member.getBirth())
