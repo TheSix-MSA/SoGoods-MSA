@@ -8,10 +8,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 import org.thesix.member.entity.Member;
+import org.thesix.member.entity.RefreshToken;
 import org.thesix.member.repository.MemberRepository;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +27,7 @@ class MemberSearchImplTest {
     @Autowired
     private MemberRepository memberRepository;
 
-    @Value("${secretKey}")
+    @Value("${org.secret.key}")
     private String sk;
 
     @Test
@@ -34,9 +39,15 @@ class MemberSearchImplTest {
         members.getContent().forEach(arr -> log.info(Arrays.toString(arr)));
     }
 
+    @Transactional
     @Test
     public void test2(){
-        log.info(sk);
+
+        Optional<Object[]> result = memberRepository.findByMemberWithRefreshToken("aaa101@aaa.aa");
+
+        List<Object> collect = Arrays.stream(result.get()).collect(Collectors.toList());
+
+
     }
 
 
