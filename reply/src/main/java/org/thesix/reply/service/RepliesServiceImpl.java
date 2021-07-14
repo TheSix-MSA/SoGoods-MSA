@@ -27,8 +27,10 @@ public class RepliesServiceImpl implements RepliesService {
 
     @Override
     public ListResponseRepliesDTO getList(Long bno, int page) {
-        //Pageable pageable = repliesListRequestDTO.getPageable();
-
+        /**
+         * 조회하는 게시글 번호(bno), 현재 보려는 페이지(page) 를 받아서
+         * 해당 페이지의 댓글을 가져오는 함수.
+         */
         Pageable pageable = PageRequest.of(page-1,30, Sort.by("rno").ascending());
 
         Page<Replies> res = repository.getList(bno, pageable);
@@ -45,6 +47,11 @@ public class RepliesServiceImpl implements RepliesService {
     @Override
     @Transactional
     public RepliesResponseDTO saveReply(RepliesSaveRequestDTO dto) {
+        /**
+         * 댓글 저장함수. 대댓글이 아닌 일반 댓글의 경우 groupId가 0으로 넘어오는데
+         * 이때 0으로 저장 후, 엔티티에 있는 changeGroupId 함수로 저장하며 나온 pk값을
+         * groupdId로 바꾼다.
+         */
         Replies entity = null;
         entity = repository.save(DtoToEntity(dto));
         if(dto.getGroupId() == null || dto.getGroupId() == 0){
@@ -59,18 +66,27 @@ public class RepliesServiceImpl implements RepliesService {
     @Override
     @Transactional
     public RepliesResponseDTO updateReply(RepliesUpdateRequestDTO dto) {
-        Optional<Replies> optReply = repository.findById(dto.getRno());
         /**
-         * Not exactly sure if we need to consider if the attempting user is actually the owner of the reply he/she is trying to modify
+         * 댓글 수정함수.
          */
+
+        Optional<Replies> optReply = repository.findById(dto.getRno());
         RepliesResponseDTO resDto = null;
         if(optReply.isPresent()){
             Replies replies = optReply.get();
+            if(replies.isRemoved()){
+                /**
+                 * 댓글이 지워져 있다면?
+                 * 프론트에서 안보이게 처리 필요
+                 *
+                 * 예외처리에 대해 공부후 추가 필요
+                 */
+            }
             replies.updateReply(dto.getContent());
             resDto = entityToDTO(replies);
         } else {
             /**
-             * Needs to have some sort of exception handles here
+             * 없는 댓글에 대한 예외처리.
              */
         }
 

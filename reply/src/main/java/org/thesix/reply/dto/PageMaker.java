@@ -18,12 +18,14 @@ public class PageMaker {
     private boolean prev,next;
 
     public PageMaker(int page,int size, int totalCount){
+        /**
+         * 강사님과 함께한 페이 정보 만드는 클래스
+         */
         this.page = page;
         this.size = size;
         this.totalCount = totalCount;
 
         int totalPage = (int)(Math.ceil(totalCount/(double)size));
-        System.out.println(totalPage);
         int tempEnd = (int)(Math.ceil(page/10.0)) * 10;
 
         int start = tempEnd - 9;

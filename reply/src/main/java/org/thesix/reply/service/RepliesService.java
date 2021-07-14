@@ -17,6 +17,7 @@ public interface RepliesService {
     default RepliesResponseDTO entityToDTO(Replies entity){
         return RepliesResponseDTO.builder()
                 .content(entity.getContent())
+                .email(entity.getEmail())
                 .groupId(entity.getGroupId())
                 .level(entity.getLevel())
                 .modDate(entity.getModDate())
