@@ -20,11 +20,11 @@ import java.util.List;
 public class JWTUtil {
 
     //토큰 시크릿키
-    @Value("${secretKey}")
+    @Value("${org.secret.key}")
     private String secretKey;
 
     //토큰 만료시간 (1분)
-    private long expiredDate = 1;
+    private long expiredDate = 20;
 
     @Autowired
     private RefreshTokenService refreshTokenService;
@@ -41,7 +41,7 @@ public class JWTUtil {
                 .setIssuedAt(new Date())
                 .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(expiredDate).toInstant()))
                 .claim("email",email)
-                .claim("role",roles)
+                .claim("roles",roles)
                 .signWith(SignatureAlgorithm.HS256, secretKey.getBytes(StandardCharsets.UTF_8))
                 .compact();
     }
