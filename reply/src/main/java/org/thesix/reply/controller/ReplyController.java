@@ -15,6 +15,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @Log4j2
+//@CrossOrigin(origins = {"*"})
 @RequestMapping("/reply")
 public class ReplyController {
     private final RepliesService replyService;
