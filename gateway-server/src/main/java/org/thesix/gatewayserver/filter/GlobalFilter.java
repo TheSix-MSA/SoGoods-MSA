@@ -12,6 +12,8 @@ import org.thesix.gatewayserver.config.GatewayExceptionHandler;
 import org.thesix.gatewayserver.config.JwtValidator;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Component
 @Log4j2
 public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Config> {
@@ -22,8 +24,6 @@ public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Conf
         return new GatewayExceptionHandler();
     }
 
-    @Autowired
-    private JwtValidator jwtValidator;
 
     public GlobalFilter() {
         super(Config.class);
@@ -36,8 +36,7 @@ public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Conf
             log.info("GlobalFilter baseMessage>>>>>>" + config.getBaseMessage());
             if (config.isPreLogger()) {
                 log.info("GlobalFilter Start>>>>>>" + exchange.getRequest());
-                String accessToken = exchange.getRequest().getHeaders().get("Authorization").get(0).substring(7);
-                jwtValidator.validateToken(accessToken);
+
             }
             return chain.filter(exchange).then(Mono.fromRunnable(()->{
                 if (config.isPostLogger()) {

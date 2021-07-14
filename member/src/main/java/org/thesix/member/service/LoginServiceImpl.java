@@ -31,7 +31,8 @@ public class LoginServiceImpl implements LoginService{
         if(userInfo.isPresent()) {
             Member member = userInfo.get();
             boolean matchResult = encoder.matches(dto.getPassword(), member.getPassword());
-
+            log.info("======>" + matchResult);
+            log.info("======>member" + member);
             if (matchResult) {
                 String jwtToken = jwtUtil.generateJWTToken(member.getEmail(), member.getRoleSet().stream().collect(Collectors.toList()));
 

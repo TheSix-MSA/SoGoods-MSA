@@ -17,13 +17,13 @@ public class MemberFilter extends AbstractGatewayFilterFactory<MemberFilter.Conf
     @Override
     public GatewayFilter apply(Config config) {
         return ((exchange, chain) -> {
-            log.info("GlobalFilter baseMessage>>>>>>" + config.getBaseMessage());
+            log.info("MemberFilter baseMessage>>>>>>" + config.getBaseMessage());
             if (config.isPreLogger()) {
-                log.info("GlobalFilter Start>>>>>>" + exchange.getRequest());
+                log.info("MemberFilter Start>>>>>>" + exchange.getRequest());
             }
             return chain.filter(exchange).then(Mono.fromRunnable(()->{
                 if (config.isPostLogger()) {
-                    log.info("GlobalFilter End>>>>>>" + exchange.getResponse());
+                    log.info("MemberFilter End>>>>>>" + exchange.getResponse());
                 }
             }));
         });

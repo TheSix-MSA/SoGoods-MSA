@@ -17,13 +17,13 @@ public class FundingFilter extends AbstractGatewayFilterFactory<FundingFilter.Co
     @Override
     public GatewayFilter apply(Config config) {
         return ((exchange, chain) -> {
-            log.info("GlobalFilter baseMessage>>>>>>" + config.getBaseMessage());
+            log.info("FundingFilter baseMessage>>>>>>" + config.getBaseMessage());
             if (config.isPreLogger()) {
-                log.info("GlobalFilter Start>>>>>>" + exchange.getRequest());
+                log.info("FundingFilter Start>>>>>>" + exchange.getRequest());
             }
             return chain.filter(exchange).then(Mono.fromRunnable(()->{
                 if (config.isPostLogger()) {
-                    log.info("GlobalFilter End>>>>>>" + exchange.getResponse());
+                    log.info("FundingFilter End>>>>>>" + exchange.getResponse());
                 }
             }));
         });

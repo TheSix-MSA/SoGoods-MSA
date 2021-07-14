@@ -5,17 +5,19 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.UnsupportedEncodingException;
+
 @Component
 @Log4j2
 public class JwtValidator {
 
-    @Value("${jwt.secret}")
+    @Value("${org.secret.key}")
     private String jwtSecret;
 
     public boolean validateToken(String authToken) {
         try {
             Jwts.parser()
-                    .setSigningKey(jwtSecret)
+                    .setSigningKey(jwtSecret.getBytes("UTF-8"))
                     .parseClaimsJws(authToken);
             return true;
         } catch (SignatureException ex) {
@@ -30,15 +32,22 @@ public class JwtValidator {
             log.error("JWT claims string is empty.");
         } catch (NoClassDefFoundError ex) {
             log.error("Not Valid Token");
+        } catch (UnsupportedEncodingException e) {
+            log.error("Not Valid Token");
         }
         return false;
     }
 
     public Claims extractAllClaims(String token) throws ExpiredJwtException {
-        return Jwts
-                .parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts
+                    .parser()
+                    .setSigningKey(jwtSecret.getBytes("UTF-8"))
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

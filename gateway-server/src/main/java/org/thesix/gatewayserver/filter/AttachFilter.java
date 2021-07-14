@@ -17,13 +17,13 @@ public class AttachFilter extends AbstractGatewayFilterFactory<AttachFilter.Conf
     @Override
     public GatewayFilter apply(Config config) {
         return ((exchange, chain) -> {
-            log.info("GlobalFilter baseMessage>>>>>>" + config.getBaseMessage());
+            log.info("AttachFilter baseMessage>>>>>>" + config.getBaseMessage());
             if (config.isPreLogger()) {
-                log.info("GlobalFilter Start>>>>>>" + exchange.getRequest());
+                log.info("AttachFilter Start>>>>>>" + exchange.getRequest());
             }
             return chain.filter(exchange).then(Mono.fromRunnable(()->{
                 if (config.isPostLogger()) {
-                    log.info("GlobalFilter End>>>>>>" + exchange.getResponse());
+                    log.info("AttachFilter End>>>>>>" + exchange.getResponse());
                 }
             }));
         });
