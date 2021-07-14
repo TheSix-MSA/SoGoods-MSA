@@ -17,6 +17,6 @@ public class UploadResultDTO {
     public UploadResultDTO(String uuid, String fileName) throws UnsupportedEncodingException {
         this.uuid = uuid;
         this.fileName = fileName;
-        this.fileFullName = uuid + "_" + URLEncoder.encode(fileName);
+        this.fileFullName = uuid + "_" + URLEncoder.encode(fileName, "UTF-8");
     }
 }
