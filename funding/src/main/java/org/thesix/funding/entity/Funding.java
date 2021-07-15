@@ -35,6 +35,8 @@ public class Funding extends BaseEntity {
 
     private long totalAmount; // 토탈 모금 금액
 
+    private long targetAmount; // 목표 금액
+
 
     /**
      * 제목, 콘텐츠, 마감날짜, 삭제여부를 수정하는 메서드 : Setter 역할
@@ -48,12 +50,15 @@ public class Funding extends BaseEntity {
         this.content = content;
     }
 
-    public void changeDueDate(LocalDateTime modDate){
-        this.dueDate = modDate;
+    public void changeDueDate(LocalDateTime dueDate){
+        this.dueDate = dueDate;
     }
+
+    public void changeTotalAmount(Long totalAmount){this.totalAmount = totalAmount;}
 
     public void changeRemoved(boolean removed){
         this.removed = removed;
     }
+
 
 }

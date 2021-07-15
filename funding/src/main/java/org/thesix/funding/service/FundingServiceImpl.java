@@ -65,6 +65,8 @@ public class FundingServiceImpl implements FundingService {
                 .dueDate(registerDTO.getDueDate())
                 .success(registerDTO.isSuccess())
                 .removed(registerDTO.isRemoved())
+                .totalAmount(registerDTO.getTotalAmount())
+                .targetAmount(registerDTO.getTargetAmount())
                 .build();
 
         fundingRepository.save(funding);
@@ -128,6 +130,7 @@ public class FundingServiceImpl implements FundingService {
         funding.get().changeContent(fundingEntity.getContent());
         funding.get().changeTitle(fundingEntity.getTitle());
         funding.get().changeDueDate(fundingEntity.getDueDate());
+        funding.get().changeTotalAmount(fundingEntity.getTotalAmount());
 
         fundingRepository.save(funding.get());
 

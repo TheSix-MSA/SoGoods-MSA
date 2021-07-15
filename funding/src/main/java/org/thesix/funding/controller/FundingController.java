@@ -50,7 +50,7 @@ public class FundingController {
     }
 
     /**
-     * 펀딩 글을 수정하는 메서드 (제목, 내용, 만기일만 수정가능)
+     * 펀딩 글을 수정하는 메서드 (제목, 내용, 만기일, 모금 금액만 수정가능)
      * @param fno
      * @param registerDTO
      * @return ResponseEntity<FundingResponseDTO>

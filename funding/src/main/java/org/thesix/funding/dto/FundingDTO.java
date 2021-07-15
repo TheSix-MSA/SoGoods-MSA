@@ -35,4 +35,6 @@ public class FundingDTO {
     private boolean removed;  // 펀딩 삭제여부
 
     private long totalAmount; // 총 모금액
+
+    private long targetAmount; // 목표 금액
 }

@@ -26,6 +26,8 @@ public interface FundingService {
                 .dueDate(funding.getDueDate())
                 .removed(funding.isRemoved())
                 .success(funding.isSuccess())
+                .totalAmount(funding.getTotalAmount())
+                .targetAmount(funding.getTargetAmount())
                 .build();
     }
 
@@ -77,7 +79,8 @@ public interface FundingService {
                 .dueDate(registerDTO.getDueDate())
                 .removed(registerDTO.isRemoved())
                 .success(registerDTO.isSuccess())
-                .totalAmount(registerDTO.getTotalAmount()).build();
+                .totalAmount(registerDTO.getTotalAmount())
+                .targetAmount(registerDTO.getTargetAmount()).build();
     }
 
     default FavoriteDTO entityToDTO(Favorite favorite){
