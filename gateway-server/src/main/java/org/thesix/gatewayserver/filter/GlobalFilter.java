@@ -1,34 +1,14 @@
 package org.thesix.gatewayserver.filter;
 
-import lombok.Data;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
-import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-import org.thesix.gatewayserver.config.GatewayExceptionHandler;
-import org.thesix.gatewayserver.config.JwtValidator;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
 
 @Component
 @Log4j2
-public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Config> {
-
-
-    @Bean
-    public ErrorWebExceptionHandler exceptionHandler() {
-        return new GatewayExceptionHandler();
-    }
-
-
-    public GlobalFilter() {
-        super(Config.class);
-    }
-
+public class GlobalFilter extends CustomFilter {
 
     @Override
     public GatewayFilter apply(Config config) {
@@ -44,15 +24,5 @@ public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Conf
                 }
             }));
         });
-    }
-
-    /**
-     * application.yml에 선언한 각 filter의 args(인자값) 사용을 위한 클래스
-     */
-    @Data
-    public static class Config {
-        private String baseMessage;
-        private boolean preLogger;
-        private boolean postLogger;
     }
 }

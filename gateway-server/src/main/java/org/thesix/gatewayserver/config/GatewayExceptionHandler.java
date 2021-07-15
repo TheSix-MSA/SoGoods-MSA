@@ -41,6 +41,10 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
             status = 1002;
         } else if (throwable.getClass() == IllegalArgumentException.class) {
             status = 1003;
+        } else if (throwable.getClass() == RuntimeException.class) {
+            status = 1004;
+        } else if (throwable.getClass() == StringIndexOutOfBoundsException.class) {
+            status = 1005;
         }
         byte[] bytes = errorStatusJSON(status).getBytes(StandardCharsets.UTF_8);
         DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
