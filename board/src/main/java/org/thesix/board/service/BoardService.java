@@ -1,15 +1,15 @@
 package org.thesix.board.service;
 
 import org.thesix.board.dto.BoardDTO;
-import org.thesix.board.dto.BoardListDTO;
+import org.thesix.board.dto.BoardListRequestDTO;
+import org.thesix.board.dto.BoardListResponseDTO;
 import org.thesix.board.entity.Board;
-
-import java.util.List;
+import org.thesix.board.entity.BoardType;
 
 public interface BoardService {
 
     // 게시판 글작성
-    BoardDTO register(BoardDTO dto);
+    BoardDTO register(BoardDTO dto, String board_type);
 
     // 게시판 글수정
     BoardDTO modify(BoardDTO dto);
@@ -21,17 +21,17 @@ public interface BoardService {
     BoardDTO read(Long bno);
 
     // 특정 게시판의 목록 가져오기
-    BoardDTO boardList(String type);
+    BoardListResponseDTO<BoardDTO> getList(BoardListRequestDTO boardListRequestDTO, String board_type);
 
     // DTO 객체를 ENTITY로 변환
-    default Board dtoToEntity(BoardDTO dto) {
+    default Board dtoToEntity(BoardDTO dto, String board_type) {
         Board board = Board.builder()
                 .bno(dto.getBno())
                 .title(dto.getTitle())
                 .writer(dto.getWriter())
                 .email(dto.getEmail())
                 .content(dto.getContent())
-                .type(dto.getType())
+                .boardType(BoardType.valueOf(board_type))
                 .build();
         return board;
     }
@@ -45,7 +45,6 @@ public interface BoardService {
                 .email(board.getEmail())
                 .content(board.getContent())
                 .removed(board.isRemoved())
-                .type(board.getType())
                 .regDate(board.getRegDate())
                 .modDate(board.getModDate())
                 .build();

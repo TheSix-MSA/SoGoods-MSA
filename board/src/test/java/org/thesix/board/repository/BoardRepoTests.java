@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.thesix.board.dto.BoardDTO;
 import org.thesix.board.entity.Board;
+import org.thesix.board.entity.BoardType;
 import org.thesix.board.service.BoardService;
 
 import java.util.Arrays;
@@ -38,15 +39,14 @@ public class BoardRepoTests {
 
     @Test
     public void registerTest() {
-        IntStream.rangeClosed(1, 50).forEach(i-> {
+        IntStream.rangeClosed(1, 25).forEach(i-> {
             BoardDTO dto = BoardDTO.builder()
                     .title("테스트 제목 " + i)
                     .writer("테스트 작성자 " + i)
                     .email("테스트 이메일 " + i)
                     .content("테스트 내용 " + i)
-                    .type("작가게시판")
                     .build();
-            BoardDTO registerDTO = boardService.register(dto);
+            BoardDTO registerDTO = boardService.register(dto, "WRITER");
         });
     }
 
