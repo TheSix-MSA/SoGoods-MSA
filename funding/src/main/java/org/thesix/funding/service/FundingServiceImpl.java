@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.thesix.funding.common.dto.ListResponseDTO;
 import org.thesix.funding.common.dto.PageMaker;
 import org.thesix.funding.dto.*;
+import org.thesix.funding.entity.Favorite;
 import org.thesix.funding.entity.Funding;
 import org.thesix.funding.entity.Product;
 import org.thesix.funding.repository.FavoriteRepository;
@@ -97,7 +98,7 @@ public class FundingServiceImpl implements FundingService {
 
         Optional<Funding> funding = fundingRepository.getFundingById(fno);
         Optional<Product[]> products1 = productRepository.getProductById(fno);
-        Optional<Long> favoriteCount = favoriteRepository.getProductById(fno);
+        Optional<Long> favoriteCount = favoriteRepository.getFavoriteCntById(fno);
 
         FundingDTO fundingDTO = entityToDTO(funding.get());
 
@@ -193,4 +194,27 @@ public class FundingServiceImpl implements FundingService {
                         .map(product1 -> entityToDTO(product1)).collect(Collectors.toList())).build();
     }
 
+    /**
+     * 찜하기 기능 처리
+     * @param favoriteDTO
+     * @return FavoriteDTO
+     */
+    @Override
+    public Long insertFavorite(FavoriteDTO favoriteDTO){
+
+        Funding funding = Funding.builder()
+                .fno(favoriteDTO.getFunFno()).build();
+
+        Favorite favorite = Favorite.builder()
+                .mark(true)
+                .actor(favoriteDTO.getActor())
+                .funding(funding)
+                .build();
+
+        favoriteRepository.save(favorite);
+
+        return favoriteRepository.getFavoriteCntById(favoriteDTO.getFunFno()).get();
+    }
+
 }
+

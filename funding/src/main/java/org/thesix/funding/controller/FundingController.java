@@ -39,7 +39,7 @@ public class FundingController {
     }
 
     /**
-     * 지정한 글 번호를 받아 세부화면에 필요한 정보를 불러올 메서드 -- 미완
+     * 지정한 글 번호를 받아 세부화면에 필요한 정보를 불러올 메서드
      * @param fno
      * @return ResponseEntity<FundingResponseDTO>
      */
@@ -61,12 +61,31 @@ public class FundingController {
         return ResponseEntity.ok().body(fundingService.modify(fno, registerDTO));
     }
 
+
+    /**
+     * 펀딩 글을 삭제하는 메서드 -> removed 처리
+     * @param fno
+     * @return ResponseEntity<FundingResponseDTO>
+     */
     @DeleteMapping("/{fno}")
     public ResponseEntity<FundingResponseDTO> changeRemoved(@PathVariable Long fno){
 
         return ResponseEntity.ok(fundingService.remove(fno));
-
     }
+
+    /**
+     * 찜하기 기능
+     * @param favoriteDTO
+     * @return ResponseEntity<Long>  => 추가된 게시판의 총 좋아요 수 반환
+     */
+    @PostMapping("/fav")
+    public ResponseEntity<Long> changeFavorite(@RequestBody FavoriteDTO favoriteDTO){
+
+        return ResponseEntity.ok(fundingService.insertFavorite(favoriteDTO));
+    }
+
+
+
 
 
 }

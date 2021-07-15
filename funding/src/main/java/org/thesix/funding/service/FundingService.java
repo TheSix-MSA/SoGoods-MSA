@@ -2,6 +2,7 @@ package org.thesix.funding.service;
 
 import org.thesix.funding.common.dto.ListResponseDTO;
 import org.thesix.funding.dto.*;
+import org.thesix.funding.entity.Favorite;
 import org.thesix.funding.entity.Funding;
 import org.thesix.funding.entity.Product;
 
@@ -67,6 +68,7 @@ public interface FundingService {
      * @return
      */
     default Funding dtoToEntity(FundingRegisterDTO registerDTO){
+
         return Funding.builder()
                 .title(registerDTO.getTitle())
                 .content(registerDTO.getContent())
@@ -76,6 +78,17 @@ public interface FundingService {
                 .removed(registerDTO.isRemoved())
                 .success(registerDTO.isSuccess())
                 .totalAmount(registerDTO.getTotalAmount()).build();
+    }
+
+    default FavoriteDTO entityToDTO(Favorite favorite){
+
+        Funding funding = Funding.builder().fno(favorite.getFunding().getFno()).build();
+
+        return FavoriteDTO.builder()
+                .favno(favorite.getFavno())
+                .mark(favorite.isMark())
+                .actor(favorite.getActor())
+                .funFno(funding.getFno()).build();
     }
 
     /**
@@ -106,5 +119,12 @@ public interface FundingService {
      * @return FundingResponseDTO
      */
     FundingResponseDTO remove(Long fno);
+
+    /**
+     * 찜하기 기능을 위한 추상메서드
+     * @param favoriteDTO
+     * @return FavoriteDTO
+     */
+    Long insertFavorite(FavoriteDTO favoriteDTO);
 
 }
