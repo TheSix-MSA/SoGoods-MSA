@@ -81,13 +81,14 @@ public class BoardServiceImpl implements BoardService {
                 boardListRequestDTO.getPageable()
         );
 //        List<Object> collect = list.get().map().collect(Collectors.toList());
-        BoardListResponseDTO build = BoardListResponseDTO.builder()
+
+        BoardListResponseDTO boardListResponseDTO = BoardListResponseDTO.builder()
                 .pageMaker(new PageMaker(boardListRequestDTO.getPage(), boardListRequestDTO.getSize(), (int) list.getTotalElements()))
                 .boardDtoList(Collections.singletonList(list.toList()))
                 .boardListRequestDTO(boardListRequestDTO)
                 .build();
 
-        return build;
+        return boardListResponseDTO;
     }
 
 }
