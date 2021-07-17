@@ -1,7 +1,7 @@
 package org.thesix.reply.entity;
 
 import lombok.*;
-import org.thesix.reply.entity.common.BaseEntity;
+import org.thesix.reply.common.entity.BaseEntity;
 
 import javax.persistence.*;
 

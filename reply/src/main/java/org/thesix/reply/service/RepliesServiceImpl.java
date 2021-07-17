@@ -24,14 +24,13 @@ import java.util.stream.Collectors;
 public class RepliesServiceImpl implements RepliesService {
     private final RepliesRepository repository;
 
-
     @Override
-    public ListResponseRepliesDTO getList(Long bno, int page) {
+    public ListResponseRepliesDTO getList(Long bno, Long page) {
         /**
          * 조회하는 게시글 번호(bno), 현재 보려는 페이지(page) 를 받아서
          * 해당 페이지의 댓글을 가져오는 함수.
          */
-        Pageable pageable = PageRequest.of(page-1,30, Sort.by("rno").ascending());
+        Pageable pageable = PageRequest.of((int) (page-1),30, Sort.by("rno").ascending());
 
         Page<Replies> res = repository.getList(bno, pageable);
 
@@ -39,7 +38,7 @@ public class RepliesServiceImpl implements RepliesService {
                 .map(objects -> entityToDTO(objects))
                 .collect(Collectors.toList());
 
-        PageMaker pageMaker = new PageMaker(page,30, (int)res.getTotalElements());
+        PageMaker pageMaker = new PageMaker(Math.toIntExact(page),30, (int)res.getTotalElements());
 
         return ListResponseRepliesDTO.builder().repliesDTOList(listReplyDTO).pageMaker(pageMaker).build();
     }
@@ -52,10 +51,10 @@ public class RepliesServiceImpl implements RepliesService {
          * 이때 0으로 저장 후, 엔티티에 있는 changeGroupId 함수로 저장하며 나온 pk값을
          * groupdId로 바꾼다.
          */
-        Replies entity = null;
-        entity = repository.save(DtoToEntity(dto));
+        Replies entity = DtoToEntity(dto);
+        Replies entity2 = repository.save(entity);
         if(dto.getGroupId() == null || dto.getGroupId() == 0){
-            entity.changeGroupId(entity.getRno());
+            entity2.changeGroupId(entity.getRno());
         }
 
         RepliesResponseDTO resDto = entityToDTO(entity);
@@ -121,5 +120,23 @@ public class RepliesServiceImpl implements RepliesService {
             res.put("status", "실패!!");
         }
         return res;
+    }
+
+    @Override
+    public ListResponseRepliesDTO getListMemberWrote(String email, Long page) {
+        /***
+         * 유저의 이메일을 받아서 그 유저가 작성한 댓글들의 목록을 보내주는 함수.
+         */
+        Pageable pageable = PageRequest.of((int) (page-1), 10, Sort.by("modDate").descending());
+
+        Page<Replies> res = repository.getListUserWrote(email, pageable);
+
+        List<RepliesResponseDTO> listReplyDTO = res.getContent().stream()
+                .map(objects -> entityToDTO(objects))
+                .collect(Collectors.toList());
+
+        PageMaker pageMaker = new PageMaker(Math.toIntExact(page),10, (int)res.getTotalElements());
+
+        return ListResponseRepliesDTO.builder().repliesDTOList(listReplyDTO).pageMaker(pageMaker).build();
     }
 }
