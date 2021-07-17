@@ -15,8 +15,8 @@ import java.nio.charset.StandardCharsets;
 
 @Log4j2
 public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
-    private String errorStatusJSON(int errorStatus) {
-        return "{\"errorStatus\":" + errorStatus +"}";
+    private String errorStatusJSON(int errorStatus,String msg) {
+        return "{\"errorStatus\":" + errorStatus +",\"error\":"+msg+"}";
     }
 
     /**
@@ -46,7 +46,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
         } else if (throwable.getClass() == StringIndexOutOfBoundsException.class) {
             status = 1005;
         }
-        byte[] bytes = errorStatusJSON(status).getBytes(StandardCharsets.UTF_8);
+        byte[] bytes = errorStatusJSON(status,throwable.getMessage()).getBytes(StandardCharsets.UTF_8);
         DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
         return exchange.getResponse().writeWith(Flux.just(buffer));
     }

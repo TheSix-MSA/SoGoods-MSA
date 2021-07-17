@@ -31,9 +31,11 @@ public class ReplyFilter extends CustomFilter {
                 if(!method.equals(HttpMethod.GET)) {
                   String accessToken = exchange.getRequest().getHeaders().get("Authorization").get(0).substring(7);
                   List<String> roles = jwtValidator.extractAllClaims(accessToken).get("roles", List.class);
-                  jwtValidator.validateToken(accessToken);
-                  log.info("권한이 없다.");
-                  throw new RuntimeException("hi");
+                    if(!roles.contains("GENERAL")) {
+                      jwtValidator.validateToken(accessToken);
+                      log.info("권한이 없다.");
+                      throw new RuntimeException("권한이 없다.");
+                    }
                 }
 
             }
