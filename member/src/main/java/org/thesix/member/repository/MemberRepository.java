@@ -20,8 +20,8 @@ public interface MemberRepository extends JpaRepository<Member,String>, MemberSe
     @Query("select m from Member m where m.email = :email")
     Optional<Member> findByEmail(@Param("email") String email);
 
-    @EntityGraph(attributePaths = {"roleSet"}, type= EntityGraph.EntityGraphType.FETCH)
-    @Query("select m, r from Member m left join RefreshToken r on m = r.member " +
-            "where m.email = :email")
-    Optional<Object[]> findByMemberWithRefreshToken(@Param("email") String email);
+//    @EntityGraph(attributePaths = {"roleSet"}, type= EntityGraph.EntityGraphType.FETCH)
+//    @Query("select m, r from Member m left join RefreshToken r on m = r.member " +
+//            "where m.email = :email")
+//    Optional<Object[]> findByMemberWithRefreshToken(@Param("email") String email);
 }

@@ -10,6 +10,8 @@ import org.thesix.member.dto.ResponseListDTO;
 import org.thesix.member.entity.Member;
 import org.thesix.member.entity.MemberRole;
 import org.thesix.member.service.MemberService;
+import static org.thesix.member.util.ApiUtil.ApiResult;
+import static org.thesix.member.util.ApiUtil.success;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,11 +31,10 @@ public class MemberController {
      * @return String email 이메일
      */
     @PutMapping("/signup")
-    public ResponseEntity<MemberDTO> SignUp(@RequestBody MemberDTO dto){
-        log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    public ApiResult<MemberDTO> SignUp(@RequestBody MemberDTO dto){
         dto.addMemberRole(MemberRole.GENERAL);
         MemberDTO resultDTO = memberService.register(dto);
-        return ResponseEntity.ok(resultDTO);
+        return success(resultDTO);
     }
 
 
@@ -44,10 +45,10 @@ public class MemberController {
      * @return jsonUser 반환할 유저의 계정정보
      */
     @GetMapping("/getUser/{email}")
-    public ResponseEntity<MemberDTO> getUser(@PathVariable("email") String email){
+    public ApiResult<MemberDTO> getUser(@PathVariable("email") String email){
 
         MemberDTO dto = memberService.readUser(email);
-        return ResponseEntity.ok(dto);
+        return success(dto);
     }
 
 
@@ -57,7 +58,7 @@ public class MemberController {
      * @return 상태메세지
      */
     @DeleteMapping("/delete/{email}")
-    public ResponseEntity<Map> delete(@PathVariable("email") String email) {
+    public ApiResult<Map> delete(@PathVariable("email") String email) {
 
         memberService.delete(email);
         Map<String, String> map = new HashMap<>();
@@ -65,7 +66,7 @@ public class MemberController {
         map.put("email", email);
         map.put("msg", "삭제가 완료되었습니다.");
 
-        return ResponseEntity.ok(map);
+        return success(map);
     }
 
     /**
@@ -74,9 +75,9 @@ public class MemberController {
      * @return
      */
     @PutMapping("/update")
-    public ResponseEntity<MemberDTO> modify(@RequestBody MemberDTO dto){
+    public ApiResult<MemberDTO> modify(@RequestBody MemberDTO dto){
 
-        return ResponseEntity.ok(memberService.modify(dto));
+        return success(memberService.modify(dto));
     }
 
 
@@ -86,9 +87,9 @@ public class MemberController {
      * @return 회원List, PageMaker, 요청파라미터
      */
     @GetMapping("/list")
-    public ResponseEntity<ResponseListDTO> readList(RequestListDTO dto){
+    public ApiResult<ResponseListDTO> readList(RequestListDTO dto){
 
-        return ResponseEntity.ok(memberService.readList(dto));
+        return success(memberService.readList(dto));
     }
 
 }

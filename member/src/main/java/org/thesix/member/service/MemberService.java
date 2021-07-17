@@ -6,7 +6,6 @@ import org.thesix.member.dto.RefreshDTO;
 import org.thesix.member.dto.RequestListDTO;
 import org.thesix.member.dto.ResponseListDTO;
 import org.thesix.member.entity.Member;
-import org.thesix.member.entity.RefreshToken;
 
 import java.util.List;
 

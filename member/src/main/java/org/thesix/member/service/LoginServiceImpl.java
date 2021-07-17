@@ -8,7 +8,6 @@ import org.thesix.member.dto.LoginInfoDTO;
 import org.thesix.member.dto.TokenDTO;
 import org.thesix.member.entity.Member;
 import org.thesix.member.repository.MemberRepository;
-import org.thesix.member.repository.RefreshTokenRepository;
 import org.thesix.member.util.JWTUtil;
 
 import java.util.Optional;

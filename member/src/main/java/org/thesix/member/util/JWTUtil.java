@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import org.thesix.member.dto.RefreshDTO;
 import org.thesix.member.entity.Member;
 import org.thesix.member.entity.MemberRole;
-import org.thesix.member.service.RefreshTokenService;
 
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
@@ -25,9 +24,6 @@ public class JWTUtil {
 
     //토큰 만료시간 (1분)
     private long expiredDate = 20;
-
-    @Autowired
-    private RefreshTokenService refreshTokenService;
 
     /**
      * 로그인시 이용할 JWT토큰을 발행한다.
