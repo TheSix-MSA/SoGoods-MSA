@@ -10,7 +10,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.thesix.member.entity.Member;
-import org.thesix.member.entity.RefreshToken;
 import org.thesix.member.repository.MemberRepository;
 
 import java.util.Arrays;
@@ -37,17 +36,6 @@ class MemberSearchImplTest {
         Page<Object[]> members = memberRepository.getMemberList("n", "11", pageable);
 
         members.getContent().forEach(arr -> log.info(Arrays.toString(arr)));
-    }
-
-    @Transactional
-    @Test
-    public void test2(){
-
-        Optional<Object[]> result = memberRepository.findByMemberWithRefreshToken("aaa101@aaa.aa");
-
-        List<Object> collect = Arrays.stream(result.get()).collect(Collectors.toList());
-
-
     }
 
 
