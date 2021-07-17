@@ -2,19 +2,16 @@ package org.thesix.member.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.thesix.member.dto.MemberDTO;
 import org.thesix.member.dto.RequestListDTO;
 import org.thesix.member.dto.ResponseListDTO;
-import org.thesix.member.entity.Member;
 import org.thesix.member.entity.MemberRole;
 import org.thesix.member.service.MemberService;
 import static org.thesix.member.util.ApiUtil.ApiResult;
 import static org.thesix.member.util.ApiUtil.success;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -30,21 +27,19 @@ public class MemberController {
      * @param dto 회원가입정보(멤버의 DTO)
      * @return String email 이메일
      */
-    @PutMapping("/signup")
+    @PostMapping("/")
     public ApiResult<MemberDTO> SignUp(@RequestBody MemberDTO dto){
         dto.addMemberRole(MemberRole.GENERAL);
         MemberDTO resultDTO = memberService.register(dto);
         return success(resultDTO);
     }
 
-
-
     /**
      * 회원 조회
      * @param email 검색할 유저의 이메일
      * @return jsonUser 반환할 유저의 계정정보
      */
-    @GetMapping("/getUser/{email}")
+    @GetMapping("/{email}")
     public ApiResult<MemberDTO> getUser(@PathVariable("email") String email){
 
         MemberDTO dto = memberService.readUser(email);
@@ -57,7 +52,7 @@ public class MemberController {
      * @param email 삭제할 유저의 이메일
      * @return 상태메세지
      */
-    @DeleteMapping("/delete/{email}")
+    @DeleteMapping("/{email}")
     public ApiResult<Map> delete(@PathVariable("email") String email) {
 
         memberService.delete(email);
@@ -74,9 +69,8 @@ public class MemberController {
      * @param dto
      * @return
      */
-    @PutMapping("/update")
+    @PutMapping("/")
     public ApiResult<MemberDTO> modify(@RequestBody MemberDTO dto){
-
         return success(memberService.modify(dto));
     }
 
@@ -88,7 +82,6 @@ public class MemberController {
      */
     @GetMapping("/list")
     public ApiResult<ResponseListDTO> readList(RequestListDTO dto){
-
         return success(memberService.readList(dto));
     }
 
