@@ -85,6 +85,17 @@ public class FundingController {
     }
 
 
+    /**
+     * 해당 유저가 찜한 펀딩 게시글 리스트
+     * @param email
+     * @return
+     */
+    @GetMapping
+    public ResponseEntity<FundingDTO[]> getFavoriteFunding(String email){
+
+        return ResponseEntity.ok(null);
+    }
+
 
 
 

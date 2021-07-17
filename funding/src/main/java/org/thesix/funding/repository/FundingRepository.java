@@ -22,6 +22,10 @@ public interface FundingRepository extends JpaRepository<Funding, Long>, Funding
     Optional<Funding> getFundingById(Long fno);
 
 
+    @Query("select f from Funding f inner join Favorite fa on fa.actor=:email")
+    Funding[] getFundingByemail(String email);
+
+
 
 
 

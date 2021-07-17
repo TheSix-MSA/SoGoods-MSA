@@ -219,5 +219,17 @@ public class FundingServiceImpl implements FundingService {
         return favoriteRepository.getFavoriteCntById(favoriteDTO.getFunFno()).get();
     }
 
+    @Override
+    public FundingDTO[] getFavoriteFunding(String email) {
+
+        Funding[] fundings = fundingRepository.getFundingByemail(email);
+
+        for(Funding f : fundings){
+            FundingDTO result = entityToDTO(f);
+        }
+
+        return null;
+    }
+
 }
 

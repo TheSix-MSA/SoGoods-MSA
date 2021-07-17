@@ -83,6 +83,11 @@ public interface FundingService {
                 .targetAmount(registerDTO.getTargetAmount()).build();
     }
 
+    /**
+     * Favorite엔티티를 FavoriteDTO로 변환하는 메서드
+     * @param favorite
+     * @return FavoriteDTO
+     */
     default FavoriteDTO entityToDTO(Favorite favorite){
 
         Funding funding = Funding.builder().fno(favorite.getFunding().getFno()).build();
@@ -93,6 +98,7 @@ public interface FundingService {
                 .actor(favorite.getActor())
                 .funFno(funding.getFno()).build();
     }
+
 
     /**
      * 글 등록 처리를 위한 추상메서드
@@ -129,5 +135,10 @@ public interface FundingService {
      * @return FavoriteDTO
      */
     Long insertFavorite(FavoriteDTO favoriteDTO);
+
+
+    FundingDTO[] getFavoriteFunding(String email);
+
+
 
 }
