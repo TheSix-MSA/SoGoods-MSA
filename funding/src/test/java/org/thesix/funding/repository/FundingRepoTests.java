@@ -11,8 +11,8 @@ import org.thesix.funding.entity.Funding;
 import org.thesix.funding.entity.Product;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @SpringBootTest
@@ -101,9 +101,9 @@ public class FundingRepoTests {
     @Test
     public void testList1() {
 
-        Optional<Product[]> result = productRepository.getProductById(5L);
+        Optional<List<Product>> result = productRepository.getProductById(5L);
 
-        System.out.println(Arrays.stream(result.get()).collect(Collectors.toList()));
+       // System.out.println(Arrays.stream(result).collect(Collectors.toList()));
     }
 
 

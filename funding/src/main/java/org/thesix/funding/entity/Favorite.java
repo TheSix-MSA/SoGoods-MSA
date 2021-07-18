@@ -17,13 +17,19 @@ public class Favorite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long favno;
 
+    @Column(nullable = false)
     private boolean mark;
 
+    @Column(nullable = false)
     private String actor;
 
     @JoinColumn
     @ManyToOne(fetch = FetchType.LAZY)
     private Funding funding;
+
+    public void changeMark(boolean mark){
+        this.mark = mark;
+    }
 
 
 }

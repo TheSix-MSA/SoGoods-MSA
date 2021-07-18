@@ -19,12 +19,16 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pno; // 제품 식별번호
 
+    @Column(nullable = false)
     private String name;  // 제품 이름
 
+    @Column(nullable = false)
     private String des;  // 제품 설명
 
+    @Column(nullable = false)
     private int price;  // 제품 가격
 
+    @Column(nullable = false)
     private boolean removed;  // 삭제 여부
 
     @JoinColumn

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Lob;
 import java.time.LocalDateTime;
 
 @Data
@@ -22,6 +23,7 @@ public class FundingDTO {
 
     private String email;  // 작성자 이메일
 
+    @Lob
     private String content;  // 펀딩글 내용
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -37,4 +39,7 @@ public class FundingDTO {
     private long totalAmount; // 총 모금액
 
     private long targetAmount; // 목표 금액
+
+    private boolean authorized;  // 관리자 승인 여부
+
 }
