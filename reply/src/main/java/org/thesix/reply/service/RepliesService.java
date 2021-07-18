@@ -13,7 +13,7 @@ public interface RepliesService {
     RepliesResponseDTO saveReply(RepliesSaveRequestDTO dto);
     RepliesResponseDTO updateReply(RepliesUpdateRequestDTO dto);
     Map<String, String> deleteReply(Long rno);
-    ListResponseRepliesDTO getListMemberWrote(String email, Long page);
+    ListResponseRepliesDTO getListMemberWrote(Map<String, String> email, Long page);
 
     default RepliesResponseDTO entityToDTO(Replies entity){
         return RepliesResponseDTO.builder()

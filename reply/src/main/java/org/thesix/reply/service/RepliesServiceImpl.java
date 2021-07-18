@@ -15,7 +15,6 @@ import org.thesix.reply.repository.RepliesRepository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +29,8 @@ public class RepliesServiceImpl implements RepliesService {
          * 조회하는 게시글 번호(bno), 현재 보려는 페이지(page) 를 받아서
          * 해당 페이지의 댓글을 가져오는 함수.
          */
+        if(page < 1L) page = 1L;
+
         Pageable pageable = PageRequest.of((int) (page-1),30, Sort.by("rno").ascending());
 
         Page<Replies> res = repository.getList(bno, pageable);
@@ -51,6 +52,7 @@ public class RepliesServiceImpl implements RepliesService {
          * 이때 0으로 저장 후, 엔티티에 있는 changeGroupId 함수로 저장하며 나온 pk값을
          * groupdId로 바꾼다.
          */
+
         Replies entity = DtoToEntity(dto);
         Replies entity2 = repository.save(entity);
         if(dto.getGroupId() == null || dto.getGroupId() == 0){
@@ -67,27 +69,20 @@ public class RepliesServiceImpl implements RepliesService {
     public RepliesResponseDTO updateReply(RepliesUpdateRequestDTO dto) {
         /**
          * 댓글 수정함수.
+         * 예외처리까지 완료.(존재하는지 확인 + 수정하려는 유저가 본인인지 확인.)
          */
 
-        Optional<Replies> optReply = repository.findById(dto.getRno());
-        RepliesResponseDTO resDto = null;
-        if(optReply.isPresent()){
-            Replies replies = optReply.get();
-            if(replies.isRemoved()){
-                /**
-                 * 댓글이 지워져 있다면?
-                 * 프론트에서 안보이게 처리 필요
-                 *
-                 * 예외처리에 대해 공부후 추가 필요
-                 */
-            }
-            replies.updateReply(dto.getContent());
-            resDto = entityToDTO(replies);
-        } else {
-            /**
-             * 없는 댓글에 대한 예외처리.
-             */
-        }
+        Replies replies = repository.findById(dto.getRno())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
+
+        if(!dto.getEmail().equals(replies.getEmail()))
+            throw new IllegalArgumentException("작성자가 아니라면 변경할 수 없습니다.");
+
+        if(replies.isRemoved()) throw new IllegalArgumentException("이미 지워진 댓글입니다.");
+
+        replies.updateReply(dto.getContent());
+
+        RepliesResponseDTO resDto = entityToDTO(replies);
 
         return resDto;
     }
@@ -98,35 +93,33 @@ public class RepliesServiceImpl implements RepliesService {
         /**
          * 댓글의 deleted 컬럼을 true로 바꿔 삭제되었다 표기하는 함수.
          * 성공시 'status':'success' 싪패시는 예외 메세지
+         *
+         * 삭제하려는 유저가 관리자가 맞는지 확인할 방법이 없다.
+         * 본인이 맞는지는 확인이 가능(이메일 비교)하나 관리자가 댓글 삭제는 가능한데
+         * 요청을 보낸 이메일이 관리자인지 댓글 서비스에선 확인할 방법이 없다.
          */
 
-        Optional<Replies> optReply = repository.findById(rno);
-        /**
-         * Not exactly sure if we need to consider if the attempting user is actually the owner of the reply he/she is trying to modify
-         */
+        Replies replies = repository.findById(rno).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
 
         Map<String, String> res = new HashMap<>();
 
+        replies.deleteReply();
+        res.put("status", "댓글이 성공적으로 삭제되었습니다!");
 
-        if(optReply.isPresent()){
-            Replies replies = optReply.get();
-            replies.deleteReply();
-            res.put("status", "댓글이 성공적으로 삭제되었습니다!");
-        } else {
-            /**
-             * Needs to have some sort of exception handles here
-             */
-
-            res.put("status", "실패!!");
-        }
         return res;
     }
 
     @Override
-    public ListResponseRepliesDTO getListMemberWrote(String email, Long page) {
+    public ListResponseRepliesDTO getListMemberWrote(Map<String, String> emailMap, Long page) {
         /***
          * 유저의 이메일을 받아서 그 유저가 작성한 댓글들의 목록을 보내주는 함수.
          */
+        if(page < 1L) page = 1L;
+
+        String email = emailMap.get("email");
+
+        if(email.equals("") || email == null) throw new IllegalArgumentException("로그인해야 합니다");
+
         Pageable pageable = PageRequest.of((int) (page-1), 10, Sort.by("modDate").descending());
 
         Page<Replies> res = repository.getListUserWrote(email, pageable);

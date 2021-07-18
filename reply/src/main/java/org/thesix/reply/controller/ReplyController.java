@@ -32,7 +32,7 @@ public class ReplyController {
         return success(replyService.getList(bno, page));
     }
 
-    @PostMapping("/save")
+    @PostMapping("/")
     public ApiResult<RepliesResponseDTO> saveReply(@RequestBody RepliesSaveRequestDTO dto){
         /**
          * 댓글 등록 컨트롤러.
@@ -42,7 +42,7 @@ public class ReplyController {
         return success(replyService.saveReply(dto));
     }
 
-    @PutMapping("/update")
+    @PutMapping("/")
     public ApiResult<RepliesResponseDTO> updateReply(@RequestBody RepliesUpdateRequestDTO dto){
         /**
          * 댓글 수정 컨트롤러.
@@ -52,7 +52,7 @@ public class ReplyController {
         return success(replyService.updateReply(dto));
     }
 
-    @DeleteMapping("/delete/{rno}")
+    @DeleteMapping("/{rno}")
     public ApiResult<Map<String,String>> updateReply(@PathVariable Long rno){
         /**
          * 댓글 삭제 컨트롤러.
@@ -69,7 +69,6 @@ public class ReplyController {
          * 유저의 마이 페이지에서 본인이 쓴 댓글 목록을 불러와 그 댓글에 링크 등을 걸어
          * 해당 글로 이동하게 하기위한 컨트롤러러
          * */
-        String email = emailMap.get("email");
-        return success(replyService.getListMemberWrote(email, page));
+        return success(replyService.getListMemberWrote(emailMap, page));
     }
 }
