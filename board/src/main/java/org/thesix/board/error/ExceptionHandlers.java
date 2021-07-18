@@ -13,7 +13,6 @@ import static org.thesix.board.util.ApiUtil.error;
 @RestControllerAdvice
 @Log4j2
 public class ExceptionHandlers {
-
     private ResponseEntity<ApiResult<?>> newResponse(Throwable throwable, HttpStatus status) {
         return newResponse(throwable.getMessage(), status);
     }
