@@ -5,11 +5,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
 import static org.thesix.funding.util.ApiUtil.ApiResult;
 import static org.thesix.funding.util.ApiUtil.error;
 
-@RestController
+@RestControllerAdvice
 @Log4j2
 public class ErrorExceptionHandler {
 
@@ -25,13 +26,11 @@ public class ErrorExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> handleUnauthorizedException(Exception e) {
-
         return newResponse(e, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(NullPointerException.class)
+    @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> ServerErrorException(Exception e) {
-
         return newResponse(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

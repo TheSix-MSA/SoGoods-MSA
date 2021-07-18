@@ -90,19 +90,21 @@ public class FundingServiceImpl implements FundingService {
 
         // 해당 게시글이 존재하고, 인증이 됐는지 체크 후 예외처리
         Funding funding = fundingRepository.getFundingById(fno)
-                .orElseThrow(()-> new NullPointerException("요청하신 정보를 찾을 수 없습니다."));
+                .orElseThrow(()-> new IllegalArgumentException("요청하신 정보를 찾을 수 없습니다."));
 
-        Optional<List<Product>> products1 = productRepository.getProductById(fno);
+        List<Product> products1 = productRepository.getProductById(fno)
+                .orElseThrow(()-> new IllegalArgumentException("요청하신 정보를 찾을 수 없습니다."));
 
-        Optional<Long> favoriteCount = favoriteRepository.getFavoriteCntById(fno);
+        Long favoriteCount = favoriteRepository.getFavoriteCntById(fno)
+                .orElseThrow(()-> new IllegalArgumentException("요청하신 정보를 찾을 수 없습니다."));
 
         FundingDTO fundingDTO = entityToDTO(funding);
 
         return FundingResponseDTO.builder()
                 .fundingDTO(fundingDTO)
-                .productDTOs(products1.get().stream().map(product -> entityToDTO(product))
+                .productDTOs(products1.stream().map(product -> entityToDTO(product))
                         .collect(Collectors.toList()))
-                .favoriteCount(favoriteCount.get())
+                .favoriteCount(favoriteCount)
                 .build();
     }
 
