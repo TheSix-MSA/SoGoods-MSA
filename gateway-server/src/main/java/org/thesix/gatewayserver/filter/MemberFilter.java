@@ -17,7 +17,8 @@ public class MemberFilter extends CustomFilter {
             }
             return chain.filter(exchange).then(Mono.fromRunnable(()->{
                 if (config.isPostLogger()) {
-                    log.info("MemberFilter End>>>>>>" + exchange.getResponse());
+                    log.info("MemberFilter End Status>>>>>>" + exchange.getResponse().getStatusCode());
+//                    log.info("MemberFilter End>>>>>>" + exchange.getResponse());
                 }
             }));
         });
