@@ -9,7 +9,7 @@ import org.thesix.board.entity.BoardType;
 public interface BoardService {
 
     // 게시판 글작성
-    BoardDTO register(BoardDTO dto, String board_type);
+    BoardDTO register(BoardDTO dto, String boardType);
 
     // 게시판 글수정
     BoardDTO modify(BoardDTO dto);

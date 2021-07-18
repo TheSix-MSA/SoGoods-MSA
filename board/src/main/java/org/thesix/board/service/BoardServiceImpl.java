@@ -24,58 +24,54 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
 
-    // 게시판 글등록("/board/{board_type}/register")
+    // 게시판 글등록("/board/{boardType}")
     @Override
-    public BoardDTO register(BoardDTO dto, String board_type) {
-        Board register = dtoToEntity(dto, board_type);
+    public BoardDTO register(BoardDTO dto, String boardType) {
+        Board register = dtoToEntity(dto, boardType);
         Board registerResult = boardRepository.save(register);
         return entityToDTO(registerResult);
     }
 
-    // 게시판 글수정("/board/modify/{bno}")
+    // 게시판 글수정("/board/{boardType}/{bno}")
     @Override
     public BoardDTO modify(BoardDTO dto) {
-        Optional<Board> result = boardRepository.findById(dto.getBno());
-        if(result.isPresent() && dto.isRemoved() == false) {
-            Board entity = result.get();
-            entity.changeTitle(dto.getTitle());
-            entity.changeContent(dto.getContent());
-            Board modifyResult = boardRepository.save(entity);
+        Board result = boardRepository.findById(dto.getBno()).orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
+        if(dto.isRemoved() == false) {
+            result.changeTitle(dto.getTitle());
+            result.changeContent(dto.getContent());
+            Board modifyResult = boardRepository.save(result);
             return entityToDTO(modifyResult);
         }
-        return null;
+        throw new RuntimeException("이미 삭제된 게시글입니다.");
     }
 
-    // 게시판 글삭제("/board/remove/{bno}")
+    // 게시판 글삭제("/board/{bno}")
     @Override
     public BoardDTO remove(BoardDTO dto) {
-        Optional<Board> result = boardRepository.findById(dto.getBno());
-        if(result.isPresent() && dto.isRemoved() == false) {
-            Board entity = result.get();
-            entity.changeRemoved(true);
-            Board removeResult = boardRepository.save(entity);
+        Board result = boardRepository.findById(dto.getBno()).orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
+        if(dto.isRemoved() == false) {
+            result.changeRemoved(true);
+            Board removeResult = boardRepository.save(result);
             return entityToDTO(removeResult);
         }
-        return null;
+        throw new RuntimeException("이미 삭제된 게시글입니다.");
     }
 
-    // 게시판 특정 글조회("/board/read/{board_type}/{bno}")
+    // 게시판 특정 글조회("/board/{board_type}/{bno}")
     @Override
     public BoardDTO read(Long bno) {
-        Optional<Board> result = boardRepository.findById(bno);
-        log.info(result);
-        if(result.isPresent()){
-            Board readResult = result.get();
-            return entityToDTO(readResult);
-        }
-        return null;
+
+        Board result = boardRepository.findById(bno).orElseThrow(()-> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+        return entityToDTO(result);
+
     }
 
     // 특정 게시판의 목록("/board/{board_type}/list")
     @Override
-    public BoardListResponseDTO<BoardDTO> getList(BoardListRequestDTO boardListRequestDTO, String board_type) {
-        log.info(boardListRequestDTO + " : " + board_type);
+    public BoardListResponseDTO<BoardDTO> getList(BoardListRequestDTO boardListRequestDTO, String boardType) {
+        log.info(boardListRequestDTO + " : " + boardType);
         Page<Board> list = boardRepository.getBoardList(
+                boardType,
                 boardListRequestDTO.getType(),
                 boardListRequestDTO.getKeyword(),
                 boardListRequestDTO.getPageable()
