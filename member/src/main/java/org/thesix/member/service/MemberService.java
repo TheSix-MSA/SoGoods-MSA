@@ -1,13 +1,10 @@
 package org.thesix.member.service;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.thesix.member.dto.MemberDTO;
-import org.thesix.member.dto.RefreshDTO;
 import org.thesix.member.dto.RequestListDTO;
 import org.thesix.member.dto.ResponseListDTO;
 import org.thesix.member.entity.Member;
 
-import java.util.List;
 
 public interface MemberService {
 
@@ -23,6 +20,10 @@ public interface MemberService {
     MemberDTO modify(MemberDTO dto);
 
     ResponseListDTO readList(RequestListDTO dto);
+
+    MemberDTO changeRole(String email);
+
+    MemberDTO changeBanned(String email);
 
     /**
      *

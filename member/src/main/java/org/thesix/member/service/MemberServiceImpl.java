@@ -12,8 +12,10 @@ import org.thesix.member.dto.PageMaker;
 import org.thesix.member.dto.RequestListDTO;
 import org.thesix.member.dto.ResponseListDTO;
 import org.thesix.member.entity.Member;
+import org.thesix.member.entity.MemberRole;
 import org.thesix.member.repository.MemberRepository;
 import java.util.List;
+import java.util.Set;
 
 @Log4j2
 @Service
@@ -116,6 +118,51 @@ public class MemberServiceImpl implements MemberService{
                 .memberList(memberListResult)
                 .pageMaker(pageMaker)
                 .build();
+    }
+
+    /**
+     * 회원권한 변환
+     * toggle로 Author와 General권한을 바꿀 수 있다.
+     *
+     * @param email
+     * @return MemberDTO
+     */
+    @Override
+    public MemberDTO changeRole(String email) {
+
+        Member memberResult = memberRepository.findByEmail(email).orElseThrow(() -> new NullPointerException("사용자가 없습니다."));
+
+        Set<MemberRole> roleSet = memberResult.getRoleSet();
+
+        if (roleSet.contains(MemberRole.AUTHOR)) {
+            roleSet.remove(MemberRole.AUTHOR);
+        } else {
+            roleSet.add(MemberRole.AUTHOR);
+        }
+
+        return entityToMeberDTO(memberRepository.save(memberResult));
+    }
+
+    /**
+     * 회원의 ban 여부 변경
+     *
+     * @param email
+     * @return MemberDTO
+     */
+    @Override
+    public MemberDTO changeBanned(String email) {
+
+        Member memberResult = memberRepository.findByEmail(email).orElseThrow(() -> new NullPointerException("사용자가 존재하지 않습니다."));
+
+        boolean banned = memberResult.isBanned();
+
+        if (banned) {
+            memberResult.changeBanned(false);
+        } else {
+            memberResult.changeBanned(true);
+        }
+
+        return entityToMeberDTO(memberRepository.save(memberResult));
     }
 
 }

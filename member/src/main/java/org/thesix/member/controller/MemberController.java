@@ -1,5 +1,6 @@
 package org.thesix.member.controller;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.*;
@@ -84,5 +85,29 @@ public class MemberController {
     public ApiResult<ResponseListDTO> readList(RequestListDTO dto){
         return success(memberService.readList(dto));
     }
+
+    /**
+     * 회원 권한 바꾸기
+     *
+     * @param email email
+     * @return MemberDTO
+     */
+    @PostMapping("/change/{email}")
+    public ApiResult<MemberDTO> changeRole(@PathVariable("email") String email){
+        return success(memberService.changeRole(email));
+    }
+
+    /**
+     * 회원 ban 정보 바꾸기
+     *
+     * @param email email
+     * @return MemberDTO
+     */
+    @PostMapping("/ban/{email}")
+    public ApiResult<MemberDTO> changeBanned(@PathVariable("email") String email){
+        return success(memberService.changeBanned(email));
+    }
+
+
 
 }

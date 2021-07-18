@@ -32,6 +32,7 @@ public class MemberDTO {
     private LocalDateTime loginDate;
     @Builder.Default
     private Set<MemberRole> roleSet = new HashSet<>();
+
     public void addMemberRole(MemberRole role) {
         roleSet.add(role);
     }

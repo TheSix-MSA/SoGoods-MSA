@@ -13,6 +13,5 @@ import org.thesix.member.entity.Member;
 public class RefreshDTO {
 
     private Member member;
-
     private long expireDate;
 }
