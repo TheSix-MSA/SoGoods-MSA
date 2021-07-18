@@ -1,5 +1,7 @@
 package org.thesix.member.util;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,5 +60,20 @@ public class JWTUtil {
                 .compact();
 
 
+    }
+
+
+    // 만들어야함 . 토큰의 만료시 처리는 어디서할것인가...
+    public Claims parseToken(String jwt){
+
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8))
+                    .parseClaimsJws(jwt)
+                    .getBody();
+        }catch (ExpiredJwtException e){ //토큰만료시
+
+        }
+        return null;
     }
 }

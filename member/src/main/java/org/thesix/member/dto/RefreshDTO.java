@@ -12,6 +12,7 @@ import org.thesix.member.entity.Member;
 @NoArgsConstructor
 public class RefreshDTO {
 
+    private long rno;
     private Member member;
-    private long expireDate;
+    private String refreshToken;
 }

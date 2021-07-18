@@ -1,5 +1,6 @@
 package org.thesix.member.service;
 
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -8,7 +9,9 @@ import org.springframework.stereotype.Service;
 import org.thesix.member.dto.LoginInfoDTO;
 import org.thesix.member.dto.TokenDTO;
 import org.thesix.member.entity.Member;
+import org.thesix.member.entity.RefreshToken;
 import org.thesix.member.repository.MemberRepository;
+import org.thesix.member.repository.RefreshTokenRepository;
 import org.thesix.member.util.JWTUtil;
 
 import java.util.stream.Collectors;
@@ -19,6 +22,7 @@ import java.util.stream.Collectors;
 public class LoginServiceImpl implements LoginService{
 
     private final MemberRepository memberRepository;
+    private final RefreshTokenRepository tokenRepository;
     private final PasswordEncoder encoder;
     private final JWTUtil jwtUtil;
 
@@ -31,16 +35,24 @@ public class LoginServiceImpl implements LoginService{
      */
     @Override
     public TokenDTO Login(LoginInfoDTO dto) {
-
         Member member = memberRepository.findById(dto.getEmail()).orElseThrow(() -> new NullPointerException("해당하는 사용자가 없습니다."));
 
         boolean matchResult = encoder.matches(dto.getPassword(), member.getPassword());
 
         if (matchResult) {
             String jwtToken = jwtUtil.generateJWTToken(member.getEmail(), member.getRoleSet().stream().collect(Collectors.toList()));
-            String refreshToken = jwtUtil.makeRefreshToken(member.getEmail());
 
-            return TokenDTO.builder().accessToken(jwtToken).refreshToken(refreshToken).build();
+            if(tokenRepository.findById(dto.getEmail()).isPresent()){
+                RefreshToken refreshToken = tokenRepository.findById(dto.getEmail()).get();
+
+
+            }else{
+
+
+            }
+
+
+            return TokenDTO.builder().accessToken(jwtToken).refreshToken("refreshToken.getRefreshToken()").build();
         }
 
         throw new BadCredentialsException("비밀번호가 틀렸습니다.");

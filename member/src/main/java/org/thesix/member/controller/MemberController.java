@@ -92,7 +92,7 @@ public class MemberController {
      * @param email email
      * @return MemberDTO
      */
-    @PostMapping("/change/{email}")
+    @PostMapping("/role/{email}")
     public ApiResult<MemberDTO> changeRole(@PathVariable("email") String email){
         return success(memberService.changeRole(email));
     }
