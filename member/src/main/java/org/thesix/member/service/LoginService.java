@@ -5,4 +5,6 @@ import org.thesix.member.dto.TokenDTO;
 
 public interface LoginService {
     TokenDTO Login(LoginInfoDTO dto);
+
+    String emailVerify(String userName);
 }

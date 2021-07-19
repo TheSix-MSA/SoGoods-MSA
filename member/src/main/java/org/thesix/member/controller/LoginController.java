@@ -3,13 +3,16 @@ package org.thesix.member.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.thesix.member.dto.LoginInfoDTO;
 import org.thesix.member.dto.TokenDTO;
 import org.thesix.member.service.LoginService;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.thesix.member.util.ApiUtil.ApiResult;
+import static org.thesix.member.util.ApiUtil.success;
 
 @Log4j2
 @RestController
@@ -26,8 +29,18 @@ public class LoginController {
      * @return JWT/Refresh 토큰
      */
     @PostMapping("/login")
-    public ResponseEntity<TokenDTO> acceptLogin(@RequestBody LoginInfoDTO dto){
+    public ApiResult<TokenDTO> acceptLogin(@RequestBody LoginInfoDTO dto){
         log.info(dto);
-        return ResponseEntity.ok(loginService.Login(dto));
+        return success(loginService.Login(dto));
+    }
+
+    @PostMapping("/login/{email}")
+    public ApiResult<Map<String, Object>> verifyEmail(@PathVariable("email") String email) {
+        String result = loginService.emailVerify(email);
+        Map<String, Object> map = new HashMap<>();
+        map.put("msg", "확인코드");
+        map.put("code", result);
+
+        return success(map);
     }
 }
