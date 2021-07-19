@@ -31,7 +31,7 @@ public class RepliesServiceImpl implements RepliesService {
          */
         if(page < 1L) page = 1L;
 
-        Pageable pageable = PageRequest.of((int) (page-1),30, Sort.by("rno").ascending());
+        Pageable pageable = PageRequest.of((int) (page-1),20, Sort.by("rno").ascending());
 
         Page<Replies> res = repository.getList(bno, pageable);
 
@@ -39,9 +39,9 @@ public class RepliesServiceImpl implements RepliesService {
                 .map(objects -> entityToDTO(objects))
                 .collect(Collectors.toList());
 
-        PageMaker pageMaker = new PageMaker(Math.toIntExact(page),30, (int)res.getTotalElements());
+        PageMaker pageMaker = new PageMaker(Math.toIntExact(page),20, (int)res.getTotalElements());
 
-        return ListResponseRepliesDTO.builder().repliesDTOList(listReplyDTO).pageMaker(pageMaker).build();
+        return ListResponseRepliesDTO.builder().repliesDTOList(listReplyDTO).pageMaker(pageMaker).bno(bno).build();
     }
 
     @Override

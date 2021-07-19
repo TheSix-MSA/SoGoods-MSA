@@ -17,7 +17,6 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @Log4j2
-@CrossOrigin(origins = {"*"})
 @RequestMapping("/reply")
 public class ReplyController {
     private final RepliesService replyService;
@@ -57,7 +56,6 @@ public class ReplyController {
         /**
          * 댓글 삭제 컨트롤러.
          * 대댓글도 이 컨트롤러를 통해서 삭제 처리한다.
-         *
          */
         return success(replyService.deleteReply(rno));
     }
