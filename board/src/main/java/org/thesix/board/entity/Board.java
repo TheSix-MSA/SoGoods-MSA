@@ -5,6 +5,8 @@ import lombok.*;
 import org.thesix.board.common.BoardDateEntity;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "tbl_board")
@@ -28,14 +30,15 @@ public class Board extends BoardDateEntity {
     @Column(nullable = false)
     private String email; // 게시글 작성자이메일
 
+    @Lob
     @Column(nullable = false)
     private String content; // 게시글 내용
 
     @Column(nullable = false)
     private boolean removed; // 게시글 삭제여부
 
-    @Column(nullable = false)
-    private String type; // 게시글 종류
+    @Enumerated(EnumType.STRING)
+    private BoardType boardType; // 게시글 종류
 
     // 제목수정
     public void changeTitle(String title) {
@@ -51,4 +54,5 @@ public class Board extends BoardDateEntity {
     public void changeRemoved(boolean removed) {
         this.removed = removed;
     }
+
 }
