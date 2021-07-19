@@ -1,0 +1,38 @@
+server:
+  port: 8022
+
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: user1
+    password: user1
+    url: jdbc:mariadb://database-1.cuj7cskl9xcv.ap-northeast-2.rds.amazonaws.com:3306/crowdfunding
+  servlet:
+    multipart:
+      enabled: true
+      location: /home/thesix
+      max-request-size: 30MB
+      max-file-size: 10MB
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+
+  profiles:
+    include: oauth
+
+  application:
+    name: attach-service-dev
+
+eureka:
+  instance:
+    instance-id: ATTACH-SERVICE-DEV
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://3.37.203.28:8761/eureka

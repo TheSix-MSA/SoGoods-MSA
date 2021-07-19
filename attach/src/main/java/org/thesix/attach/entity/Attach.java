@@ -1,8 +1,8 @@
 package org.thesix.attach.entity;
 
 import lombok.*;
-import org.thesix.common.BaseEntity;
 
+import org.thesix.common.BaseEntity;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;

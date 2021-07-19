@@ -1,7 +1,6 @@
 package org.thesix.attach.service;
 
 import com.sun.jdi.InternalException;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.coobird.thumbnailator.Thumbnailator;
@@ -14,10 +13,11 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.thesix.attach.dto.AttachConfimRequestDTO;
 import org.thesix.attach.dto.UploadResultDTO;
+import org.thesix.attach.dto.UuidRequestDTO;
+import org.thesix.attach.dto.UuidResponseDTO;
 import org.thesix.attach.entity.Attach;
 import org.thesix.attach.repository.AttachRepository;
 
-import javax.swing.*;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
@@ -30,11 +30,12 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class AttachServiceImpl implements AttachService{
+public class AttachServiceImpl implements AttachService {
 
     @Value("${spring.servlet.multipart.location}")
     private String uploadPath;
@@ -45,16 +46,15 @@ public class AttachServiceImpl implements AttachService{
     public List<UploadResultDTO> uplaodtemp(MultipartFile[] files) {
         List<UploadResultDTO> resultDTOList = new ArrayList<>();
 
-        for(MultipartFile file : files){
+        for (MultipartFile file : files) {
 
-            if(file.getContentType().startsWith("image") == false) {
+            if (file.getContentType().startsWith("image") == false) {
 //              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
             }
 
             //브라우저별 파일 오리지널파일이름 처리
             String originalName = file.getOriginalFilename();
-            int pos =  originalName.lastIndexOf("\\") + 1;
+            int pos = originalName.lastIndexOf("\\") + 1;
             String fileName = originalName.substring(pos);
             log.info(fileName);
             //날짜 폴더 생성
@@ -65,13 +65,13 @@ public class AttachServiceImpl implements AttachService{
 
             //저장할 파일 이름 중간에 "_"
             String commonPath = uploadPath + File.separator + "temp" + File.separator;
-            String uuidFileName =  uuid + "_" + fileName;
+            String uuidFileName = uuid + "_" + fileName;
 
             String severSideOriginFilePath = commonPath + uuidFileName;
 
             Path savePath = Paths.get(severSideOriginFilePath);
 
-            try{
+            try {
                 //서버에 저장
                 //  1. 원본
                 file.transferTo(savePath);
@@ -82,7 +82,7 @@ public class AttachServiceImpl implements AttachService{
 
                 //응답해줄 업로드 정보 추가
                 resultDTOList.add(new UploadResultDTO(uuid, fileName));
-            }catch (IOException e){
+            } catch (IOException e) {
                 throw new InternalException();
             }
         }
@@ -95,8 +95,10 @@ public class AttachServiceImpl implements AttachService{
         String tableName = requestDTO.getTableName();
         Long keyValue = requestDTO.getKeyValue();
         String mainFileName = requestDTO.getMainFileName();
+        log.info("mainFIleName: " + mainFileName);
         log.info(requestDTO);
-        for(String tempFileName : requestDTO.getTempFileNameList()){
+        for (String tempFileName : requestDTO.getTempFileNameList()) {
+            log.info(tempFileName);
             //tempFile은 uuid + 원본파일명 의 값을 갖는다.
             String[] arr = URLDecoder.decode(tempFileName, "UTF-8").split("_");
 
@@ -108,10 +110,10 @@ public class AttachServiceImpl implements AttachService{
             //String folderPath = makeFolder()
 
             //저장할 파일 이름 중간에 "_"
-            String tempPath  = uploadPath + File.separator + "temp" + File.separator + decodedFileName;
+            String tempPath = uploadPath + File.separator + "temp" + File.separator + decodedFileName;
             String savedPath = uploadPath + File.separator + "saved" + File.separator + decodedFileName;
 
-            String s_tempPath  = uploadPath + File.separator + "temp"  + File.separator + "s_" + decodedFileName;
+            String s_tempPath = uploadPath + File.separator + "temp" + File.separator + "s_" + decodedFileName;
             String s_savedPath = uploadPath + File.separator + "saved" + File.separator + "s_" + decodedFileName;
 
             //파일삭제(원본, 썸네일)
@@ -129,7 +131,7 @@ public class AttachServiceImpl implements AttachService{
                     .originalName(tempFileName)
                     .uuid(uuid);
 
-            if(mainFileName.equals(tempFileName))
+            if (mainFileName != null && mainFileName.equals(tempFileName))
                 attachBuilder = attachBuilder.main(true);
             else
                 attachBuilder = attachBuilder.main(false);
@@ -160,7 +162,7 @@ public class AttachServiceImpl implements AttachService{
 
             result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file), headers, HttpStatus.OK);
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new InternalException();
         }
         return result;
@@ -168,22 +170,22 @@ public class AttachServiceImpl implements AttachService{
 
     @Override
     @Transactional
-    public void removeTempFile(String opt,String fileName) {
-        try{
+    public void removeTempFile(String opt, String fileName) {
+        try {
             String srcFileName = null;
 
             srcFileName = URLDecoder.decode(fileName);
 
-            File originFile   = new File(uploadPath + File.separator + opt + File.separator + srcFileName);
+            File originFile = new File(uploadPath + File.separator + opt + File.separator + srcFileName);
             File thumnailFile = new File(uploadPath + File.separator + opt + File.separator + "s_" + srcFileName);
 
             originFile.delete();
             thumnailFile.delete();
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new InternalException();
         }
         System.out.println("fileName: " + fileName);
-        if(opt.equals("saved")){
+        if (opt.equals("saved")) {
             try {
                 attachRepository.deleteByOriginalName(URLEncoder.encode(fileName, "UTF-8"));
             } catch (UnsupportedEncodingException e) {
@@ -192,7 +194,27 @@ public class AttachServiceImpl implements AttachService{
         }
     }
 
+    @Override
+    public List<UuidResponseDTO> getUuidInBoardList(UuidRequestDTO requestDTO) {
 
+        String type = requestDTO.getType();
+        long[] keyValues = requestDTO.getKeyValues();
+
+        List<Attach> res = attachRepository.getAttachesByValues(type, keyValues);
+
+        return res.stream().map((attach -> entityToDTO(attach))).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UuidResponseDTO> getUuidInBoard(UuidRequestDTO requestDTO) {
+
+        String type = requestDTO.getType();
+        long keyValue = requestDTO.getKeyValue();
+
+        List<Attach> res = attachRepository.getAttachesByValue(type, keyValue);
+
+        return res.stream().map((attach -> entityToDTO(attach))).collect(Collectors.toList());
+    }
 
 
 }
