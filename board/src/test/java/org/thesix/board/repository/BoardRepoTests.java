@@ -52,11 +52,12 @@ public class BoardRepoTests {
 
     @Test
     public void testGetBoardList() {
+        String boardType = "NOVELIST";
         Pageable pageable = PageRequest.of(0,10);
         String keyword = "10";
         String type = "t";
 
-        Page<Board> list = boardRepository.getBoardList(type, keyword, pageable);
+        Page<Board> list = boardRepository.getBoardList(boardType, type, keyword, pageable);
         list.getContent().forEach(i -> System.out.println(i));
     }
 }
