@@ -23,4 +23,6 @@ public class BoardDTO {
     private boolean removed; // 게시글 삭제여부
     private LocalDateTime regDate; // 게시글 작성일
     private LocalDateTime modDate; // 게시글 수정일
+    private boolean isPrivate;
+    private Long replyCnt;
 }

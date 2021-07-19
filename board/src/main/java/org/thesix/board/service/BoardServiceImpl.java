@@ -3,19 +3,16 @@ package org.thesix.board.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.thesix.board.dto.BoardDTO;
 import org.thesix.board.dto.BoardListRequestDTO;
 import org.thesix.board.dto.BoardListResponseDTO;
 import org.thesix.board.dto.PageMaker;
 import org.thesix.board.entity.Board;
+import org.thesix.board.entity.BoardType;
 import org.thesix.board.repository.BoardRepository;
 
 import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +21,9 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
 
-    // 게시판 글등록("/board/{boardType}")
+    /*
+        게시판 글등록("/board/{boardType}")
+     */
     @Override
     public BoardDTO register(BoardDTO dto, String boardType) {
         Board register = dtoToEntity(dto, boardType);
@@ -32,7 +31,9 @@ public class BoardServiceImpl implements BoardService {
         return entityToDTO(registerResult);
     }
 
-    // 게시판 글수정("/board/{boardType}/{bno}")
+    /*
+        게시판 글수정("/board/{boardType}/{bno}")
+     */
     @Override
     public BoardDTO modify(BoardDTO dto) {
         Board result = boardRepository.findById(dto.getBno()).orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
@@ -45,7 +46,9 @@ public class BoardServiceImpl implements BoardService {
         throw new RuntimeException("이미 삭제된 게시글입니다.");
     }
 
-    // 게시판 글삭제("/board/{bno}")
+    /*
+        게시판 글삭제("/board/{bno}")
+     */
     @Override
     public BoardDTO remove(BoardDTO dto) {
         Board result = boardRepository.findById(dto.getBno()).orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
@@ -57,7 +60,23 @@ public class BoardServiceImpl implements BoardService {
         throw new RuntimeException("이미 삭제된 게시글입니다.");
     }
 
-    // 게시판 특정 글조회("/board/{board_type}/{bno}")
+    /*
+        공지사항 공개/비공개 처리
+     */
+    @Override
+    public BoardDTO changeIsPrivate(BoardDTO dto, String boardType) {
+        Board result = boardRepository.findById(dto.getBno()).orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
+        if(boardType.equals("NOTICE")) {
+            result.changeIsPrivate(!result.isPrivate());
+            Board noticeResult = boardRepository.save(result);
+            return entityToDTO(noticeResult);
+        }
+        throw new RuntimeException("공개되지 않는 게시글입니다.");
+    }
+
+    /*
+        게시판 특정 글조회("/board/{board_type}/{bno}")
+     */
     @Override
     public BoardDTO read(Long bno) {
 
@@ -66,7 +85,9 @@ public class BoardServiceImpl implements BoardService {
 
     }
 
-    // 특정 게시판의 목록("/board/{board_type}/list")
+    /*
+        특정 게시판의 목록("/board/{board_type}/list")
+     */
     @Override
     public BoardListResponseDTO<BoardDTO> getList(BoardListRequestDTO boardListRequestDTO, String boardType) {
         log.info(boardListRequestDTO + " : " + boardType);
@@ -76,7 +97,6 @@ public class BoardServiceImpl implements BoardService {
                 boardListRequestDTO.getKeyword(),
                 boardListRequestDTO.getPageable()
         );
-//        List<Object> collect = list.get().map().collect(Collectors.toList());
 
         BoardListResponseDTO boardListResponseDTO = BoardListResponseDTO.builder()
                 .pageMaker(new PageMaker(boardListRequestDTO.getPage(), boardListRequestDTO.getSize(), (int) list.getTotalElements()))
@@ -85,6 +105,47 @@ public class BoardServiceImpl implements BoardService {
                 .build();
 
         return boardListResponseDTO;
+    }
+
+    /*
+        자신이 작성한 게시글 목록("/board/{writer}")
+     */
+    @Override
+    public BoardListResponseDTO<BoardDTO> writerList(BoardListRequestDTO boardListRequestDTO, String writer) {
+        log.info(boardListRequestDTO + " : " + writer);
+        Page<Board> list = boardRepository.getWriterBoardList(
+                writer,
+                boardListRequestDTO.getType(),
+                boardListRequestDTO.getKeyword(),
+                boardListRequestDTO.getPageable()
+        );
+
+        BoardListResponseDTO boardListResponseDTO = BoardListResponseDTO.builder()
+                .pageMaker(new PageMaker(boardListRequestDTO.getPage(), boardListRequestDTO.getSize(), (int) list.getTotalElements()))
+                .boardDtoList(Collections.singletonList(list.toList()))
+                .boardListRequestDTO(boardListRequestDTO)
+                .build();
+
+        return boardListResponseDTO;
+    }
+
+    /*
+        댓글 증가
+     */
+    @Override
+    public BoardDTO replyCountUp(Long bno, BoardDTO dto) {
+        Board result = boardRepository.findById(dto.getBno()).orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
+        result.replyCountUp(result.getReplyCnt());
+        Board countResult = boardRepository.save(result);
+        return entityToDTO(countResult);
+    }
+
+    @Override
+    public BoardDTO replyCountDown(Long bno, BoardDTO dto) {
+        Board result = boardRepository.findById(dto.getBno()).orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
+        result.replyCountDown(result.getReplyCnt());
+        Board countResult = boardRepository.save(result);
+        return entityToDTO(countResult);
     }
 
 }

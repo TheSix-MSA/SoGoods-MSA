@@ -13,15 +13,18 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Board, Long>, BoardSearch {
-
-//    @Query("select b from Board b where b.type = :type")
-//    List<Object[]> getAllBoardList(@Param("type") String type);
-//
-//    @Query("select b from Board b where b.type = :type")
-//    Page<Object[]> getBoardList(Pageable pageable);
-
+    /*
+        게시판 종류별 목록 가져오기
+     */
     @EntityGraph(attributePaths = "boardType", type= EntityGraph.EntityGraphType.LOAD)
     @Query("select b from Board b where b.boardType = :board_type")
     Optional<Board> findByBoard(String board_type);
+    
+    /*
+        자신이 작성한 글 목록 가져오기
+     */
+    @EntityGraph(attributePaths = "writer", type= EntityGraph.EntityGraphType.LOAD)
+    @Query("select b from Board b where b.writer = :writer")
+    Optional<Board> findByWriterBoard(String writer);
 
 }

@@ -39,14 +39,14 @@ public class BoardRepoTests {
 
     @Test
     public void registerTest() {
-        IntStream.rangeClosed(1, 25).forEach(i-> {
+        IntStream.rangeClosed(1, 20).forEach(i-> {
             BoardDTO dto = BoardDTO.builder()
                     .title("테스트 제목 " + i)
                     .writer("테스트 작성자 " + i)
                     .email("테스트 이메일 " + i)
                     .content("테스트 내용 " + i)
                     .build();
-            BoardDTO registerDTO = boardService.register(dto, "WRITER");
+            BoardDTO registerDTO = boardService.register(dto, "NOTICE");
         });
     }
 
