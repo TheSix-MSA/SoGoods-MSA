@@ -38,6 +38,7 @@ class MemberRoleTest {
             int ranYear=(int) (Math.random() * 49) + 50;
             String ranMonthStr = Integer.toString(ranMonth);
             String ranDateStr = Integer.toString(ranDate);
+
             if(ranMonthStr.length()<2){
                 ranMonthStr = "0" + ranMonthStr;
             }
@@ -45,9 +46,7 @@ class MemberRoleTest {
                 ranDateStr = "0" + ranDateStr;
             }
 
-
             int ranNum=(int) (Math.random() * 9999) + 1;
-
 
             String randomBirth = Integer.toString(ranYear) +
                     ranMonthStr +

@@ -14,7 +14,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = "roleSet")
+@ToString  (exclude = "roleSet")
 public class Member {
 
     @Id
@@ -71,6 +71,10 @@ public class Member {
         this.phone = member.getPhone();
         this.address = member.getAddress();
         this.detailAddress = member.getDetailAddress();
+    }
+
+    public void changeRoleSet(Set<MemberRole> role){
+        this.roleSet = role;
     }
 
     public void changeRemoved(boolean removed) {

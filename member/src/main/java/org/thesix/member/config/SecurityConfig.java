@@ -20,13 +20,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
-//        http.addFilterBefore(loginFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
-//    @Bean
-//    public LoginFilter loginFilter() throws Exception{
-//        LoginFilter loginFilter = new LoginFilter("/login", authenticationManager());
-////        loginFilter.setAuthenticationFailureHandler();
-//        return loginFilter;
-//    }
 }

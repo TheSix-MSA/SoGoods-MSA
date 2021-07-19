@@ -25,7 +25,6 @@ public class LoginController {
      * @param dto (Id, Password)
      * @return JWT/Refresh 토큰
      */
-
     @PostMapping("/login")
     public ResponseEntity<TokenDTO> acceptLogin(@RequestBody LoginInfoDTO dto){
         log.info(dto);
