@@ -48,6 +48,8 @@ dependencies {
     implementation 'com.querydsl:querydsl-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     testImplementation 'org.springframework.security:spring-security-test'
+    // Mail
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.4.5'
 //    eureka-client
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 

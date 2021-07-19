@@ -33,7 +33,8 @@ public class ExceptionHandlers {
 
     @ExceptionHandler({
             NullPointerException.class,
-            BadCredentialsException.class
+            BadCredentialsException.class,
+            IllegalAccessError.class
     })
     public ResponseEntity<?> handle500Exception(Exception e) {
         return newResponse(e, HttpStatus.INTERNAL_SERVER_ERROR);
