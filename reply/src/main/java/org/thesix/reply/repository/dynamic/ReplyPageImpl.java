@@ -34,4 +34,20 @@ public class ReplyPageImpl extends QuerydslRepositorySupport implements ReplyPag
 
         return new PageImpl<>(tupList, pageable, totalCnt);
     }
+
+    @Override
+    public Page<Replies> getListUserWrote(String email, Pageable pageable) {
+        QReplies replies = QReplies.replies;
+        JPQLQuery<Replies> query = from(replies);
+
+        query.where(replies.rno.gt(0));
+        query.where(replies.email.eq(email));
+        query.offset(pageable.getOffset());
+        query.limit(pageable.getPageSize());
+        List<Replies> tupList = query.fetch();
+
+        long totalCnt = query.fetchCount();
+
+        return new PageImpl<>(tupList, pageable, totalCnt);
+    }
 }

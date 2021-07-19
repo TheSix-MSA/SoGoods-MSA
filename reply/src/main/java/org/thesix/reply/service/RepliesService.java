@@ -9,10 +9,11 @@ import org.thesix.reply.entity.Replies;
 import java.util.Map;
 
 public interface RepliesService {
-    ListResponseRepliesDTO getList(Long bno, int page);
+    ListResponseRepliesDTO getList(Long bno, Long page);
     RepliesResponseDTO saveReply(RepliesSaveRequestDTO dto);
     RepliesResponseDTO updateReply(RepliesUpdateRequestDTO dto);
     Map<String, String> deleteReply(Long rno);
+    ListResponseRepliesDTO getListMemberWrote(Map<String, String> email, Long page);
 
     default RepliesResponseDTO entityToDTO(Replies entity){
         return RepliesResponseDTO.builder()

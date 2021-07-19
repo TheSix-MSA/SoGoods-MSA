@@ -1,4 +1,4 @@
-package org.thesix.reply.entity.common;
+package org.thesix.reply.common.entity;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
