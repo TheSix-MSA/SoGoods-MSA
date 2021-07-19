@@ -71,6 +71,7 @@ public class FundingSearchImpl extends QuerydslRepositorySupport implements Fund
 
         tuple.where(funding.fno.gt(0L));
         tuple.where(funding.removed.eq(false));
+        tuple.where(funding.authorized.eq(true));
         tuple.groupBy(funding);
         tuple.orderBy(funding.fno.desc());
 

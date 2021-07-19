@@ -2,12 +2,13 @@ package org.thesix.funding.service;
 
 import org.thesix.funding.common.dto.ListResponseDTO;
 import org.thesix.funding.dto.*;
+import org.thesix.funding.entity.Favorite;
 import org.thesix.funding.entity.Funding;
 import org.thesix.funding.entity.Product;
 
-public interface FundingService {
+import java.util.List;
 
-    ListResponseDTO<ListFundingDTO> getSearchList(FundingRequestDTO dto);
+public interface FundingService {
 
     /**
      * 펀딩글 객체를 DTO로 변환하는 메서드
@@ -25,6 +26,9 @@ public interface FundingService {
                 .dueDate(funding.getDueDate())
                 .removed(funding.isRemoved())
                 .success(funding.isSuccess())
+                .totalAmount(funding.getTotalAmount())
+                .targetAmount(funding.getTargetAmount())
+                .authorized(funding.isAuthorized())
                 .build();
     }
 
@@ -44,6 +48,16 @@ public interface FundingService {
                 .des(product.getDes())
                 .fno(funding.getFno()).build();
     }
+
+    default Product dtoToEntity(ProductDTO dto, Funding funding){
+        return  Product.builder()
+                .pno(dto.getPno())
+                .name(dto.getName())
+                .des(dto.getDes())
+                .price(dto.getPrice())
+                .funding(funding).build();
+    }
+
 
     /**
      * 배열을 받아 ListFundingDTO객체로 변환하는 메서드
@@ -67,6 +81,7 @@ public interface FundingService {
      * @return
      */
     default Funding dtoToEntity(FundingRegisterDTO registerDTO){
+
         return Funding.builder()
                 .title(registerDTO.getTitle())
                 .content(registerDTO.getContent())
@@ -75,8 +90,34 @@ public interface FundingService {
                 .dueDate(registerDTO.getDueDate())
                 .removed(registerDTO.isRemoved())
                 .success(registerDTO.isSuccess())
-                .totalAmount(registerDTO.getTotalAmount()).build();
+                .totalAmount(registerDTO.getTotalAmount())
+                .targetAmount(registerDTO.getTargetAmount())
+                .authorized(registerDTO.isAuthorized())
+                .build();
     }
+
+    /**
+     * Favorite엔티티를 FavoriteDTO로 변환하는 메서드
+     * @param favorite
+     * @return FavoriteDTO
+     */
+    default FavoriteDTO entityToDTO(Favorite favorite){
+
+        Funding funding = Funding.builder().fno(favorite.getFunding().getFno()).build();
+
+        return FavoriteDTO.builder()
+                .favno(favorite.getFavno())
+                .mark(favorite.isMark())
+                .actor(favorite.getActor())
+                .funFno(funding.getFno()).build();
+    }
+
+    /**
+     * 글 리스트를 가져올 추상메서드
+     * @param dto
+     * @return ListResponseDTO<ListFundingDTO>
+     */
+    ListResponseDTO<ListFundingDTO> getSearchList(FundingRequestDTO dto);
 
     /**
      * 글 등록 처리를 위한 추상메서드
@@ -106,5 +147,27 @@ public interface FundingService {
      * @return FundingResponseDTO
      */
     FundingResponseDTO remove(Long fno);
+
+    /**
+     * 찜하기 기능을 위한 추상메서드
+     * @param favoriteDTO
+     * @return FavoriteDTO
+     */
+    Long insertFavorite(FavoriteDTO favoriteDTO);
+
+
+    /**
+     * 찜한 게시글을 가져올 추상메서드
+     * @param email
+     * @return List<FundingDTO>
+     */
+    List<FundingDTO> getFavoriteFunding(String email);
+
+    /**
+     * 유저가 작성한 게시글을 가져올 추상메서드
+     * @param email
+     * @return List<FundingDTO>
+     */
+    List<FundingDTO> getFundingList(String email);
 
 }

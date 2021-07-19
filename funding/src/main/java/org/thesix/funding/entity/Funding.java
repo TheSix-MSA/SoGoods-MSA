@@ -19,14 +19,20 @@ public class Funding extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long fno;  // 펀딩 식별번호
 
+    @Column(nullable = false)
     private String title;  // 펀딩글 제목
 
+    @Column(nullable = false)
     private String writer;  // 펀딩글 작성자
 
+    @Column(nullable = false)
     private String email;  // 작성자 이메일
 
+    @Lob
+    @Column(nullable = false)
     private String content;  // 펀딩글 내용
 
+    @Column(nullable = false)
     private LocalDateTime dueDate;  // 펀딩 만료일
 
     private boolean success;  // 펀딩 성공여부
@@ -34,6 +40,12 @@ public class Funding extends BaseEntity {
     private boolean removed;  // 펀딩 삭제여부
 
     private long totalAmount; // 토탈 모금 금액
+
+    @Column(nullable = false)
+    private long targetAmount; // 목표 금액
+
+    @Column(nullable = false)
+    private boolean authorized;  // 관리자 승인 여부
 
 
     /**
@@ -48,12 +60,15 @@ public class Funding extends BaseEntity {
         this.content = content;
     }
 
-    public void changeDueDate(LocalDateTime modDate){
-        this.dueDate = modDate;
+    public void changeDueDate(LocalDateTime dueDate){
+        this.dueDate = dueDate;
     }
+
+    public void changeTotalAmount(Long totalAmount){this.totalAmount = totalAmount;}
 
     public void changeRemoved(boolean removed){
         this.removed = removed;
     }
+
 
 }
