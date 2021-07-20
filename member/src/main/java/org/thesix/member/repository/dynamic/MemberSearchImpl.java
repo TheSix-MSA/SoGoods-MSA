@@ -23,7 +23,7 @@ public class MemberSearchImpl extends QuerydslRepositorySupport implements Membe
     }
 
     /**
-     * 동적쿼리 적용 paging 회원목록리스트 반환
+     * 동적쿼리 적용 paging 회원목록리스트 반환함.
      *
      * @param type
      * @param keyword
