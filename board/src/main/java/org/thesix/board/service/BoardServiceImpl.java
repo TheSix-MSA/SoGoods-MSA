@@ -13,6 +13,7 @@ import org.thesix.board.entity.BoardType;
 import org.thesix.board.repository.BoardRepository;
 
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -100,7 +101,7 @@ public class BoardServiceImpl implements BoardService {
 
         BoardListResponseDTO boardListResponseDTO = BoardListResponseDTO.builder()
                 .pageMaker(new PageMaker(boardListRequestDTO.getPage(), boardListRequestDTO.getSize(), (int) list.getTotalElements()))
-                .boardDtoList(Collections.singletonList(list.toList()))
+                .boardDtoList(list.stream().map((board)->entityToDTO(board)).collect(Collectors.toList()))
                 .boardListRequestDTO(boardListRequestDTO)
                 .build();
 
@@ -122,7 +123,7 @@ public class BoardServiceImpl implements BoardService {
 
         BoardListResponseDTO boardListResponseDTO = BoardListResponseDTO.builder()
                 .pageMaker(new PageMaker(boardListRequestDTO.getPage(), boardListRequestDTO.getSize(), (int) list.getTotalElements()))
-                .boardDtoList(Collections.singletonList(list.toList()))
+                .boardDtoList(list.stream().map((board)->entityToDTO(board)).collect(Collectors.toList()))
                 .boardListRequestDTO(boardListRequestDTO)
                 .build();
 
