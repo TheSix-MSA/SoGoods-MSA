@@ -20,8 +20,8 @@ public class PageMaker {
         this.totalCount = totalCount;
         int totalPage = (int)(Math.ceil(totalCount/(double)size));
         //temp end page
-        int tempEnd = (int)(Math.ceil(page/10.0)) * 10;
-        int start = tempEnd - 9;
+        int tempEnd = (int)(Math.ceil(page/5.0)) * 5;
+        int start = tempEnd - 4;
         prev = start > 1;
         int end = totalPage > tempEnd ? tempEnd: totalPage;
         next = totalPage > tempEnd;
