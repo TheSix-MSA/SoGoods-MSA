@@ -1,9 +1,12 @@
 package org.thesix.funding.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -22,4 +25,10 @@ public class ProductDTO {
     private Long fno; // 펀딩 식별번호
 
     private boolean removed; // 삭제 여부
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDateTime regDate; // 제품 등록일
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDateTime modDate; // 제품 수정일
 }

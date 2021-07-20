@@ -14,8 +14,6 @@ public class FavoriteDTO {
 
     private Long favno;  // 찜 식별 번호
 
-    private boolean mark;  // 찜 여부
-
     private String actor;  // 찜한 주체
 
     private Long funFno;  // 찜한 게시글 식별번호

@@ -88,7 +88,6 @@ public class FundingRepoTests {
                     .fno(fno).build();
 
             Favorite favorite = Favorite.builder()
-                    .mark(true)
                     .actor("사용자.."+i)
                     .funding(funding).build();
 
@@ -192,7 +191,7 @@ public class FundingRepoTests {
 
     @Test
     public void testGetDetail() {
-        List<Object[]> result = fundingRepository.getFundingData(5L);
+        List<Object[]> result = fundingRepository.getFundingData(5L).orElseThrow();
         List<Object> res = new ArrayList<>();
         List<Product> proList = result.stream().map(obj -> (Product)obj[0]).collect(Collectors.toList());
         res.add(proList);

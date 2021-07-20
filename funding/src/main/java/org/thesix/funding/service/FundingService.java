@@ -131,7 +131,6 @@ public interface FundingService {
 
         return FavoriteDTO.builder()
                 .favno(favorite.getFavno())
-                .mark(favorite.isMark())
                 .actor(favorite.getActor())
                 .funFno(funding.getFno()).build();
     }
@@ -174,10 +173,10 @@ public interface FundingService {
 
     /**
      * 찜하기 기능을 위한 추상메서드
-     * @param favoriteDTO
+     * @param fno, email
      * @return FavoriteDTO
      */
-    Long insertFavorite(FavoriteDTO favoriteDTO);
+    Long insertFavorite(Long fno, String email);
 
 
     /**

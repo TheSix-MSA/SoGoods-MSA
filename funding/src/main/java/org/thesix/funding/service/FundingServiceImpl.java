@@ -208,37 +208,34 @@ public class FundingServiceImpl implements FundingService {
 
     /**
      * 펀딩 글 찜하기 기능
-     * @param favoriteDTO
+     * @param fno, email
      * @return FavoriteDTO
      */
     @Override
-    public Long insertFavorite(FavoriteDTO favoriteDTO){
+    public Long insertFavorite(Long fno, String email){
 
         Funding funding = Funding.builder()
-                .fno(favoriteDTO.getFunFno()).build();
+                .fno(fno).build();
 
         // 찜한 주체, 게시글 번호를 받아 해당 유저 정보가 있는지 확인
-        Favorite checkFavorite = favoriteRepository.checkUser(favoriteDTO.getActor(), favoriteDTO.getFunFno())
-                        .orElseThrow(()-> new NullPointerException("요청하신 정보를 찾을 수 없습니다."));
+        Optional<Favorite> checkFavorite = favoriteRepository.checkUser(email, fno);
 
-        if(checkFavorite.isMark()){
+        if(checkFavorite.isPresent()){
             // 유저 정보가 존재하고,
             // 이미 찜한 게시글일 경우 mark -> false
-            checkFavorite.changeMark(!favoriteDTO.isMark());
-            favoriteRepository.save(checkFavorite);
+            favoriteRepository.deleteById(checkFavorite.get().getFavno());
 
-        } else {
+        } else{
             // 유저 정보가 존재하지 않고,
             // 첫 찜일 경우 insert 실행
             Favorite favorite = Favorite.builder()
-                    .mark(true)
-                    .actor(favoriteDTO.getActor())
+                    .actor(email)
                     .funding(funding)
                     .build();
-
             favoriteRepository.save(favorite);
         }
-        return favoriteRepository.getFavoriteCntById(favoriteDTO.getFunFno())
+
+        return favoriteRepository.getFavoriteCntById(fno)
                 .orElseThrow(()-> new NullPointerException("요청하신 정보를 찾을 수 없습니다."));
     }
 
