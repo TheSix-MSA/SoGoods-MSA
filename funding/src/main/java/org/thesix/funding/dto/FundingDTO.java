@@ -26,10 +26,10 @@ public class FundingDTO {
     @Lob
     private String content;  // 펀딩글 내용
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime regDate; // 펀딩글 등록일
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime dueDate;  // 펀딩 만료일
 
     private boolean success;  // 펀딩 성공여부

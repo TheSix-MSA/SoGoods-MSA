@@ -10,9 +10,11 @@ import org.thesix.funding.entity.Favorite;
 import org.thesix.funding.entity.Funding;
 import org.thesix.funding.entity.Product;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @SpringBootTest
@@ -186,6 +188,22 @@ public class FundingRepoTests {
             fundingRepository.save(result1);
         });
     }
+
+
+    @Test
+    public void testGetDetail() {
+        List<Object[]> result = fundingRepository.getFundingData(5L);
+        List<Object> res = new ArrayList<>();
+        List<Product> proList = result.stream().map(obj -> (Product)obj[0]).collect(Collectors.toList());
+        res.add(proList);
+        res.add(result.get(0)[1]);
+        res.add(result.get(0)[2]);
+        proList.forEach(r-> System.out.println(r));
+        System.out.println(res.get(1));
+        System.out.println(res.get(2));
+    }
+    
+
 
 
 }
