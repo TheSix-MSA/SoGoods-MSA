@@ -13,10 +13,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("select p from Product p where p.funding.fno = :fno and p.removed=false")
     Optional<List<Product>> getProductById(Long fno);
 
-    @Modifying
-    @Transactional
-    @Query("delete from Product p where p.funding.fno = :fno and p.removed=false")
-    Optional<Integer> deleteAllByFundingId(Long fno);
+    @Query("select p from Product p where p.pno = :pno")
+    Optional<Product> getOneProduct(Long pno);
+
 
 
 }

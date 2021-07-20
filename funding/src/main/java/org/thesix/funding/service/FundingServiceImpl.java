@@ -15,6 +15,7 @@ import org.thesix.funding.repository.FavoriteRepository;
 import org.thesix.funding.repository.FundingRepository;
 import org.thesix.funding.repository.ProductRepository;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -75,53 +76,46 @@ public class FundingServiceImpl implements FundingService {
 
             productRepository.save(product);
         }
-
         return entityToDTO(funding);
     }
 
 
     /**
      * 글 상세페이지에 보여줄 데이터를 가져오는 서비스 메서드
+     * 글이 존재하며 승인되었고, 제품중에 삭제되지 않은 데이터 출력
      * @param fno
      * @return FundingResponseDTO
      */
     @Override
-    public FundingResponseDTO getData(Long fno) {
-
-        // 해당 게시글이 존재하고, 인증이 됐는지 체크 후 예외처리
-        Funding funding = fundingRepository.getFundingById(fno)
-                .orElseThrow(()-> new IllegalArgumentException("요청하신 정보를 찾을 수 없습니다."));
-
-        List<Product> products1 = productRepository.getProductById(fno)
-                .orElseThrow(()-> new IllegalArgumentException("요청하신 정보를 찾을 수 없습니다."));
-
-        Long favoriteCount = favoriteRepository.getFavoriteCntById(fno)
-                .orElseThrow(()-> new IllegalArgumentException("요청하신 정보를 찾을 수 없습니다."));
-
-        FundingDTO fundingDTO = entityToDTO(funding);
+    public FundingResponseDTO getDetailFundingData(Long fno){
+        List<Object[]> result = fundingRepository.getFundingData(fno)
+                .orElseThrow(()-> new NullPointerException("요청하신 정보를 찾을 수 없습니다."));
+        List<Object> res = new ArrayList<>();
+        List<ProductDTO> proList = result.stream().map(obj -> entityToDTO((Product)obj[0])).collect(Collectors.toList());
+        res.add(proList);
+        res.add(result.get(0)[1]);
+        res.add(result.get(0)[2]);
 
         return FundingResponseDTO.builder()
-                .fundingDTO(fundingDTO)
-                .productDTOs(products1.stream().map(product -> entityToDTO(product))
-                        .collect(Collectors.toList()))
-                .favoriteCount(favoriteCount)
-                .build();
+                .fundingDTO(arrToEntity(result.get(1)))
+                .productDTOs(proList)
+                .favoriteCount((long)res.get(2)).build();
     }
 
 
     /**
      * 글 수정 처리를 위한 메서드
-     * 제목, 내용, 현재 토탈모금액, 상품내용 수정가능.
+     * 제목, 내용, 현재 토탈모금액 수정가능, 제품은 개수 추가 및 삭제가능(이미 구매가 이루어진 경우 불가).
      * @param fno
-     * @param registerDTO
+     * @param modDTO
      * @return FundingResponseDTO
      */
     @Override
     @Transactional
-    public FundingResponseDTO modify(Long fno, FundingRegisterDTO registerDTO) {
+    public FundingResponseDTO modify(Long fno, FundingModDTO modDTO) {
 
         // FundingDTO -> Entity
-        Funding fundingEntity = dtoToEntity(registerDTO);
+        Funding fundingEntity = dtoToEntity(modDTO);
 
         // 해당 게시글이 존재하고, 인증이 됐는지 체크 후 예외처리
         Funding funding = fundingRepository.getFundingById(fno)
@@ -134,13 +128,26 @@ public class FundingServiceImpl implements FundingService {
 
         fundingRepository.save(funding);
 
-        // 제품리스트를 모두 삭제 후 새 데이터로 재저장
-        productRepository.deleteAllByFundingId(fno);
+        // 삭제할 제품 리스트
+        if(modDTO.getToBeDeletedDTO() !=null) {
+            for (ProductDTO p1 : modDTO.getToBeDeletedDTO()) {
+                // ProductDTO -> Entity
+                Product product = dtoToEntity(p1, funding);
+                // 제품번호를 받아서 해당 제품 removed 처리
+                Product deletedProduct = productRepository.getOneProduct(product.getPno())
+                        .orElseThrow(() -> new NullPointerException("요청하신 정보를 찾을 수 없습니다."));
+                product.changeRemoved(true);
+                productRepository.save(product);
+            }
+        }
 
-        for (ProductDTO dto : registerDTO.getProductDTOs()) {
-            // ProductDTO -> Entity
-            Product product = dtoToEntity(dto, funding);
-            productRepository.save(product);
+        // 추가할 제품 리스트
+        if(modDTO.getToBeAddedDTO() != null) {
+            for (ProductDTO dto : modDTO.getToBeAddedDTO()) {
+                // ProductDTO -> Entity
+                Product product = dtoToEntity(dto, funding);
+                productRepository.save(product);
+            }
         }
 
         // 리턴값 출력을 위해 Entity -> DTO 변환

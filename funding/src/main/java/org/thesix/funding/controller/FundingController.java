@@ -41,14 +41,14 @@ public class FundingController {
     }
 
     /**
-     * 클릭한 글 번호를 받아 세부화면에 필요한 정보를 불러올 메서드
+     * 글 번호를 받아 세부화면에 필요한 정보를 불러올 메서드
      * @param fno
      * @return ApiResult<FundingResponseDTO>
      */
     @GetMapping("/{fno}")
     public ApiResult<FundingResponseDTO> getOneFundingData(@PathVariable Long fno){
 
-        return success(fundingService.getData(fno));
+        return success(fundingService.getDetailFundingData(fno));
     }
 
     /**
@@ -65,13 +65,13 @@ public class FundingController {
     /**
      * 펀딩 글을 수정하는 메서드 (제목, 내용, 만기일, 모금 금액만 수정가능)
      * @param fno
-     * @param registerDTO
+     * @param fundingModDTO
      * @return ApiResult<FundingResponseDTO>
      */
     @PutMapping("/{fno}")
-    public ApiResult<FundingResponseDTO> Modify(@PathVariable Long fno, @RequestBody FundingRegisterDTO registerDTO){
+    public ApiResult<FundingResponseDTO> Modify(@PathVariable Long fno, @RequestBody FundingModDTO fundingModDTO){
 
-        return success(fundingService.modify(fno, registerDTO));
+        return success(fundingService.modify(fno, fundingModDTO));
     }
 
     /**

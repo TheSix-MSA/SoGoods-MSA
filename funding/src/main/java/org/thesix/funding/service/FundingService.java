@@ -6,7 +6,9 @@ import org.thesix.funding.entity.Favorite;
 import org.thesix.funding.entity.Funding;
 import org.thesix.funding.entity.Product;
 
+import java.util.Arrays;
 import java.util.List;
+
 
 public interface FundingService {
 
@@ -67,19 +69,41 @@ public interface FundingService {
     default ListFundingDTO arrToDTO(Object[] arr){
 
         Funding funding = (Funding) arr[0];
-        long productCnt = (long) arr[1];
+        Long mainProductPno = (Long) arr[1];
         long favoriteCnt = (long) arr[2];
 
         return ListFundingDTO.builder()
-                .fundingDTO(entityToDTO(funding)).productCnt(productCnt).favoriteCnt(favoriteCnt).build();
+                .fundingDTO(entityToDTO(funding)).mainProductPno(mainProductPno).favoriteCnt(favoriteCnt).build();
+    }
+
+    default FundingDTO arrToEntity(Object[] resultArr){
+        Funding funding = (Funding) resultArr[1];
+        FundingDTO dto = entityToDTO(funding);
+       return dto;
     }
 
 
     /**
      * FundingRegisterDTO를 Funding 엔티티로 변환하는 메서드
-     * @param registerDTO
+     * @param modDTO
      * @return
      */
+    default Funding dtoToEntity(FundingModDTO modDTO){
+
+        return Funding.builder()
+                .title(modDTO.getTitle())
+                .content(modDTO.getContent())
+                .email(modDTO.getEmail())
+                .writer(modDTO.getWriter())
+                .dueDate(modDTO.getDueDate())
+                .removed(modDTO.isRemoved())
+                .success(modDTO.isSuccess())
+                .totalAmount(modDTO.getTotalAmount())
+                .targetAmount(modDTO.getTargetAmount())
+                .authorized(modDTO.isAuthorized())
+                .build();
+    }
+
     default Funding dtoToEntity(FundingRegisterDTO registerDTO){
 
         return Funding.builder()
@@ -131,15 +155,15 @@ public interface FundingService {
      * @param fno
      * @return FundingResponseDTO
      */
-    FundingResponseDTO getData(Long fno);
+    FundingResponseDTO getDetailFundingData(Long fno);
 
     /**
      * 글 수정처리를 위한 추상메서드
      * @param fno
-     * @param registerDTO
+     * @param modDTO
      * @return FundingResponseDTO
      */
-    FundingResponseDTO modify(Long fno, FundingRegisterDTO registerDTO);
+    FundingResponseDTO modify(Long fno, FundingModDTO modDTO);
 
     /**
      * 삭제여부를 변경하는 추상메서드

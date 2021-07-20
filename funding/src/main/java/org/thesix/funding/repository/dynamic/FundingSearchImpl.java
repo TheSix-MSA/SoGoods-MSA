@@ -7,12 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
-import org.thesix.funding.entity.Funding;
-import org.thesix.funding.entity.QFavorite;
-import org.thesix.funding.entity.QFunding;
-import org.thesix.funding.entity.QProduct;
+import org.thesix.funding.entity.*;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.querydsl.core.group.GroupBy.min;
 
 public class FundingSearchImpl extends QuerydslRepositorySupport implements FundingSearch{
 
@@ -40,11 +39,11 @@ public class FundingSearchImpl extends QuerydslRepositorySupport implements Fund
 
         JPQLQuery<Funding> query = from(funding);
 
-        query.leftJoin(product).on(product.funding.eq(funding));
+        query.leftJoin(product).on(product.funding.eq(funding), product.removed.eq(false));
         query.leftJoin(favorite).on(favorite.funding.eq(funding));
 
         // 원하는 값만 select
-        JPQLQuery<Tuple> tuple = query.select(funding, product.countDistinct(), favorite.countDistinct());
+        JPQLQuery<Tuple> tuple = query.select(funding, min(product.pno), favorite.countDistinct());
 
         // 동적 쿼리
         if(keyword != null && type != null) {
