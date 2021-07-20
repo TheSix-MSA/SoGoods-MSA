@@ -9,13 +9,13 @@ public class AttachConfimRequestDTO {
 
     /*
 {
-    "tableName": "tbl_board",
-    "keyValue": "123",
+    "tableName": "REPLY",
+    "keyValue": "3",
     "tempFileNameList": [
-        "9561eea4-32b7-4871-a1d6-164b1b9622ab_%ED%95%9C%EA%B8%80.png",
-        "s_9561eea4-32b7-4871-a1d6-164b1b9622ab_%ED%95%9C%EA%B8%80.png"
+        "f5f11c37-bd8b-4a77-89c2-84061adfce72_1.png",
+        "ccd9aea4-2e64-46d8-89fe-b076b0a4f713_1.jpg"
     ],
-    "mainFileName": "9561eea4-32b7-4871-a1d6-164b1b9622ab_%ED%95%9C%EA%B8%80.png"
+    "mainFileName": "ccd9aea4-2e64-46d8-89fe-b076b0a4f713_1.jpg"
 }
      */
 

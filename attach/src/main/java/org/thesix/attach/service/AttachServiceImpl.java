@@ -1,9 +1,24 @@
 package org.thesix.attach.service;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.netflix.discovery.converters.Auto;
 import com.sun.jdi.InternalException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.coobird.thumbnailator.Thumbnailator;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -11,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.thesix.attach.dto.AttachConfimRequestDTO;
 import org.thesix.attach.dto.UploadResultDTO;
 import org.thesix.attach.dto.UuidRequestDTO;
@@ -18,10 +34,9 @@ import org.thesix.attach.dto.UuidResponseDTO;
 import org.thesix.attach.entity.Attach;
 import org.thesix.attach.repository.AttachRepository;
 
+import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.file.Files;
@@ -32,15 +47,42 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+
 @Service
 @RequiredArgsConstructor
 @Log4j2
 public class AttachServiceImpl implements AttachService {
+    private AmazonS3 s3Client;
+
+    @Value("${cloud.aws.credentials.accessKey}")
+    private String accessKey;
+
+    @Value("${cloud.aws.credentials.secretKey}")
+    private String secretKey;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    @Value("${cloud.aws.region.static}")
+    private String region;
 
     @Value("${spring.servlet.multipart.location}")
     private String uploadPath;
 
+    @Value("${cloud.aws.host}")
+    private String awsHost;
+
     private final AttachRepository attachRepository;
+
+    @PostConstruct
+    public void setS3Client() {
+        AWSCredentials credentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
+
+        s3Client = AmazonS3ClientBuilder.standard()
+                .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                .withRegion(this.region)
+                .build();
+    }
 
     @Override
     public List<UploadResultDTO> uplaodtemp(MultipartFile[] files) {
@@ -91,7 +133,7 @@ public class AttachServiceImpl implements AttachService {
     }
 
     @Override
-    public void registerConfimedImages(AttachConfimRequestDTO requestDTO) throws UnsupportedEncodingException {
+    public void registerConfimedImages(AttachConfimRequestDTO requestDTO) throws IOException {
         String tableName = requestDTO.getTableName();
         Long keyValue = requestDTO.getKeyValue();
         String mainFileName = requestDTO.getMainFileName();
@@ -99,32 +141,43 @@ public class AttachServiceImpl implements AttachService {
         log.info(requestDTO);
         for (String tempFileName : requestDTO.getTempFileNameList()) {
             log.info(tempFileName);
+
             //tempFile은 uuid + 원본파일명 의 값을 갖는다.
             String[] arr = URLDecoder.decode(tempFileName, "UTF-8").split("_");
 
             String decodedFileName = URLDecoder.decode(tempFileName, "UTF-8");
+
             String uuid = decodedFileName.split("_")[0];
             String fileName = decodedFileName.split("_")[1];
-
-            //날짜 폴더 생성
-            //String folderPath = makeFolder()
+            String ext = fileName.substring(fileName.lastIndexOf(".") + 1);
 
             //저장할 파일 이름 중간에 "_"
             String tempPath = uploadPath + File.separator + "temp" + File.separator + decodedFileName;
-            String savedPath = uploadPath + File.separator + "saved" + File.separator + decodedFileName;
-
             String s_tempPath = uploadPath + File.separator + "temp" + File.separator + "s_" + decodedFileName;
-            String s_savedPath = uploadPath + File.separator + "saved" + File.separator + "s_" + decodedFileName;
 
-            //파일삭제(원본, 썸네일)
-            try {
-                Files.copy(Paths.get(tempPath), Paths.get(savedPath));
-                Files.copy(Paths.get(s_tempPath), Paths.get(s_savedPath));
-                new File(tempPath).delete();
-                new File(s_tempPath).delete();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return;
+            String[] pathList = new String[]{tempPath, s_tempPath};
+            for(String ele : pathList){
+//                File file = new File(ele);
+//                DiskFileItem fileItem = new DiskFileItem(file.getName(), "img/"+ext, false, file.getName(), (int) file.length() , file.getParentFile());
+//                fileItem.getOutputStream();
+
+
+                File file = new File(ele);
+                FileItem fileItem = new DiskFileItem("mainFile", Files.probeContentType(file.toPath()), false, file.getName(), (int) file.length(), file.getParentFile());
+
+                try {
+                    InputStream input = new FileInputStream(file);
+                    OutputStream os = fileItem.getOutputStream();
+                    IOUtils.copy(input, os);
+                    // Or faster..
+                    // IOUtils.copy(new FileInputStream(file), fileItem.getOutputStream());
+                } catch (IOException ex) {
+                    // do something.
+                }
+
+                MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
+                s3Client.putObject(new PutObjectRequest(bucket, multipartFile.getOriginalFilename(), multipartFile.getInputStream(), null)
+                        .withCannedAcl(CannedAccessControlList.PublicRead));
             }
 
             Attach.AttachBuilder attachBuilder = Attach.builder()
@@ -143,18 +196,21 @@ public class AttachServiceImpl implements AttachService {
 
             //DB에 INSERT
             attachRepository.save(attach);
+
+            new File(tempPath).delete();
+            new File(s_tempPath).delete();
         }
     }
 
     @Override
-    public ResponseEntity<byte[]> getFile(String opt, String filename) {
+    public ResponseEntity<byte[]> getTempFile(String filename) {
         ResponseEntity<byte[]> result = null;
 
         try {
 
             String srcFileName = URLDecoder.decode(filename, "UTF-8");
 
-            File file = new File(uploadPath + File.separator + opt + File.separator + srcFileName);
+            File file = new File(uploadPath + File.separator + "temp" + File.separator + srcFileName);
 
             HttpHeaders headers = new HttpHeaders();
 
@@ -170,26 +226,31 @@ public class AttachServiceImpl implements AttachService {
 
     @Override
     @Transactional
-    public void removeTempFile(String opt, String fileName) {
-        try {
-            String srcFileName = null;
+    public void removeFile(String opt, String fileName) {
 
-            srcFileName = URLDecoder.decode(fileName);
-
-            File originFile = new File(uploadPath + File.separator + opt + File.separator + srcFileName);
-            File thumnailFile = new File(uploadPath + File.separator + opt + File.separator + "s_" + srcFileName);
-
-            originFile.delete();
-            thumnailFile.delete();
-        } catch (Exception e) {
-            throw new InternalException();
-        }
-        System.out.println("fileName: " + fileName);
         if (opt.equals("saved")) {
             try {
                 attachRepository.deleteByOriginalName(URLEncoder.encode(fileName, "UTF-8"));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
+            }
+
+            s3Client.deleteObject(new DeleteObjectRequest(bucket, awsHost+"/"+fileName));
+            s3Client.deleteObject(new DeleteObjectRequest(bucket, awsHost+"/s_"+fileName));
+
+        }else{
+            try {
+                String srcFileName = null;
+
+                srcFileName = URLDecoder.decode(fileName);
+
+                File originFile = new File(uploadPath + File.separator + "temp" + File.separator + srcFileName);
+                File thumnailFile = new File(uploadPath + File.separator + "temp" + File.separator + "s_" + srcFileName);
+
+                originFile.delete();
+                thumnailFile.delete();
+            } catch (Exception e) {
+                throw new InternalException();
             }
         }
     }
@@ -210,11 +271,16 @@ public class AttachServiceImpl implements AttachService {
 
         String type = requestDTO.getType();
         long keyValue = requestDTO.getKeyValue();
-
         List<Attach> res = attachRepository.getAttachesByValue(type, keyValue);
 
         return res.stream().map((attach -> entityToDTO(attach))).collect(Collectors.toList());
     }
 
-
+    UuidResponseDTO entityToDTO(Attach attach){
+        UuidResponseDTO dto = UuidResponseDTO.builder()
+                .key(attach.getKeyValue())
+                .fileFullName(awsHost + "/" + attach.getOriginalName())
+                .build();
+        return dto;
+    }
 }

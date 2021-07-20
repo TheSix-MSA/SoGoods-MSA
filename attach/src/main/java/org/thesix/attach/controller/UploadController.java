@@ -15,7 +15,9 @@ import org.thesix.attach.service.AttachService;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 import static org.thesix.util.ApiUtil.*;
@@ -26,10 +28,13 @@ import static org.thesix.util.ApiUtil.*;
 //
 @Log4j2
 @RequestMapping("/attach")
+@CrossOrigin
 @RequiredArgsConstructor
 public class UploadController {
     @Value("${spring.servlet.multipart.location}")
     private String uploadPath;
+
+
 
     private final AttachService attachService;
 
@@ -76,19 +81,26 @@ public class UploadController {
      * http://localhost:8022/attach/display/temp?
      * filename=s_b0246ab4-c3f6-43a7-9c3f-616955046ea9_%ED%95%9C%EA%B8%80.png
      */
-    @GetMapping("/display/{opt}")
-    public ResponseEntity<byte[]> getFile(@PathVariable String opt, String fileName) {
+    @GetMapping("/display/temp")
+    public ResponseEntity<byte[]> getTempFile(String fileName) {
 
-        ResponseEntity<byte[]> result = attachService.getFile(opt, fileName);
+        ResponseEntity<byte[]> result = attachService.getTempFile(fileName);
 
         return result;
     }
 
+
+
+    @GetMapping("/remove/{opt}")
+    public ApiResult<Boolean> removeFile(@PathVariable String opt, String fileName) {
+        attachService.removeFile(opt, fileName);
+
+        return success(true);
+    }
+
     @PostMapping("/list/uuid")
     public ApiResult<List<UuidResponseDTO>> getUuidInList(UuidRequestDTO requestDTO){
-
         List<UuidResponseDTO> res = attachService.getUuidInBoardList(requestDTO);
-
         return success(res);
     }
 
@@ -98,14 +110,6 @@ public class UploadController {
         List<UuidResponseDTO> res = attachService.getUuidInBoard(requestDTO);
 
         return success(res);
-    }
-
-    @GetMapping("/remove/{opt}")
-    public ApiResult<Boolean> removeFile(@PathVariable String opt, String fileName) {
-        System.out.println(opt + " " + fileName);
-        attachService.removeTempFile(opt, fileName);
-
-        return success(true);
     }
 
     /**
@@ -125,10 +129,6 @@ public class UploadController {
 
         if (!tempPathFolder.exists()) {
             tempPathFolder.mkdirs();
-        }
-
-        if (!savedPathFolder.exists()) {
-            savedPathFolder.mkdirs();
         }
     }
 }
