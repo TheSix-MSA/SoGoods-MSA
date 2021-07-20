@@ -15,5 +15,5 @@ public class ResponseListDTO {
 
     private RequestListDTO requestListDTO;
     private PageMaker pageMaker;
-    private List<Object[]> memberList;
+    private List<Object> memberList;
 }

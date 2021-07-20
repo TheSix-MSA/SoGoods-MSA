@@ -50,11 +50,15 @@ public class LoginServiceImpl implements LoginService{
         if (matchResult) {
             String jwtToken = jwtUtil.generateJWTToken(member.getEmail(), member.getRoleSet().stream().collect(Collectors.toList()));
 
-            if(tokenRepository.findById(dto.getEmail()).isPresent()){
-                RefreshToken refreshToken = tokenRepository.findById(dto.getEmail()).get();
-            }
+            String refreshTk = jwtUtil.makeRefreshToken(dto.getEmail());
 
-            return TokenDTO.builder().accessToken(jwtToken).refreshToken("refreshToken.getRefreshToken()").build();
+
+            return TokenDTO.builder()
+                    .accessToken(jwtToken)
+                    .refreshToken(refreshTk)
+                    .email(dto.getEmail())
+                    .roles(member.getRoleSet())
+                    .build();
         }
 
         throw new BadCredentialsException("비밀번호가 틀렸습니다.");

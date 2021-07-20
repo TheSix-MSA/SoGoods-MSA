@@ -30,13 +30,26 @@ public class MemberSearchImpl extends QuerydslRepositorySupport implements Membe
      * @return
      */
     @Override
-    public Page<Object[]> getMemberList(String type, String keyword, Pageable pageable) {
+    public Page<Object> getMemberList(String type, String keyword, Pageable pageable) {
 
         QMember member = QMember.member;
 
         JPQLQuery<Member> query = from(member);
 
         JPQLQuery<Tuple>  tuple = query.select(member, member.roleSet.size());
+//        JPQLQuery<Tuple> tuple = query.select(member.email,
+//                member.address,
+//                member.detailAddress,
+//                member.name,
+//                member.banned,
+//                member.birth,
+//                member.phone,
+//                member.provider,
+//                member.removed,
+//                member.regDate,
+//                member.gender,
+//                member.social
+//        );
 
         if(keyword != null && type != null){
             BooleanBuilder condition = new BooleanBuilder();
@@ -62,7 +75,9 @@ public class MemberSearchImpl extends QuerydslRepositorySupport implements Membe
         tuple.limit(pageable.getPageSize());
         tuple.offset(pageable.getOffset());
 
-        List<Object[]> result = tuple.fetch().stream().map(t -> t.toArray()).collect(Collectors.toList());
+//        List<Object[]> result = tuple.fetch().stream().map(t -> t.toArray()).collect(Collectors.toList());
+        List<Object> result = tuple.fetch().stream().map(t -> t.toArray()).collect(Collectors.toList());
+
 
         return new PageImpl<>(result,pageable,query.fetchCount());
     }
