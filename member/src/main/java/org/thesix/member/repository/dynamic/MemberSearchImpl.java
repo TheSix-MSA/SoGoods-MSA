@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import org.thesix.member.dto.MemberDTO;
 import org.thesix.member.entity.Member;
 import org.thesix.member.entity.MemberRole;
 import org.thesix.member.entity.QMember;
@@ -36,21 +37,6 @@ public class MemberSearchImpl extends QuerydslRepositorySupport implements Membe
 
         JPQLQuery<Member> query = from(member);
 
-        JPQLQuery<Tuple>  tuple = query.select(member, member.roleSet.size());
-//        JPQLQuery<Tuple> tuple = query.select(member.email,
-//                member.address,
-//                member.detailAddress,
-//                member.name,
-//                member.banned,
-//                member.birth,
-//                member.phone,
-//                member.provider,
-//                member.removed,
-//                member.regDate,
-//                member.gender,
-//                member.social
-//        );
-
         if(keyword != null && type != null){
             BooleanBuilder condition = new BooleanBuilder();
 
@@ -66,19 +52,34 @@ public class MemberSearchImpl extends QuerydslRepositorySupport implements Membe
                 }
             }
 
-            tuple.where(condition);
+            query.where(condition);
         }
 
 
-        tuple.orderBy(member.email.desc());
+        query.orderBy(member.email.desc());
 
-        tuple.limit(pageable.getPageSize());
-        tuple.offset(pageable.getOffset());
+        query.limit(pageable.getPageSize());
+        query.offset(pageable.getOffset());
 
-//        List<Object[]> result = tuple.fetch().stream().map(t -> t.toArray()).collect(Collectors.toList());
-        List<Object> result = tuple.fetch().stream().map(t -> t.toArray()).collect(Collectors.toList());
+        List<MemberDTO> result = query.fetch().stream().map(memberObj ->
+                MemberDTO.builder()
+                        .email(memberObj.getEmail())
+                        .name(memberObj.getName())
+                        .gender(memberObj.getGender())
+                        .birth(memberObj.getBirth())
+                        .phone(memberObj.getPhone())
+                        .address(memberObj.getAddress())
+                        .detailAddress(memberObj.getDetailAddress())
+                        .removed(memberObj.isRemoved())
+                        .banned(memberObj.isBanned())
+                        .provider(memberObj.getProvider())
+                        .social(memberObj.isSocial())
+                        .regDate(memberObj.getRegDate())
+                        .roleSet(memberObj.getRoleSet())
+                        .build()
+        ).collect(Collectors.toList());
 
 
-        return new PageImpl<>(result,pageable,query.fetchCount());
+        return new PageImpl(result, pageable, query.fetchCount());
     }
 }
