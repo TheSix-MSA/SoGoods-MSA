@@ -134,8 +134,9 @@ public class FundingRepoTests {
 
         String keyword = "10";
         String type = "tcw";
+        String state = "open";
 
-        Page<Object[]> list = fundingRepository.getListSearch(keyword, type, pageable);
+        Page<Object[]> list = fundingRepository.getListSearch(state, keyword, type, pageable);
 
         list.getContent().forEach(list1-> System.out.println(Arrays.toString(list1)));
 
@@ -191,15 +192,12 @@ public class FundingRepoTests {
 
     @Test
     public void testGetDetail() {
-        List<Object[]> result = fundingRepository.getFundingData(5L).orElseThrow();
+        List<Object[]> result = fundingRepository.getFundingALLData(5L).orElseThrow();
         List<Object> res = new ArrayList<>();
         List<Product> proList = result.stream().map(obj -> (Product)obj[0]).collect(Collectors.toList());
         res.add(proList);
         res.add(result.get(0)[1]);
-        res.add(result.get(0)[2]);
         proList.forEach(r-> System.out.println(r));
-        System.out.println(res.get(1));
-        System.out.println(res.get(2));
     }
     
 

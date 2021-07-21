@@ -193,4 +193,10 @@ public interface FundingService {
      */
     List<FundingDTO> getFundingList(String email);
 
+    /**
+     * 게시글 승인처리를 하는 추상메서드
+     * @param fno
+     * @return Long
+     */
+    FundingDTO updateAuthorized(Long fno);
 }

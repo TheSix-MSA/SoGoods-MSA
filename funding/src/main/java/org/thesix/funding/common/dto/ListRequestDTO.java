@@ -19,6 +19,9 @@ public class ListRequestDTO {
     @Builder.Default
     private int size = 12;
 
+    @Builder.Default
+    private String state = "open";
+
     private String keyword;
 
     // 파라미터로 들어오는 page, size 값이 음수일 경우 디폴트값으로 정의

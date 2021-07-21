@@ -14,6 +14,6 @@ public interface FundingSearch {
      * @param pageable
      * @return
      */
-    Page<Object[]> getListSearch(String keyword, String type, Pageable pageable);
+    Page<Object[]> getListSearch(String state, String keyword, String type, Pageable pageable);
 
 }

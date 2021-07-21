@@ -108,6 +108,17 @@ public class FundingController {
     }
 
 
+    /**
+     * 게시글 승인처리를 하는 메서드
+     * @param fno
+     * @return FundingDTO
+     */
+    @GetMapping("/req/{fno}")
+    public ApiResult<FundingDTO> changeAuthorized(@PathVariable Long fno){
+
+        return success(fundingService.updateAuthorized(fno));
+    }
+
 
 
 

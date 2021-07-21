@@ -30,7 +30,7 @@ public class FundingSearchImpl extends QuerydslRepositorySupport implements Fund
      * @return
      */
     @Override
-    public Page<Object[]> getListSearch(String keyword, String type, Pageable pageable) {
+    public Page<Object[]> getListSearch(String state, String keyword, String type, Pageable pageable) {
 
         // querydsl을 이용해 쿼리 처리
         QFunding funding = QFunding.funding;

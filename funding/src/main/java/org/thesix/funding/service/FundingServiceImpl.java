@@ -40,7 +40,7 @@ public class FundingServiceImpl implements FundingService {
 
         Pageable pageable = dto.getPageable();
 
-        Page<Object[]> result = fundingRepository.getListSearch(dto.getKeyword(), dto.getType(), pageable);
+        Page<Object[]> result = fundingRepository.getListSearch(dto.getState(), dto.getKeyword(), dto.getType(), pageable);
 
         List<ListFundingDTO> dtoList = result.getContent().stream().map(arr -> arrToDTO(arr)).collect(Collectors.toList());
 
@@ -48,7 +48,6 @@ public class FundingServiceImpl implements FundingService {
 
         return ListResponseDTO.<ListFundingDTO>builder().listRequestDTO(dto).dtoList(dtoList).pageMaker(pageMaker).build();
     }
-
 
     /**
      * 글 등록 처리를 위한 메서드
@@ -88,18 +87,22 @@ public class FundingServiceImpl implements FundingService {
      */
     @Override
     public FundingResponseDTO getDetailFundingData(Long fno){
-        List<Object[]> result = fundingRepository.getFundingData(fno)
+        List<Object[]> result = fundingRepository.getFundingALLData(fno)
                 .orElseThrow(()-> new NullPointerException("요청하신 정보를 찾을 수 없습니다."));
+        log.info(result.get(0)[0]);
+        log.info(result.get(0)[1]);
         List<Object> res = new ArrayList<>();
         List<ProductDTO> proList = result.stream().map(obj -> entityToDTO((Product)obj[0])).collect(Collectors.toList());
         res.add(proList);
         res.add(result.get(0)[1]);
-        res.add(result.get(0)[2]);
+
+        Long favCnt = favoriteRepository.getFavoriteCntById(fno)
+                .orElseThrow(()-> new IllegalArgumentException("요청하신 정보를 찾을 수 없습니다."));
 
         return FundingResponseDTO.builder()
-                .fundingDTO(arrToEntity(result.get(1)))
+                .fundingDTO(arrToEntity(result.get(0)))
                 .productDTOs(proList)
-                .favoriteCount((long)res.get(2)).build();
+                .favoriteCount(favCnt).build();
     }
 
 
@@ -161,6 +164,7 @@ public class FundingServiceImpl implements FundingService {
 
     /**
      * 삭제 여부를 변경하는 메서드
+     * 게시글 removed처리 -> 관련 제품 removed처리 -> 게시글 관련 찜 delete
      * @param fno
      * @return FundingResponseDTO
      */
@@ -191,19 +195,26 @@ public class FundingServiceImpl implements FundingService {
             }
         }
 
+        // 해당 게시글과 관련된 찜 객체 모두 삭제
+        List<Favorite> favorites = favoriteRepository.getFavorite(fno)
+                .orElseThrow(()-> new IllegalArgumentException("요청하신 정보를 찾을 수 없습니다."));
+
+        for(Favorite f : favorites){
+            favoriteRepository.deleteById(f.getFavno());
+        }
+
         // 삭제 완료 후 해당 게시글의 데이터 반환 (removed처리 확인)
         Funding funding = fundingRepository.findById(fno)
                 .orElseThrow(()-> new NullPointerException("요청하신 정보를 찾을 수 없습니다."));
 
-        List<Product> productList = productRepository.getProductById(fno)
+        List<Product> productList = productRepository.getALLProductById(fno)
                 .orElseThrow(()-> new NullPointerException("요청하신 정보를 찾을 수 없습니다."));
 
-        FundingDTO dto = entityToDTO(funding);
-
         return FundingResponseDTO.builder()
-                .fundingDTO(dto)
+                .fundingDTO(entityToDTO(funding))
                 .productDTOs(productList.stream().map(list-> entityToDTO(list))
-                        .collect(Collectors.toList())).build();
+                        .collect(Collectors.toList()))
+                .build();
     }
 
     /**
@@ -265,6 +276,18 @@ public class FundingServiceImpl implements FundingService {
                 .orElseThrow(()-> new NullPointerException("요청하신 정보를 찾을 수 없습니다."));
 
         return fundings.stream().map(funding -> entityToDTO(funding)).collect(Collectors.toList());
+    }
+
+    @Override
+    public FundingDTO updateAuthorized(Long fno) {
+
+        Funding funding = fundingRepository.getFunding(fno).orElseThrow
+                (()->new NullPointerException("요청하신 정보를 찾을 수 없습니다."));
+
+            funding.changeAuthorized(true);
+            Funding result = fundingRepository.save(funding);
+
+        return entityToDTO(result);
     }
 
 

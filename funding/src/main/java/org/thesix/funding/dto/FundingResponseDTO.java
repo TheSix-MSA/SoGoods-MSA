@@ -17,6 +17,6 @@ public class FundingResponseDTO {
 
     private List<ProductDTO> productDTOs;  // 제품 리스트
 
-    private long favoriteCount;  //  찜 개수
+    private Long favoriteCount;  //  찜 개수
 
 }
