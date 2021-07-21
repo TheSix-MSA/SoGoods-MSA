@@ -63,7 +63,8 @@ public class MemberSearchImpl extends QuerydslRepositorySupport implements Membe
 
         query.limit(pageable.getPageSize());
         query.offset(pageable.getOffset());
-
+        System.out.println(pageable.getPageSize());
+        System.out.println(pageable.getOffset());
         List<MemberDTO> result = query.fetch().stream().map(memberObj ->
                 MemberDTO.builder()
                         .email(memberObj.getEmail())

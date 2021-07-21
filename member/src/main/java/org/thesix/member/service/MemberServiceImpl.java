@@ -105,7 +105,7 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public ResponseListDTO readList(RequestListDTO dto) {
 
-        Pageable pageable = PageRequest.of(dto.getPage(), dto.getSize());
+        Pageable pageable = PageRequest.of(dto.getPage()-1, dto.getSize());
 
         Page<Object> memberList = memberRepository.getMemberList(dto.getType(), dto.getKeyword(), pageable, dto.isApproval());
 

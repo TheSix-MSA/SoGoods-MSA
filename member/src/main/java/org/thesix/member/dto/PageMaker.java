@@ -27,7 +27,7 @@ public class PageMaker {
 
 
     public PageMaker(Pageable pageable,RequestListDTO dto, int totalCount){
-        this.page = pageable.getPageNumber();
+        this.page = pageable.getPageNumber()+1;
         this.size = pageable.getPageSize() < 10 ? 10 : pageable.getPageSize();
         this.keyword = dto.getKeyword();
         this.type = dto.getType();
