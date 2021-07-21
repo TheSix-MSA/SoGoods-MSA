@@ -31,7 +31,7 @@ public class MemberSearchImpl extends QuerydslRepositorySupport implements Membe
      * @return
      */
     @Override
-    public Page<Object> getMemberList(String type, String keyword, Pageable pageable) {
+    public Page<Object> getMemberList(String type, String keyword, Pageable pageable, boolean approval) {
 
         QMember member = QMember.member;
 
@@ -55,6 +55,9 @@ public class MemberSearchImpl extends QuerydslRepositorySupport implements Membe
             query.where(condition);
         }
 
+        if(approval == true){
+            query.where(member.approval.eq(true));
+        }
 
         query.orderBy(member.email.desc());
 
@@ -84,4 +87,5 @@ public class MemberSearchImpl extends QuerydslRepositorySupport implements Membe
 
         return new PageImpl(result, pageable, query.fetchCount());
     }
+
 }

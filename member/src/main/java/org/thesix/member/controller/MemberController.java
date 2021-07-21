@@ -108,6 +108,4 @@ public class MemberController {
         return success(memberService.changeBanned(email));
     }
 
-
-
 }

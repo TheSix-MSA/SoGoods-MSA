@@ -107,7 +107,7 @@ public class MemberServiceImpl implements MemberService{
 
         Pageable pageable = PageRequest.of(dto.getPage(), dto.getSize());
 
-        Page<Object> memberList = memberRepository.getMemberList(dto.getType(), dto.getKeyword(), pageable);
+        Page<Object> memberList = memberRepository.getMemberList(dto.getType(), dto.getKeyword(), pageable, dto.isApproval());
 
         List<Object> memberListResult = memberList.toList();
 

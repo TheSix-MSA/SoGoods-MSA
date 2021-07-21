@@ -20,4 +20,5 @@ public interface MemberRepository extends JpaRepository<Member,String>, MemberSe
     @Query("select m from Member m where m.email = :email")
     Optional<Member> findByEmail(@Param("email") String email);
 
+
 }

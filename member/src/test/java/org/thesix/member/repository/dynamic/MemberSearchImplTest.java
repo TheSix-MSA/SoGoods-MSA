@@ -28,7 +28,7 @@ class MemberSearchImplTest {
     public void test1(){
         Pageable pageable = PageRequest.of(1, 10);
 
-        Page<Object> members = memberRepository.getMemberList("n", "11", pageable);
+        Page<Object> members = memberRepository.getMemberList("n", "11", pageable,false);
 
         members.getContent().forEach(arr -> log.info("ㅎㅎ"));
     }

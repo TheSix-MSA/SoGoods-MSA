@@ -21,4 +21,7 @@ public class RequestListDTO {
 
     private String type;
 
+    @Builder.Default
+    private boolean approval = false;
+
 }
