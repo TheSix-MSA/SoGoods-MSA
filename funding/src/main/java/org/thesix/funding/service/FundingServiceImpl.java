@@ -219,17 +219,17 @@ public class FundingServiceImpl implements FundingService {
 
     /**
      * 펀딩 글 찜하기 기능
-     * @param fno, email
+     * @param dto
      * @return FavoriteDTO
      */
     @Override
-    public Long insertFavorite(Long fno, String email){
+    public Long insertFavorite(FavoriteRequestDTO dto){
 
         Funding funding = Funding.builder()
-                .fno(fno).build();
+                .fno(dto.getFno()).build();
 
         // 찜한 주체, 게시글 번호를 받아 해당 유저 정보가 있는지 확인
-        Optional<Favorite> checkFavorite = favoriteRepository.checkUser(email, fno);
+        Optional<Favorite> checkFavorite = favoriteRepository.checkUser(dto.getEmail(), dto.getFno());
 
         if(checkFavorite.isPresent()){
             // 유저 정보가 존재하고,
@@ -240,13 +240,13 @@ public class FundingServiceImpl implements FundingService {
             // 유저 정보가 존재하지 않고,
             // 첫 찜일 경우 insert 실행
             Favorite favorite = Favorite.builder()
-                    .actor(email)
+                    .actor(dto.getEmail())
                     .funding(funding)
                     .build();
             favoriteRepository.save(favorite);
         }
 
-        return favoriteRepository.getFavoriteCntById(fno)
+        return favoriteRepository.getFavoriteCntById(dto.getFno())
                 .orElseThrow(()-> new NullPointerException("요청하신 정보를 찾을 수 없습니다."));
     }
 

@@ -176,7 +176,7 @@ public interface FundingService {
      * @param fno, email
      * @return FavoriteDTO
      */
-    Long insertFavorite(Long fno, String email);
+    Long insertFavorite(FavoriteRequestDTO favoriteRequestDTO);
 
 
     /**

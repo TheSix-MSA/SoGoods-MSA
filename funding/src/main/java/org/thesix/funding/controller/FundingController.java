@@ -87,13 +87,13 @@ public class FundingController {
 
     /**
      * 찜하기 기능
-     * @param fno, email
+     * @param favoriteRequestDTO
      * @return ApiResult<Long>  => 추가된 게시판의 총 좋아요 수 반환
      */
-    @GetMapping("/fav/{fno}/{email}")
-    public ApiResult<Long> changeFavorite(@PathVariable Long fno, @PathVariable String email){
+    @PostMapping("/fav")
+    public ApiResult<Long> changeFavorite(@RequestBody FavoriteRequestDTO favoriteRequestDTO){
 
-        return success(fundingService.insertFavorite(fno, email));
+        return success(fundingService.insertFavorite(favoriteRequestDTO));
     }
 
     /**
@@ -113,7 +113,7 @@ public class FundingController {
      * @param fno
      * @return FundingDTO
      */
-    @GetMapping("/req/{fno}")
+    @PutMapping("/req/{fno}")
     public ApiResult<FundingDTO> changeAuthorized(@PathVariable Long fno){
 
         return success(fundingService.updateAuthorized(fno));
