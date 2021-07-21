@@ -37,17 +37,17 @@ public class FundingRepoTests {
             LocalDateTime ldt = LocalDateTime.now();
             ldt.plusYears(1);
 
-            Funding funding = Funding.builder()
-                    .title("제목.." + i)
-                    .writer("작성자" + i)
-                    .email("user" + i + "@aaa.com")
-                    .content("내용...." + i)
-                    .dueDate(ldt)
-                    .success(false)
-                    .removed(false)
-                    .build();
+//            Funding funding = Funding.builder()
+//                    .title("제목.." + i)
+//                    .writer("작성자" + i)
+//                    .email("user" + i + "@aaa.com")
+//                    .content("내용...." + i)
+//                    .dueDate(ldt)
+//                    .success(false)
+//                    .removed(false)
+//                    .build();
 
-            fundingRepository.save(funding);
+            //fundingRepository.save(funding);
         });
     }
 
@@ -166,7 +166,7 @@ public class FundingRepoTests {
 
             funding.changeTitle("change Title");
             funding.changeContent("change Content");
-            funding.changeDueDate(ldt);
+            //funding.changeDueDate(ldt);
 
             fundingRepository.save(funding);
         });

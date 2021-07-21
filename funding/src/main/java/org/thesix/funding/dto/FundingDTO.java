@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.Lob;
 import java.time.LocalDateTime;
 
@@ -32,8 +31,7 @@ public class FundingDTO {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime modDate; // 펀딩글 수정일
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime dueDate;  // 펀딩 만료일
+    private String dueDate;  // 펀딩 만료일
 
     private boolean success;  // 펀딩 성공여부
 
