@@ -1,20 +1,22 @@
-package org.thesix.funding.dto;
+package org.thesix.funding.dto.funding;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListFundingDTO {
+public class FundingResponseDTO {
 
     private FundingDTO fundingDTO;  // 펀딩 글 객체
 
-    private Long mainProductPno;  // 가장 먼저 저장된 제품 번호 -> 썸네일을 가져오기 위해 필요?
+    private List<ProductDTO> productDTOs;  // 제품 리스트
 
-    private long favoriteCnt;  // 찜 여부
+    private long favoriteCount;  //  찜 개수
 
 }

@@ -16,6 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin("*")
 @Log4j2
 @RequestMapping("/reply")
 public class ReplyController {

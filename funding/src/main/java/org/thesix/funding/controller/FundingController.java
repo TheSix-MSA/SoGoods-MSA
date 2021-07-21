@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.*;
 import org.thesix.funding.common.dto.ListResponseDTO;
-import org.thesix.funding.dto.*;
+import org.thesix.funding.dto.funding.*;
 import org.thesix.funding.service.FundingService;
 import static org.thesix.funding.util.ApiUtil.ApiResult;
 import static org.thesix.funding.util.ApiUtil.success;

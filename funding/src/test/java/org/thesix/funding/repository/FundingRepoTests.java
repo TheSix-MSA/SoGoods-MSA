@@ -190,19 +190,19 @@ public class FundingRepoTests {
     }
 
 
-    @Test
-    public void testGetDetail() {
-        List<Object[]> result = fundingRepository.getFundingData(5L);
-        List<Object> res = new ArrayList<>();
-        List<Product> proList = result.stream().map(obj -> (Product)obj[0]).collect(Collectors.toList());
-        res.add(proList);
-        res.add(result.get(0)[1]);
-        res.add(result.get(0)[2]);
-        proList.forEach(r-> System.out.println(r));
-        System.out.println(res.get(1));
-        System.out.println(res.get(2));
-    }
-    
+//    @Test
+//    public void testGetDetail() {
+//        Optional<List<Object[]>> result = fundingRepository.getFundingData(5L);
+//        List<Object> res = new ArrayList<>();
+//        List<Product> proList = result.stream().map(obj -> (Product)obj[0]).collect(Collectors.toList());
+//        res.add(proList);
+//        res.add(result.get().get(0)[1]);
+//        res.add(result.get().get(0)[2]);
+//        proList.forEach(r-> System.out.println(r));
+//        System.out.println(res.get(1));
+//        System.out.println(res.get(2));
+//    }
+//
 
 
 

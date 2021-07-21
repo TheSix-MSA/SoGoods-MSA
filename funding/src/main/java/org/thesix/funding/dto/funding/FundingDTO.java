@@ -1,4 +1,4 @@
-package org.thesix.funding.dto;
+package org.thesix.funding.dto.funding;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
