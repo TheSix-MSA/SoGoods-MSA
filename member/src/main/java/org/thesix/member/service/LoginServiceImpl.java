@@ -72,7 +72,7 @@ public class LoginServiceImpl implements LoginService{
         Member member = memberRepository.findById(email).orElse(null);
 
         if(member != null){
-            throw new IllegalAccessError("이미 가입된 이메일입니다.");
+            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
         }
         String pattern = "^[_a-zA-Z0-9-\\.]+@[\\.a-zA-Z0-9-]+\\.[a-zA-Z]+$";
         if(Pattern.matches(pattern,email) == false){
@@ -114,14 +114,11 @@ public class LoginServiceImpl implements LoginService{
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
         try {
-            log.info("1ㅇㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷ1");
             MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true, "utf-8");
-            log.info("2ㅇㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷ2");
             message.setTo(email);
             message.setSubject("회원가입 인증 메일입니다.");
             message.setText(content.toString(),true);
         } catch (MessagingException e) {
-            log.info("3ㅇㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷㄷ3");
             e.printStackTrace();
             throw new IllegalAccessError("serverError");
         }

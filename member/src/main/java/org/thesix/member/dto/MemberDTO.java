@@ -28,8 +28,9 @@ public class MemberDTO {
     private boolean banned;
     private String provider;
     private boolean social;
+    private boolean approval;
     private LocalDateTime regDate;
-    private LocalDateTime loginDate;
+    private LocalDateTime modDate;
     @Builder.Default
     private Set<MemberRole> roleSet = new HashSet<>();
 

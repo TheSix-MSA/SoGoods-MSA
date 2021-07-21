@@ -75,6 +75,8 @@ public class MemberSearchImpl extends QuerydslRepositorySupport implements Membe
                         .provider(memberObj.getProvider())
                         .social(memberObj.isSocial())
                         .regDate(memberObj.getRegDate())
+                        .modDate(memberObj.getModDate())
+                        .approval(memberObj.isApproval())
                         .roleSet(memberObj.getRoleSet())
                         .build()
         ).collect(Collectors.toList());

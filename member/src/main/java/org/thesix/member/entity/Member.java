@@ -2,6 +2,7 @@ package org.thesix.member.entity;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.thesix.member.common.BaseEntity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,7 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString  (exclude = "roleSet")
-public class Member {
+public class Member extends BaseEntity {
 
     @Id
     private String email; //이메일 (pk값)
@@ -51,13 +52,8 @@ public class Member {
     @Column(nullable = false)
     private boolean social; // 소셜로그인 여부 (0: 일반로그인, 1: 소셜로그인)
 
-    @CreationTimestamp
-    @Column(name = "regdate", updatable = false)
-    private LocalDateTime regDate;
-
-    @CreationTimestamp
-    @Column(name="loginDate", updatable = false)
-    private LocalDateTime loginDate;
+    @Builder.Default
+    private boolean approval = false;
 
     @Builder.Default
     @ElementCollection(fetch = FetchType.LAZY)
@@ -73,10 +69,6 @@ public class Member {
         this.detailAddress = member.getDetailAddress();
     }
 
-    public void changeRoleSet(Set<MemberRole> role){
-        this.roleSet = role;
-    }
-
     public void changeRemoved(boolean removed) {
         this.removed = removed;
     }
@@ -85,7 +77,4 @@ public class Member {
         this.banned = banned;
     }
 
-    public void changeLoginDate(LocalDateTime loginDate) {
-        this.loginDate = loginDate;
-    }
 }

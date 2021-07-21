@@ -27,6 +27,7 @@ public class MemberServiceImpl implements MemberService{
     private final PasswordEncoder encoder;
 
     /**
+     * 회원가입
      *
      * @param dto
      * @return true: MemberDTO
@@ -41,7 +42,7 @@ public class MemberServiceImpl implements MemberService{
             return entityToMeberDTO(member);
         }
 
-        throw new IllegalArgumentException("이미 존재하는 Email 입니다.");
+        throw new IllegalAccessError("이미 존재하는 Email 입니다.");
     }
 
     /**

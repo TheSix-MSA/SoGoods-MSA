@@ -44,8 +44,6 @@ public interface MemberService {
                 .banned(dto.isBanned())
                 .provider(dto.getProvider())
                 .social(dto.isSocial())
-                .regDate(dto.getRegDate())
-                .loginDate(dto.getLoginDate())
                 .roleSet(dto.getRoleSet())
                 .build();
 
@@ -72,7 +70,7 @@ public interface MemberService {
                 .provider(member.getProvider())
                 .social(member.isSocial())
                 .regDate(member.getRegDate())
-                .loginDate(member.getLoginDate())
+                .modDate(member.getModDate())
                 .roleSet(member.getRoleSet())
                 .build();
     }
