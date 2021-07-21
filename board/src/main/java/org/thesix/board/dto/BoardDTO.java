@@ -25,4 +25,6 @@ public class BoardDTO {
     private LocalDateTime modDate; // 게시글 수정일
     private boolean isPrivate;
     private Long replyCnt;
+
+
 }

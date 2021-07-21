@@ -13,6 +13,8 @@ public class PageMaker {
     private int totalCount;
     private List<Integer> pageList;
     private boolean prev,next;
+    private int start;
+    private int end;
 
     public PageMaker(int page,int size, int totalCount){
         this.page = page;
@@ -21,11 +23,12 @@ public class PageMaker {
         int totalPage = (int)(Math.ceil(totalCount/(double)size));
         //temp end page
         int tempEnd = (int)(Math.ceil(page/5.0)) * 5;
-        int start = tempEnd - 4;
+        this.start = tempEnd - 4;
         prev = start > 1;
-        int end = totalPage > tempEnd ? tempEnd: totalPage;
+        this.end = totalPage > tempEnd ? tempEnd: totalPage;
         next = totalPage > tempEnd;
         pageList = IntStream.rangeClosed(start, end).boxed().collect(Collectors.toList());
+
     }
 
 }

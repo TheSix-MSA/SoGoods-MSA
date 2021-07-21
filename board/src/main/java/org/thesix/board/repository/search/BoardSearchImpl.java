@@ -53,10 +53,10 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
         query.where(board.bno.gt(0L), board.boardType.eq(BoardType.valueOf(boardType)));
         query.groupBy(board);
         query.offset(pageable.getOffset());
+        query.orderBy(board.bno.desc());
         query.limit(pageable.getPageSize());
-
         List<Board> listResult = query.fetch();
-        log.info(listResult);
+
         long totalCount = query.fetchCount();
 
         return new PageImpl<>(listResult,pageable,totalCount);
@@ -95,6 +95,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
         query.groupBy(board);
         query.offset(pageable.getOffset());
         query.limit(pageable.getPageSize());
+        query.orderBy(board.bno.desc());
 
         List<Board> listResult = query.fetch();
         log.info(listResult);

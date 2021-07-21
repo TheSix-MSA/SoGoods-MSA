@@ -98,7 +98,6 @@ public class BoardServiceImpl implements BoardService {
                 boardListRequestDTO.getKeyword(),
                 boardListRequestDTO.getPageable()
         );
-
         BoardListResponseDTO boardListResponseDTO = BoardListResponseDTO.builder()
                 .pageMaker(new PageMaker(boardListRequestDTO.getPage(), boardListRequestDTO.getSize(), (int) list.getTotalElements()))
                 .boardDtoList(list.stream().map((board)->entityToDTO(board)).collect(Collectors.toList()))

@@ -27,7 +27,7 @@ public class BoardListRequestDTO {
 
     @JsonIgnore
     public Pageable getPageable() {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("bno").descending());
+        Pageable pageable = PageRequest.of(page-1, size, Sort.by("bno").descending());
         return pageable;
     }
 }
