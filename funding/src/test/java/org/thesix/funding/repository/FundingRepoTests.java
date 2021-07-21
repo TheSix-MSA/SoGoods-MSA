@@ -136,7 +136,7 @@ public class FundingRepoTests {
         String type = "tcw";
         String state = "open";
 
-        Page<Object[]> list = fundingRepository.getListSearch(state, keyword, type, pageable);
+        Page<Object[]> list = fundingRepository.getListSearch(keyword, type, pageable);
 
         list.getContent().forEach(list1-> System.out.println(Arrays.toString(list1)));
 

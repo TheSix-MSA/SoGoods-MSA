@@ -40,7 +40,7 @@ public class FundingServiceImpl implements FundingService {
 
         Pageable pageable = dto.getPageable();
 
-        Page<Object[]> result = fundingRepository.getListSearch(dto.getState(), dto.getKeyword(), dto.getType(), pageable);
+        Page<Object[]> result = fundingRepository.getListSearch(dto.getKeyword(), dto.getType(), pageable);
 
         List<ListFundingDTO> dtoList = result.getContent().stream().map(arr -> arrToDTO(arr)).collect(Collectors.toList());
 
