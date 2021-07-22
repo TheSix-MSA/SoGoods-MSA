@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 @Log4j2
 public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
     private String errorJSON(String msg,int status) {
-        return "{\"success\":"+false+",\"response\":"+null+",\"error\": {message:\""+msg+"\",status:"+status+"}}";
+        return "{\"success\":"+false+",\"response\":"+null+",\"error\": {\"message\":\""+msg+"\",\"status\":"+status+"}}";
     }
 
     @Override
