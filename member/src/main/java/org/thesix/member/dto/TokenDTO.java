@@ -16,6 +16,7 @@ public class TokenDTO {
 
     private String accessToken;
     private String refreshToken;
+    private String name;
     private String email;
     private Set<MemberRole> roles;
 }

@@ -69,6 +69,11 @@ public class Member extends BaseEntity {
         this.detailAddress = member.getDetailAddress();
 
     }
+
+    public void changeApproval(){
+        this.approval = false;
+    }
+
     public void changePassword(Member member) {
         this.password = member.getPassword();
     }

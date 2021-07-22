@@ -56,6 +56,7 @@ public class LoginServiceImpl implements LoginService{
             return TokenDTO.builder()
                     .accessToken(jwtToken)
                     .refreshToken(refreshTk)
+                    .name(member.getName())
                     .email(dto.getEmail())
                     .roles(member.getRoleSet())
                     .build();
@@ -139,6 +140,7 @@ public class LoginServiceImpl implements LoginService{
             return TokenDTO.builder()
                     .accessToken(jwtToken)
                     .refreshToken(refreshTk)
+                    .name(token.getName())
                     .email(token.getEmail())
                     .roles(token.getRoles())
                     .build();
