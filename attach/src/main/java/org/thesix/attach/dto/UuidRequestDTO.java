@@ -13,6 +13,8 @@ public class UuidRequestDTO {
 
     private String type;
 
+    private String[] keyValues;
+
     private String keyValue;
 
     private boolean main;

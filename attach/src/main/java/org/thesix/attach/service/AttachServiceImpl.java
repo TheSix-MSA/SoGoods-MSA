@@ -331,11 +331,16 @@ public class AttachServiceImpl implements AttachService {
     }
 
     @Override
+
+    //게시글 목록 : BOARD, 글 keyValues
+
+    //상품 목록: PRODUCT, 상품 keyValues
+
     public List<UuidResponseDTO> getUuidInBoardList(UuidRequestDTO requestDTO) {
 
         String type = requestDTO.getType();
-
-        List<Attach> res = attachRepository.getAttaches(type);
+        String[] keyValues = requestDTO.getKeyValues();
+        List<Attach> res = attachRepository.getAttachesByValues(type, keyValues);
 
         return res.stream().map((attach -> entityToDTO(attach))).collect(Collectors.toList());
     }
@@ -359,6 +364,10 @@ public class AttachServiceImpl implements AttachService {
         }else{
             dtoBuilder.key(Long.parseLong(attach.getKeyValue()));
         }
-        return dtoBuilder.fileFullName(awsHost + "/" + attach.getOriginalName()).build();
+
+        dtoBuilder.imgSrc(awsHost + "/" + attach.getOriginalName()).build();
+        dtoBuilder.thumbSrc(awsHost + "/s_" + attach.getOriginalName()).build();
+
+        return dtoBuilder.build();
     }
 }

@@ -13,6 +13,7 @@ public class UuidResponseDTO {
 
     private Object key;
 
-    private String fileFullName;
+    private String imgSrc;
 
+    private String thumbSrc;
 }
