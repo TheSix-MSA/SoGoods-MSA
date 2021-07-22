@@ -7,9 +7,7 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
 import com.netflix.discovery.converters.Auto;
 import com.sun.jdi.InternalException;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
 
 
 @Service
@@ -312,13 +311,28 @@ public class AttachServiceImpl implements AttachService {
 
     @Override
     @Transactional
-    public void removeFile(String fileName) {
+    public void removeFile(String[] fileNames) {
 
-        attachRepository.deleteByOriginalName(fileName);
+        attachRepository.deleteByOriginalName(fileNames);
 
         try{
-            s3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
-            s3Client.deleteObject(new DeleteObjectRequest(bucket, "s_" + fileName));
+            ArrayList<KeyVersion> keys = new ArrayList<KeyVersion>();
+            for (String keyName: fileNames) {
+                s3Client.putObject(bucket, keyName, "Object to be deleted.");
+                keys.add(new KeyVersion(keyName));
+                keys.add(new KeyVersion("s_" + keyName));
+            }
+
+            // Delete the sample objects.
+            DeleteObjectsRequest multiObjectDeleteRequest = new DeleteObjectsRequest(bucket)
+                    .withKeys(keys)
+                    .withQuiet(false);
+
+            // Verify that the objects were deleted successfully.
+            DeleteObjectsResult delObjRes = s3Client.deleteObjects(multiObjectDeleteRequest);
+            int successfulDeletes = delObjRes.getDeletedObjects().size();
+            System.out.println(successfulDeletes + " objects successfully deleted.");
+
         } catch (AmazonServiceException e) {
             // The call was transmitted successfully, but Amazon S3 couldn't process
             // it, so it returned an error response.

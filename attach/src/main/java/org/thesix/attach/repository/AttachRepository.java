@@ -12,8 +12,8 @@ import java.util.Optional;
 public interface AttachRepository extends JpaRepository<Attach, Long> {
 
     @Modifying
-    @Query("DELETE FROM Attach a WHERE a.originalName = :originalName")
-    void deleteByOriginalName(String originalName);
+    @Query("DELETE FROM Attach a WHERE a.originalName IN :fileNames")
+    void deleteByOriginalName(String[] fileNames);
 
 
     @Query("SELECT a FROM Attach a " +

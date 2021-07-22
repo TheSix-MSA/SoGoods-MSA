@@ -96,8 +96,9 @@ public class UploadController {
 
 
     @DeleteMapping("/remove")
-    public ApiResult<Boolean> removeFile(String fileName) {
-        attachService.removeFile(fileName);
+    public ApiResult<Boolean> removeFile(String[] fileNames) {
+
+        attachService.removeFile(fileNames);
 
         return success(true);
     }

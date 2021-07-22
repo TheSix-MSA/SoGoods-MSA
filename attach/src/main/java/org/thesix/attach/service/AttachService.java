@@ -21,7 +21,7 @@ public interface AttachService {
 
     ResponseEntity<byte[]> getTempFile(String filename);
 
-    void removeFile(String fileName);
+    void removeFile(String[] fileNames);
 
     List<UuidResponseDTO> getUuidInBoardList(UuidRequestDTO requestDTO);
 
