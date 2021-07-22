@@ -1,5 +1,7 @@
 package org.thesix.attach.service;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -24,6 +26,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
@@ -35,13 +38,10 @@ import org.thesix.attach.entity.Attach;
 import org.thesix.attach.repository.AttachRepository;
 
 import javax.annotation.PostConstruct;
-import javax.transaction.Transactional;
 import java.io.*;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -85,11 +85,11 @@ public class AttachServiceImpl implements AttachService {
     }
 
     @Override
-    public List<UploadResultDTO> uplaodtemp(MultipartFile[] files) {
-        List<UploadResultDTO> resultDTOList = new ArrayList<>();
+    public void uplaodtemp(MultipartFile[] files, String tableName, String keyValue, Integer mainIdx) {
 
-        for (MultipartFile file : files) {
-
+        for (int i=0; i<files.length; i++) {
+            MultipartFile file = files[i];
+            System.out.println("file.getContentType(): " + file.getContentType());
             if (file.getContentType().startsWith("image") == false) {
 //              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
@@ -99,8 +99,6 @@ public class AttachServiceImpl implements AttachService {
             int pos = originalName.lastIndexOf("\\") + 1;
             String fileName = originalName.substring(pos);
             log.info(fileName);
-            //날짜 폴더 생성
-            //String folderPath = makeFolder();
 
             //UUID
             String uuid = UUID.randomUUID().toString();
@@ -110,7 +108,7 @@ public class AttachServiceImpl implements AttachService {
             String uuidFileName = uuid + "_" + fileName;
 
             String severSideOriginFilePath = commonPath + uuidFileName;
-
+            String serverSideThumbnailFilePath = commonPath + "s_" + uuidFileName;
             Path savePath = Paths.get(severSideOriginFilePath);
 
             try {
@@ -118,27 +116,97 @@ public class AttachServiceImpl implements AttachService {
                 //  1. 원본
                 file.transferTo(savePath);
                 //  2. 썸네일
-                String serverSideThumbnailFilePath = commonPath + "s_" + uuidFileName;
+
                 File thumbnailFile = new File(serverSideThumbnailFilePath);
                 Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 100, 100);
 
-                //응답해줄 업로드 정보 추가
-                resultDTOList.add(new UploadResultDTO(uuid, fileName));
             } catch (IOException e) {
                 throw new InternalException();
+            }//원본, 썸네일 파일 저장 완료...........................
+
+            //tempFile은 uuid + 원본파일명 의 값을 갖는다.
+            String ext = fileName.substring(fileName.lastIndexOf(".") + 1);
+
+            String[] pathList = new String[]{severSideOriginFilePath, serverSideThumbnailFilePath};
+            for (String ele : pathList) {
+                File eleFile = new File(ele);
+                FileItem fileItem = null;
+                try {
+                    fileItem = new DiskFileItem("mainFile", Files.probeContentType(eleFile.toPath()), false, eleFile.getName(), (int) eleFile.length(), eleFile.getParentFile());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                InputStream input=null;
+                OutputStream os=null;
+                try {
+                    input = new FileInputStream(eleFile);
+                    os = fileItem.getOutputStream();
+                    IOUtils.copy(input, os);
+                    // Or faster..
+                    // IOUtils.copy(new FileInputStream(file), fileItem.getOutputStream());
+                } catch (IOException ex) {
+                    // do something.
+                }finally {
+                    try {
+                        input.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        os.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
+                try {
+                    s3Client.putObject(new PutObjectRequest(bucket, multipartFile.getOriginalFilename(), multipartFile.getInputStream(), null)
+                            .withCannedAcl(CannedAccessControlList.PublicRead));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            Attach.AttachBuilder attachBuilder = Attach.builder()
+                    .originalName(uuidFileName)
+                    .uuid(uuid);
+
+            if (mainIdx != null && mainIdx==i)
+                attachBuilder = attachBuilder.main(true);
+            else
+                attachBuilder = attachBuilder.main(false);
+
+            attachBuilder = attachBuilder.tableName(tableName);
+            attachBuilder = attachBuilder.keyValue(keyValue);
+
+            Attach attach = attachBuilder.build();
+
+            //DB에 INSERT
+            attachRepository.save(attach);
+
+            try {
+                Files.delete(Path.of(severSideOriginFilePath));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                Files.delete(Path.of(serverSideThumbnailFilePath));
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 
-        return resultDTOList;
+
     }
 
     @Override
+    @Transactional
     public void registerConfimedImages(AttachConfimRequestDTO requestDTO) throws IOException {
         String tableName = requestDTO.getTableName();
-        Long keyValue = requestDTO.getKeyValue();
+        String keyValue = requestDTO.getKeyValue();
         String mainFileName = requestDTO.getMainFileName();
-        log.info("mainFIleName: " + mainFileName);
-        log.info(requestDTO);
+
         for (String tempFileName : requestDTO.getTempFileNameList()) {
             log.info(tempFileName);
 
@@ -156,7 +224,7 @@ public class AttachServiceImpl implements AttachService {
             String s_tempPath = uploadPath + File.separator + "temp" + File.separator + "s_" + decodedFileName;
 
             String[] pathList = new String[]{tempPath, s_tempPath};
-            for(String ele : pathList){
+            for (String ele : pathList) {
 //                File file = new File(ele);
 //                DiskFileItem fileItem = new DiskFileItem(file.getName(), "img/"+ext, false, file.getName(), (int) file.length() , file.getParentFile());
 //                fileItem.getOutputStream();
@@ -164,15 +232,19 @@ public class AttachServiceImpl implements AttachService {
 
                 File file = new File(ele);
                 FileItem fileItem = new DiskFileItem("mainFile", Files.probeContentType(file.toPath()), false, file.getName(), (int) file.length(), file.getParentFile());
-
+                InputStream input=null;
+                OutputStream os=null;
                 try {
-                    InputStream input = new FileInputStream(file);
-                    OutputStream os = fileItem.getOutputStream();
+                    input = new FileInputStream(file);
+                    os = fileItem.getOutputStream();
                     IOUtils.copy(input, os);
                     // Or faster..
                     // IOUtils.copy(new FileInputStream(file), fileItem.getOutputStream());
                 } catch (IOException ex) {
                     // do something.
+                }finally {
+                    input.close();
+                    os.close();
                 }
 
                 MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
@@ -197,11 +269,25 @@ public class AttachServiceImpl implements AttachService {
             //DB에 INSERT
             attachRepository.save(attach);
 
-            new File(tempPath).delete();
-            new File(s_tempPath).delete();
+            log.info(tempPath);
+            log.info(s_tempPath);
+//            File t = new File(tempPath);
+//            File s_t = new File(s_tempPath);
+//            t.delete();
+//            s_t.delete();
+            Files.delete(Path.of(tempPath));
+            Files.delete(Path.of(s_tempPath));
+
+            /*
+            예상결과만 리턴
+            실제 원하는 행동은 안하고......
+             */
+            
         }
     }
 
+
+    // S3로 옮기면서 더 이상 사용안함
     @Override
     public ResponseEntity<byte[]> getTempFile(String filename) {
         ResponseEntity<byte[]> result = null;
@@ -226,32 +312,21 @@ public class AttachServiceImpl implements AttachService {
 
     @Override
     @Transactional
-    public void removeFile(String opt, String fileName) {
+    public void removeFile(String fileName) {
 
-        if (opt.equals("saved")) {
-            try {
-                attachRepository.deleteByOriginalName(URLEncoder.encode(fileName, "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+        attachRepository.deleteByOriginalName(fileName);
 
-            s3Client.deleteObject(new DeleteObjectRequest(bucket, awsHost+"/"+fileName));
-            s3Client.deleteObject(new DeleteObjectRequest(bucket, awsHost+"/s_"+fileName));
-
-        }else{
-            try {
-                String srcFileName = null;
-
-                srcFileName = URLDecoder.decode(fileName);
-
-                File originFile = new File(uploadPath + File.separator + "temp" + File.separator + srcFileName);
-                File thumnailFile = new File(uploadPath + File.separator + "temp" + File.separator + "s_" + srcFileName);
-
-                originFile.delete();
-                thumnailFile.delete();
-            } catch (Exception e) {
-                throw new InternalException();
-            }
+        try{
+            s3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
+            s3Client.deleteObject(new DeleteObjectRequest(bucket, "s_" + fileName));
+        } catch (AmazonServiceException e) {
+            // The call was transmitted successfully, but Amazon S3 couldn't process
+            // it, so it returned an error response.
+            e.printStackTrace();
+        } catch (SdkClientException e) {
+            // Amazon S3 couldn't be contacted for a response, or the client
+            // couldn't parse the response from Amazon S3.
+            e.printStackTrace();
         }
     }
 
@@ -259,9 +334,8 @@ public class AttachServiceImpl implements AttachService {
     public List<UuidResponseDTO> getUuidInBoardList(UuidRequestDTO requestDTO) {
 
         String type = requestDTO.getType();
-        long[] keyValues = requestDTO.getKeyValues();
 
-        List<Attach> res = attachRepository.getAttachesByValues(type, keyValues);
+        List<Attach> res = attachRepository.getAttaches(type);
 
         return res.stream().map((attach -> entityToDTO(attach))).collect(Collectors.toList());
     }
@@ -270,17 +344,21 @@ public class AttachServiceImpl implements AttachService {
     public List<UuidResponseDTO> getUuidInBoard(UuidRequestDTO requestDTO) {
 
         String type = requestDTO.getType();
-        long keyValue = requestDTO.getKeyValue();
+        String keyValue = requestDTO.getKeyValue();
         List<Attach> res = attachRepository.getAttachesByValue(type, keyValue);
 
         return res.stream().map((attach -> entityToDTO(attach))).collect(Collectors.toList());
     }
 
     UuidResponseDTO entityToDTO(Attach attach){
-        UuidResponseDTO dto = UuidResponseDTO.builder()
-                .key(attach.getKeyValue())
-                .fileFullName(awsHost + "/" + attach.getOriginalName())
-                .build();
-        return dto;
+
+        UuidResponseDTO.UuidResponseDTOBuilder dtoBuilder = UuidResponseDTO.builder();
+
+        if(attach.getTableName().equals("MEMBER")){
+            dtoBuilder.key(attach.getKeyValue());
+        }else{
+            dtoBuilder.key(Long.parseLong(attach.getKeyValue()));
+        }
+        return dtoBuilder.fileFullName(awsHost + "/" + attach.getOriginalName()).build();
     }
 }

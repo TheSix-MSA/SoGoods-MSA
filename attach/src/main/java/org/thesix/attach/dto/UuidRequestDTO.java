@@ -13,9 +13,7 @@ public class UuidRequestDTO {
 
     private String type;
 
-    private long[] keyValues;
-
-    private long keyValue;
+    private String keyValue;
 
     private boolean main;
 

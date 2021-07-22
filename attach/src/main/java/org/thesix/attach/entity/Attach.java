@@ -32,6 +32,6 @@ public class Attach extends BaseEntity {
 
     private String tableName;
 
-    private Long keyValue;
+    private String keyValue;
 
 }

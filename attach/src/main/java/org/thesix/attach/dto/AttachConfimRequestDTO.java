@@ -21,7 +21,7 @@ public class AttachConfimRequestDTO {
 
     private String tableName;
 
-    private Long keyValue;
+    private String keyValue;
 
     private List<String> tempFileNameList;
 

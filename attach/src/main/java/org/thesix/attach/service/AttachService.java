@@ -15,13 +15,13 @@ import java.util.List;
 
 public interface AttachService {
 
-    List<UploadResultDTO> uplaodtemp(MultipartFile[] files);
+    void uplaodtemp(MultipartFile[] files, String tableName, String keyValue, Integer mainIdx) throws IOException;
 
     void registerConfimedImages(AttachConfimRequestDTO requestDTO) throws IOException;
 
     ResponseEntity<byte[]> getTempFile(String filename);
 
-    void removeFile(String opt, String fileName);
+    void removeFile(String fileName);
 
     List<UuidResponseDTO> getUuidInBoardList(UuidRequestDTO requestDTO);
 

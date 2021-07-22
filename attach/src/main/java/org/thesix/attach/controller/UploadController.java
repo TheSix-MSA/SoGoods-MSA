@@ -43,14 +43,18 @@ public class UploadController {
      *
      * @param files URL: http://localhost:8022/attach/upload/temp
      */
-    @PostMapping("/upload/temp")
-    public ApiResult<List<UploadResultDTO>> uplaodtemp(MultipartFile[] files) {
-
+    @PostMapping("/upload")
+    public ApiResult<Boolean> uplaodtemp(MultipartFile[] files, String tableName, String keyValue, Integer mainIdx) {
         makeFolder();
-        List<UploadResultDTO> resultDTOList = attachService.uplaodtemp(files);
+        List<UploadResultDTO> resultDTOList = null;
+        try {
+            attachService.uplaodtemp(files, tableName, keyValue, mainIdx);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         //클라이언트가 업로드 된 이미지에 접근할 수 있도록 정보 응답
-        return success(resultDTOList);
+        return success(true);
     }
 
     /**
@@ -91,9 +95,9 @@ public class UploadController {
 
 
 
-    @GetMapping("/remove/{opt}")
-    public ApiResult<Boolean> removeFile(@PathVariable String opt, String fileName) {
-        attachService.removeFile(opt, fileName);
+    @DeleteMapping("/remove")
+    public ApiResult<Boolean> removeFile(String fileName) {
+        attachService.removeFile(fileName);
 
         return success(true);
     }
