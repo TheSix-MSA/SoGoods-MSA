@@ -119,6 +119,16 @@ public class FundingController {
         return success(fundingService.updateAuthorized(fno));
     }
 
+    /**
+     * 승인되지 않은 게시물 리스트를 가져오는 메서드
+     * @return List<FundingDTO>
+     */
+    @GetMapping("/false/list")
+    public ApiResult<List<FundingDTO>> getAuthorizedFalse(){
+
+        return success(fundingService.getNotAuthorizedFunding());
+    }
+
 
 
 

@@ -199,4 +199,10 @@ public interface FundingService {
      * @return Long
      */
     FundingDTO updateAuthorized(Long fno);
+
+    /**
+     * 승인되지 않은 게시글만 출력하는 추상메서드
+     * @return
+     */
+    List<FundingDTO> getNotAuthorizedFunding();
 }

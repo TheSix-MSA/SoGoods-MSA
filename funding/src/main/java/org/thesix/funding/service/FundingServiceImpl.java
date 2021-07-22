@@ -278,6 +278,12 @@ public class FundingServiceImpl implements FundingService {
         return fundings.stream().map(funding -> entityToDTO(funding)).collect(Collectors.toList());
     }
 
+    /**
+     * 게시글 승인처리 기능
+     * 승인 결과 리턴
+     * @param fno
+     * @return FundingDTO
+     */
     @Override
     public FundingDTO updateAuthorized(Long fno) {
 
@@ -288,6 +294,20 @@ public class FundingServiceImpl implements FundingService {
             Funding result = fundingRepository.save(funding);
 
         return entityToDTO(result);
+    }
+
+    /**
+     * 승인되지 않은 게시글 리스트를 반환하는 기능
+     * 관리자 페이지에서 사용
+     * @return List<FundingDTO>
+     */
+    @Override
+    public List<FundingDTO> getNotAuthorizedFunding() {
+
+        List<Funding> fundings = fundingRepository.getNotAuthorized()
+                .orElseThrow(()-> new IllegalArgumentException("요청하신 정보를 찾을 수 없습니다."));
+
+        return fundings.stream().map(funding-> entityToDTO(funding)).collect(Collectors.toList());
     }
 
 
