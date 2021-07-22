@@ -1,17 +1,26 @@
 package org.thesix.member.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.thesix.member.entity.Member;
 
 import javax.persistence.*;
 
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class NovelsDTO {
 
     private Long nno;
-    private String ISBN;
+    private String isbn;
     private String title;
-    private String Image;
+    private String image;
     private String publisher;
-    private Member member;
+    private String email;
+    private boolean deleted;
 
 
 }

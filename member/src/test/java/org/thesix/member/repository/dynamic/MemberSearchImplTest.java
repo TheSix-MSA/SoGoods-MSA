@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.thesix.member.dto.MemberDTO;
 import org.thesix.member.entity.Member;
 import org.thesix.member.entity.MemberRole;
 import org.thesix.member.entity.Novels;
@@ -59,19 +60,22 @@ class MemberSearchImplTest {
     }
 
     @Test
-    public void approveAuthor(){
+    public void registerNovel(){
 
         Novels novels = Novels.builder()
-                .Image("https://image.aladin.co.kr/product/61/50/coversum/8970127240_2.jpg")
-                .ISBN("9788970127248")
+                .image("https://image.aladin.co.kr/product/61/50/coversum/8970127240_2.jpg")
+                .isbn("9788970127248")
                 .member(Member.builder().email("aaa100@aaa.aa").build())
                 .title("총 균 쇠 (반양장) - 무기.병균.금속은 인류의 운명을 어떻게 바꿨는가, 개정증보판")
                 .publisher("문학사상사")
                 .build();
 
         novelRepository.save(novels);
+    }
 
-
+    @Test
+    public void approveAuthor(){
+        Member member = memberRepository.findByEmail("diqksk@naver.com").orElseThrow(() -> new IllegalArgumentException());
 
     }
 

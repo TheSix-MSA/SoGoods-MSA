@@ -47,6 +47,7 @@ public class LoginController {
 
 
     /**
+     * localstorage에 저장될 dto발급
      *
      * @param token
      * @return
@@ -56,4 +57,6 @@ public class LoginController {
 
         return success(loginService.refreshToken(token));
     }
+
+
 }

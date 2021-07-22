@@ -66,6 +66,15 @@ public class LoginServiceImpl implements LoginService{
 
     }
 
+    /**
+     *
+     * [수정중..]
+     * 이메일 인증전송
+     * 이메일 UI수정필요.
+     *
+     * @param email
+     * @return
+     */
     @Override
     @Transactional(readOnly = true)
     public String emailVerify(String email) {

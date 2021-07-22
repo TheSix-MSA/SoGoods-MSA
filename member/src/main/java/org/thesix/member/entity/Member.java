@@ -3,6 +3,8 @@ package org.thesix.member.entity;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.thesix.member.common.BaseEntity;
+import org.thesix.member.dto.AuthorInfoDTO;
+import org.thesix.member.dto.MemberDTO;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -77,8 +79,8 @@ public class Member extends BaseEntity {
 
     }
 
-    public void changeApproval(){
-        this.approval = false;
+    public void changeApproval(boolean request){
+        this.approval = request;
     }
 
     public void changePassword(Member member) {
@@ -91,6 +93,12 @@ public class Member extends BaseEntity {
 
     public void changeBanned(boolean banned) {
         this.banned = banned;
+    }
+
+    public void changeAuthor(AuthorInfoDTO dto){
+        this.identificationUrl = dto.getIdentificationUrl();
+        this.nickName = dto.getNickName();
+        this.introduce = dto.getIntroduce();
     }
 
 }

@@ -19,15 +19,18 @@ public class Novels extends BaseEntity {
     private Long nno;
 
     @Column(nullable = false)
-    private String ISBN;
+    private String isbn;
 
     @Column(nullable = false)
     private String title;
 
-    private String Image;
+    private String image;
 
     @Column(nullable = false)
     private String publisher;
+
+    @Builder.Default
+    private boolean deleted = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;

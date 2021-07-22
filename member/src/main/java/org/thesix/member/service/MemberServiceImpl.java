@@ -146,7 +146,7 @@ public class MemberServiceImpl implements MemberService{
         } else {
             roleSet.add(MemberRole.AUTHOR);
         }
-        memberResult.changeApproval();
+        memberResult.changeApproval(false);
 
         return entityToMeberDTO(memberRepository.save(memberResult));
     }
