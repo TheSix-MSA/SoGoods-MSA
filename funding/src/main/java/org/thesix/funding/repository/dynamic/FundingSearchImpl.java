@@ -8,6 +8,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.thesix.funding.entity.*;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,7 +45,7 @@ public class FundingSearchImpl extends QuerydslRepositorySupport implements Fund
         query.leftJoin(favorite).on(favorite.funding.eq(funding));
 
         // 원하는 값만 select
-        JPQLQuery<Tuple> tuple = query.select(funding, min(product.pno), favorite.countDistinct());
+        JPQLQuery<Tuple> tuple = query.select(funding, favorite.countDistinct());
 
         // 동적 쿼리
         if(keyword != null && type != null) {
@@ -86,7 +88,6 @@ public class FundingSearchImpl extends QuerydslRepositorySupport implements Fund
 
         return new PageImpl<>(arrList, pageable, totalCount);
     }
-
 
 
 }

@@ -5,14 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListFundingDTO {
+public class FavoriteResponseDTO{
 
-    private FundingDTO fundingDTO;  // 펀딩 글 객체
+    private List<FavoriteDTO> favoriteDTOList; // 찜 상세 리스트
 
-    private long favoriteCnt;  // 찜 개수
+    private Long favoriteCnt; // 총 찜 개수
 
 }

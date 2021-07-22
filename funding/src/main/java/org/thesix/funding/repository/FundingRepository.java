@@ -37,6 +37,5 @@ public interface FundingRepository extends JpaRepository<Funding, Long>, Funding
             "where p.funding.fno = :fno and p.removed=false group by p")
     Optional<List<Object[]>> getFundingALLData(Long fno);
 
-    @Query("select f from Funding f where f.authorized=false")
-    Optional<List<Funding>> getNotAuthorized();
+    Page<Funding> findAllByAuthorizedFalseAndRemovedFalse(Pageable pageable);
 }

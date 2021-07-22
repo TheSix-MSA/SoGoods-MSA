@@ -3,6 +3,7 @@ package org.thesix.funding.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.*;
+import org.thesix.funding.common.dto.ListRequestDTO;
 import org.thesix.funding.common.dto.ListResponseDTO;
 import org.thesix.funding.dto.*;
 import org.thesix.funding.service.FundingService;
@@ -56,8 +57,8 @@ public class FundingController {
      * @param email
      * @return List<FundingDTO>
      */
-    @GetMapping("/user/list")
-    public ApiResult<List<FundingDTO>> getFundingList(@RequestParam String email){
+    @GetMapping("/user/list/{email}")
+    public ApiResult<List<FundingDTO>> getFundingList(@PathVariable String email){
 
         return success(fundingService.getFundingList(email));
     }
@@ -91,7 +92,7 @@ public class FundingController {
      * @return ApiResult<Long>  => 추가된 게시판의 총 좋아요 수 반환
      */
     @PostMapping("/fav")
-    public ApiResult<Long> changeFavorite(@RequestBody FavoriteRequestDTO favoriteRequestDTO){
+    public ApiResult<FavoriteResponseDTO> changeFavorite(@RequestBody FavoriteRequestDTO favoriteRequestDTO){
 
         return success(fundingService.insertFavorite(favoriteRequestDTO));
     }
@@ -121,12 +122,13 @@ public class FundingController {
 
     /**
      * 승인되지 않은 게시물 리스트를 가져오는 메서드
+     * + 페이징처리
      * @return List<FundingDTO>
      */
     @GetMapping("/false/list")
-    public ApiResult<List<FundingDTO>> getAuthorizedFalse(){
+    public ApiResult<ListResponseDTO<FundingDTO>> getAuthorizedFalse(ListRequestDTO dto){
 
-        return success(fundingService.getNotAuthorizedFunding());
+        return success(fundingService.getNotAuthorizedFunding(dto));
     }
 
 

@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.thesix.funding.common.dto.ListRequestDTO;
 import org.thesix.funding.common.dto.ListResponseDTO;
 import org.thesix.funding.common.dto.PageMaker;
 import org.thesix.funding.dto.*;
@@ -220,10 +221,10 @@ public class FundingServiceImpl implements FundingService {
     /**
      * 펀딩 글 찜하기 기능
      * @param dto
-     * @return FavoriteDTO
+     * @return FavoriteResponseDTO
      */
     @Override
-    public Long insertFavorite(FavoriteRequestDTO dto){
+    public FavoriteResponseDTO insertFavorite(FavoriteRequestDTO dto){
 
         Funding funding = Funding.builder()
                 .fno(dto.getFno()).build();
@@ -246,8 +247,16 @@ public class FundingServiceImpl implements FundingService {
             favoriteRepository.save(favorite);
         }
 
-        return favoriteRepository.getFavoriteCntById(dto.getFno())
-                .orElseThrow(()-> new NullPointerException("요청하신 정보를 찾을 수 없습니다."));
+        List<Favorite> list = favoriteRepository.getFavorite(dto.getFno())
+                .orElseThrow(()-> new IllegalArgumentException("요청하신 정보를 찾을 수 없습니다."));
+
+        Long favCnt = favoriteRepository.getFavoriteCntById(dto.getFno())
+                .orElseThrow(()-> new IllegalArgumentException("요청하신 정보를 찾을 수 없습니다."));;
+
+
+        return FavoriteResponseDTO.builder()
+                .favoriteDTOList(list.stream().map(f-> entityToDTO(f)).collect(Collectors.toList()))
+                .favoriteCnt(favCnt).build();
     }
 
     /**
@@ -302,12 +311,18 @@ public class FundingServiceImpl implements FundingService {
      * @return List<FundingDTO>
      */
     @Override
-    public List<FundingDTO> getNotAuthorizedFunding() {
+    public ListResponseDTO<FundingDTO> getNotAuthorizedFunding(ListRequestDTO dto) {
 
-        List<Funding> fundings = fundingRepository.getNotAuthorized()
-                .orElseThrow(()-> new IllegalArgumentException("요청하신 정보를 찾을 수 없습니다."));
+        Pageable pageable = dto.getPageable();
 
-        return fundings.stream().map(funding-> entityToDTO(funding)).collect(Collectors.toList());
+        Page<Funding> fundingList = fundingRepository.findAllByAuthorizedFalseAndRemovedFalse(pageable);
+
+        List<FundingDTO> dtoList = fundingList.getContent().stream().map(list -> entityToDTO(list)).collect(Collectors.toList());
+
+        PageMaker pageMaker = new PageMaker(dto.getPage(), dto.getSize(), (int) fundingList.getTotalElements());
+
+        return ListResponseDTO.<FundingDTO>builder().listRequestDTO(dto)
+                .dtoList(dtoList).pageMaker(pageMaker).build();
     }
 
 

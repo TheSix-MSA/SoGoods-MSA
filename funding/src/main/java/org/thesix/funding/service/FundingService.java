@@ -1,5 +1,6 @@
 package org.thesix.funding.service;
 
+import org.thesix.funding.common.dto.ListRequestDTO;
 import org.thesix.funding.common.dto.ListResponseDTO;
 import org.thesix.funding.dto.*;
 import org.thesix.funding.entity.Favorite;
@@ -25,6 +26,7 @@ public interface FundingService {
                 .email(funding.getEmail())
                 .writer(funding.getWriter())
                 .regDate(funding.getRegDate())
+                .modDate(funding.getModDate())
                 .dueDate(funding.getDueDate())
                 .removed(funding.isRemoved())
                 .success(funding.isSuccess())
@@ -48,7 +50,9 @@ public interface FundingService {
                 .name(product.getName())
                 .price(product.getPrice())
                 .des(product.getDes())
-                .fno(funding.getFno()).build();
+                .fno(funding.getFno())
+                .modDate(product.getModDate())
+                .regDate(product.getRegDate()).build();
     }
 
     default Product dtoToEntity(ProductDTO dto, Funding funding){
@@ -69,11 +73,10 @@ public interface FundingService {
     default ListFundingDTO arrToDTO(Object[] arr){
 
         Funding funding = (Funding) arr[0];
-        Long mainProductPno = (Long) arr[1];
-        long favoriteCnt = (long) arr[2];
+        long favoriteCnt = (long) arr[1];
 
         return ListFundingDTO.builder()
-                .fundingDTO(entityToDTO(funding)).mainProductPno(mainProductPno).favoriteCnt(favoriteCnt).build();
+                .fundingDTO(entityToDTO(funding)).favoriteCnt(favoriteCnt).build();
     }
 
     default FundingDTO arrToEntity(Object[] resultArr){
@@ -173,10 +176,10 @@ public interface FundingService {
 
     /**
      * 찜하기 기능을 위한 추상메서드
-     * @param fno, email
+     * @param favoriteRequestDTO
      * @return FavoriteDTO
      */
-    Long insertFavorite(FavoriteRequestDTO favoriteRequestDTO);
+    FavoriteResponseDTO insertFavorite(FavoriteRequestDTO favoriteRequestDTO);
 
 
     /**
@@ -204,5 +207,5 @@ public interface FundingService {
      * 승인되지 않은 게시글만 출력하는 추상메서드
      * @return
      */
-    List<FundingDTO> getNotAuthorizedFunding();
+    ListResponseDTO<FundingDTO> getNotAuthorizedFunding(ListRequestDTO dto);
 }
