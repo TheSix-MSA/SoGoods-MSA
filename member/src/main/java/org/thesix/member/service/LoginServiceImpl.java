@@ -81,7 +81,7 @@ public class LoginServiceImpl implements LoginService{
         }
 
         //랜덤한 4자리 숫자 발생
-        String randomCode = Integer.toString((int)Math.ceil((Math.random()*9999)+1));
+        String randomCode = Integer.toString((int)Math.ceil((Math.random()*8999)+1001));
 
         log.info("랜덤한 4자리 숫자" + randomCode);
         log.info("인풋 이메일" + email);

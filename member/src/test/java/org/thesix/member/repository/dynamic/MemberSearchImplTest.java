@@ -10,7 +10,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.thesix.member.entity.Member;
 import org.thesix.member.entity.MemberRole;
+import org.thesix.member.entity.Novels;
 import org.thesix.member.repository.MemberRepository;
+import org.thesix.member.repository.NovelRepository;
 
 import java.util.Arrays;
 
@@ -20,6 +22,9 @@ class MemberSearchImplTest {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private NovelRepository novelRepository;
 
     @Value("${org.secret.key}")
     private String sk;
@@ -51,7 +56,20 @@ class MemberSearchImplTest {
 
         Member save = memberRepository.save(member);
         log.info(save);
+    }
 
+    @Test
+    public void approveAuthor(){
+
+        Novels novels = Novels.builder()
+                .Image("https://image.aladin.co.kr/product/61/50/coversum/8970127240_2.jpg")
+                .ISBN("9788970127248")
+                .member(Member.builder().email("aaa100@aaa.aa").build())
+                .title("총 균 쇠 (반양장) - 무기.병균.금속은 인류의 운명을 어떻게 바꿨는가, 개정증보판")
+                .publisher("문학사상사")
+                .build();
+
+        novelRepository.save(novels);
 
 
 

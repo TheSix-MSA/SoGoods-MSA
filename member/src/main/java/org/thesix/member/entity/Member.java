@@ -55,6 +55,13 @@ public class Member extends BaseEntity {
     @Builder.Default
     private boolean approval = false;
 
+    private String identificationUrl; // 작가등록시 신분증 주소
+
+    private String nickName; // 작가의 필명(혹은 본명)
+
+    @Column(length = 200)
+    private String introduce; // 작가 본인소개 (50자제한)
+
     @Builder.Default
     @ElementCollection(fetch = FetchType.LAZY)
     private Set<MemberRole> roleSet = new HashSet<>();
