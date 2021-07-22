@@ -34,7 +34,7 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
      * @throws IllegalArgumentException 권한이 없다
      */
     public void checkAuthorization(ServerHttpRequest req) {
-        String accessToken = req.getHeaders().get("Authorization").get(0);
+        String accessToken = req.getHeaders().get("Authorization").get(0).substring(7);
         jwtValidator.validateToken(accessToken);
         List<String> roles = jwtValidator.extractAllClaims(accessToken).get("roles", List.class);
         if(!roles.contains("GENERAL")) { // 권한 체크
