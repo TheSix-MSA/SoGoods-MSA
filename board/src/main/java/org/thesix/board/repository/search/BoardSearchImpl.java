@@ -50,10 +50,10 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
             query.where(condition);
         }
 
-        query.where(board.bno.gt(0L), board.boardType.eq(BoardType.valueOf(boardType)));
+        query.where(board.bno.gt(0L), board.boardType.eq(BoardType.valueOf(boardType)), board.removed.eq(false));
         query.groupBy(board);
         query.offset(pageable.getOffset());
-        query.orderBy(board.bno.desc());
+        query.orderBy(board.modDate.desc());
         query.limit(pageable.getPageSize());
         List<Board> listResult = query.fetch();
 
@@ -91,11 +91,11 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
             query.where(condition);
         }
 
-        query.where(board.bno.gt(0L), board.writer.eq(writer));
+        query.where(board.bno.gt(0L), board.writer.eq(writer), board.removed.eq(false));
         query.groupBy(board);
         query.offset(pageable.getOffset());
         query.limit(pageable.getPageSize());
-        query.orderBy(board.bno.desc());
+        query.orderBy(board.modDate.desc());
 
         List<Board> listResult = query.fetch();
         log.info(listResult);

@@ -23,9 +23,9 @@ public class PageMaker {
         int totalPage = (int)(Math.ceil(totalCount/(double)size));
         //temp end page
         int tempEnd = (int)(Math.ceil(page/5.0)) * 5;
-        this.start = tempEnd - 4;
+        start = tempEnd - 4;
         prev = start > 1;
-        this.end = totalPage > tempEnd ? tempEnd: totalPage;
+        end = totalPage > tempEnd ? tempEnd: totalPage;
         next = totalPage > tempEnd;
         pageList = IntStream.rangeClosed(start, end).boxed().collect(Collectors.toList());
 

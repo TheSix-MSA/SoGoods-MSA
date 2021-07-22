@@ -47,9 +47,8 @@ public class BoardController {
         게시판 글삭제("/board/{boardType}/{bno}")
      */
     @DeleteMapping("/{boardType}/{bno}")
-    public ApiResult<BoardDTO> removed(@PathVariable Long bno, @PathVariable String boardType, @RequestBody BoardDTO dto) {
-        dto.setBno(bno);
-        BoardDTO removedDTO = boardService.remove(dto);
+    public ApiResult<BoardDTO> removed(@PathVariable Long bno, @PathVariable String boardType) {
+        BoardDTO removedDTO = boardService.remove(bno, boardType);
         log.info("Remove BNO: " + bno);
         return success(removedDTO);
     }

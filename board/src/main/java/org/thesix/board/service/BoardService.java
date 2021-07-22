@@ -21,7 +21,7 @@ public interface BoardService {
     /*
         게시판 글삭제
      */
-    BoardDTO remove(BoardDTO dto);
+    BoardDTO remove(Long bno, String boardType);
 
     /*
         게시판 특정 글조회
