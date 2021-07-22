@@ -67,6 +67,10 @@ public class Member extends BaseEntity {
         this.phone = member.getPhone();
         this.address = member.getAddress();
         this.detailAddress = member.getDetailAddress();
+
+    }
+    public void changePassword(Member member) {
+        this.password = member.getPassword();
     }
 
     public void changeRemoved(boolean removed) {

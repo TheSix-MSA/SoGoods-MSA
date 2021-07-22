@@ -76,7 +76,7 @@ public class LoginServiceImpl implements LoginService{
         }
         String pattern = "^[_a-zA-Z0-9-\\.]+@[\\.a-zA-Z0-9-]+\\.[a-zA-Z]+$";
         if(Pattern.matches(pattern,email) == false){
-            throw new IllegalAccessError("올바른 이메일의 형식이 아닙니다.");
+            throw new IllegalArgumentException("올바른 이메일의 형식이 아닙니다.");
         }
 
         //랜덤한 4자리 숫자 발생
@@ -119,12 +119,32 @@ public class LoginServiceImpl implements LoginService{
             message.setSubject("회원가입 인증 메일입니다.");
             message.setText(content.toString(),true);
         } catch (MessagingException e) {
-            e.printStackTrace();
-            throw new IllegalAccessError("serverError");
+            throw new IllegalArgumentException("serverError");
         }
         javaMailSender.send(mimeMessage);
 
         return randomCode;
+    }
+
+    @Override
+    public TokenDTO refreshToken(TokenDTO token) {
+
+        if (token.getAccessToken() != null && token.getRefreshToken() != null) {
+            //토큰을 검증하고 토큰을 재발급한다
+            String jwtToken = jwtUtil.generateJWTToken(token.getEmail(), token.getRoles().stream().collect(Collectors.toList()));
+
+            String refreshTk = jwtUtil.makeRefreshToken(token.getEmail());
+
+
+            return TokenDTO.builder()
+                    .accessToken(jwtToken)
+                    .refreshToken(refreshTk)
+                    .email(token.getEmail())
+                    .roles(token.getRoles())
+                    .build();
+        }
+
+        throw new IllegalArgumentException("재로그인이 필요합니다.");
     }
 
 }

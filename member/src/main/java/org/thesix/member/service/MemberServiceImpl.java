@@ -42,7 +42,7 @@ public class MemberServiceImpl implements MemberService{
             return entityToMeberDTO(member);
         }
 
-        throw new IllegalAccessError("이미 존재하는 Email 입니다.");
+        throw new IllegalArgumentException("이미 존재하는 Email 입니다.");
     }
 
     /**
@@ -88,7 +88,13 @@ public class MemberServiceImpl implements MemberService{
 
         Member member = memberRepository.findById(dto.getEmail()).orElseThrow(() -> new NullPointerException("해당하는 사용자가 없습니다."));
 
-        member.changeMemberInfo(memberDTOToEntity(dto));
+        if(dto.getPassword() != null) {
+            dto.setPassword(encoder.encode(dto.getPassword()));
+            member.changePassword(memberDTOToEntity(dto));
+        }else{
+            dto.setPassword(member.getPassword());
+            member.changeMemberInfo(memberDTOToEntity(dto));
+        }
 
         Member inputResult = memberRepository.save(member);
 

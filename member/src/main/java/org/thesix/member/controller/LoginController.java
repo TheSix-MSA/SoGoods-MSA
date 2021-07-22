@@ -44,4 +44,16 @@ public class LoginController {
 
         return success(map);
     }
+
+
+    /**
+     *
+     * @param token
+     * @return
+     */
+    @PostMapping("/refresh")
+    public ApiResult<TokenDTO> refresh(@RequestBody TokenDTO token){
+
+        return success(loginService.refreshToken(token));
+    }
 }

@@ -58,7 +58,6 @@ public interface MemberService {
     default MemberDTO entityToMeberDTO(Member member) {
         return MemberDTO.builder()
                 .email(member.getEmail())
-                .password(member.getPassword())
                 .name(member.getName())
                 .gender(member.getGender())
                 .birth(member.getBirth())

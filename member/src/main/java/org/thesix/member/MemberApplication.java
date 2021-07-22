@@ -17,12 +17,6 @@ public class MemberApplication {
         SpringApplication.run(MemberApplication.class, args);
     }
 
-    @Bean
-    @LoadBalanced
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-
 }
 
 

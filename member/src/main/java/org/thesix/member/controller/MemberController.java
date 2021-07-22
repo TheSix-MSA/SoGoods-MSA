@@ -24,12 +24,13 @@ public class MemberController {
     private final MemberService memberService;
 
     /**
-     *회원가입
+     * 회원가입
+     *
      * @param dto 회원가입정보(멤버의 DTO)
      * @return String email 이메일
      */
     @PostMapping("/")
-    public ApiResult<MemberDTO> SignUp(@RequestBody MemberDTO dto){
+    public ApiResult<MemberDTO> SignUp(@RequestBody MemberDTO dto) {
         dto.addMemberRole(MemberRole.GENERAL);
         MemberDTO resultDTO = memberService.register(dto);
         return success(resultDTO);
@@ -37,11 +38,12 @@ public class MemberController {
 
     /**
      * 회원 조회
+     *
      * @param email 검색할 유저의 이메일
      * @return jsonUser 반환할 유저의 계정정보
      */
     @GetMapping("/{email}")
-    public ApiResult<MemberDTO> getUser(@PathVariable("email") String email){
+    public ApiResult<MemberDTO> getUser(@PathVariable("email") String email) {
 
         MemberDTO dto = memberService.readUser(email);
         return success(dto);
@@ -50,6 +52,7 @@ public class MemberController {
 
     /**
      * 회원아이디 삭제
+     *
      * @param email 삭제할 유저의 이메일
      * @return 상태메세지
      */
@@ -67,22 +70,25 @@ public class MemberController {
 
     /**
      * 회원정보변경
+     *
      * @param dto
      * @return
      */
     @PutMapping("/")
-    public ApiResult<MemberDTO> modify(@RequestBody MemberDTO dto){
+    public ApiResult<MemberDTO> modify(@RequestBody MemberDTO dto) {
+        log.info((dto));
         return success(memberService.modify(dto));
     }
 
 
     /**
      * 회원목록 조회
+     *
      * @param dto page, size, 검색어, 검색타입
      * @return 회원List, PageMaker, 요청파라미터
      */
     @GetMapping("/list")
-    public ApiResult<ResponseListDTO> readList(RequestListDTO dto){
+    public ApiResult<ResponseListDTO> readList(RequestListDTO dto) {
         return success(memberService.readList(dto));
     }
 
@@ -93,7 +99,7 @@ public class MemberController {
      * @return MemberDTO
      */
     @PostMapping("/role/{email}")
-    public ApiResult<MemberDTO> changeRole(@PathVariable("email") String email){
+    public ApiResult<MemberDTO> changeRole(@PathVariable("email") String email) {
         return success(memberService.changeRole(email));
     }
 
@@ -104,7 +110,7 @@ public class MemberController {
      * @return MemberDTO
      */
     @PostMapping("/ban/{email}")
-    public ApiResult<MemberDTO> changeBanned(@PathVariable("email") String email){
+    public ApiResult<MemberDTO> changeBanned(@PathVariable("email") String email) {
         return success(memberService.changeBanned(email));
     }
 
