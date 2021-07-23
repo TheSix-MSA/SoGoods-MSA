@@ -86,11 +86,12 @@ public class AttachServiceImpl implements AttachService {
     @Override
     public List<UuidResponseDTO> uplaodtemp(MultipartFile[] files, String tableName, String keyValue, Integer mainIdx) {
         List<UuidResponseDTO> list = new ArrayList<>();
+        if(files.length == 0)return null;
         for (int i=0; i<files.length; i++) {
             MultipartFile file = files[i];
             System.out.println("file.getContentType(): " + file.getContentType());
             if (file.getContentType().startsWith("image") == false) {
-//              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+              throw new IllegalArgumentException("이미지 파일이 아닙니다.");
             }
 
             //브라우저별 파일 오리지널파일이름 처리
