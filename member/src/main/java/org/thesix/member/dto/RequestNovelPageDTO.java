@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RequestNovelPageDTO {
     private String email;
-    private int page;
-    private int size;
+    @Builder.Default
+    private int page = 1;
+    @Builder.Default
+    private int size = 5;
 }

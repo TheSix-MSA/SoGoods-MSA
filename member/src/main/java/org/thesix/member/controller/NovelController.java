@@ -59,7 +59,7 @@ public class NovelController {
 
     @GetMapping("/novels")
     public ApiResult<ResponseNovelList> getNovels(RequestNovelPageDTO dto){
-
+        log.info(dto);
         return success(novelService.getNovelList(dto));
     }
 
