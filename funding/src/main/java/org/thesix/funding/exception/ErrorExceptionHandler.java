@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import static org.thesix.funding.util.ApiUtil.ApiResult;
 import static org.thesix.funding.util.ApiUtil.error;
 
-@RestControllerAdvice
+@RestController
 @Log4j2
 public class ErrorExceptionHandler {
 

@@ -6,8 +6,6 @@ import org.thesix.funding.dto.*;
 import org.thesix.funding.entity.Favorite;
 import org.thesix.funding.entity.Funding;
 import org.thesix.funding.entity.Product;
-
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -98,12 +96,6 @@ public interface FundingService {
                 .content(modDTO.getContent())
                 .email(modDTO.getEmail())
                 .writer(modDTO.getWriter())
-                .dueDate(modDTO.getDueDate())
-                .removed(modDTO.isRemoved())
-                .success(modDTO.isSuccess())
-                .totalAmount(modDTO.getTotalAmount())
-                .targetAmount(modDTO.getTargetAmount())
-                .authorized(modDTO.isAuthorized())
                 .build();
     }
 
@@ -150,7 +142,7 @@ public interface FundingService {
      * @param registerDTO
      * @return FundingDTO
      */
-    FundingDTO register(FundingRegisterDTO registerDTO);
+    FundingRegResponseDTO register(FundingRegisterDTO registerDTO);
 
     /**
      * 글 하나를 가져오는 추상메서드
@@ -163,7 +155,7 @@ public interface FundingService {
      * 글 수정처리를 위한 추상메서드
      * @param fno
      * @param modDTO
-     * @return FundingResponseDTO
+     * @return FundingRegResponseDTO
      */
     FundingResponseDTO modify(Long fno, FundingModDTO modDTO);
 

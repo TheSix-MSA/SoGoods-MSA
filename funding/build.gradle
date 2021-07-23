@@ -36,9 +36,12 @@ dependencies {
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.4'
 
-
     //eureka-client
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+    //swagger3
+    implementation "io.springfox:springfox-boot-starter:3.0.0"
+    implementation "io.springfox:springfox-swagger-ui:3.0.0"
 }
 
 dependencyManagement {

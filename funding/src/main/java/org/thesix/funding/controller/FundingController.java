@@ -22,10 +22,10 @@ public class FundingController {
     /**
      * 글 정보를 입력받아 저장하는 메서드
      * @param registerDTO
-     * @return ApiResult<FundingDTO>
+     * @return ApiResult<FundingRegResponseDTO>
      */
     @PostMapping("/")
-    public ApiResult<FundingDTO> register(@RequestBody FundingRegisterDTO registerDTO){
+    public ApiResult<FundingRegResponseDTO> register(@RequestBody FundingRegisterDTO registerDTO){
 
         return success(fundingService.register(registerDTO));
     }

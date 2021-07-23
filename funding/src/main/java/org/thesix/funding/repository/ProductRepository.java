@@ -17,6 +17,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("select p from Product p where p.pno = :pno")
     Optional<Product> getOneProduct(Long pno);
 
+    @Query("select p from Product p where p.funding.fno = :fno")
+    Optional<List<Product>> getPnoList(Long fno);
+
 
 
 }

@@ -53,11 +53,11 @@ public class FundingServiceImpl implements FundingService {
     /**
      * 글 등록 처리를 위한 메서드
      * @param registerDTO
-     * @return FundingDTO
+     * @return FundingRegResponseDTO
      */
     @Transactional
     @Override
-    public FundingDTO register(FundingRegisterDTO registerDTO) {
+    public FundingRegResponseDTO register(FundingRegisterDTO registerDTO) {
 
         // FundingDTO -> Entity
         Funding funding = dtoToEntity(registerDTO);
@@ -76,7 +76,18 @@ public class FundingServiceImpl implements FundingService {
 
             productRepository.save(product);
         }
-        return entityToDTO(funding);
+
+
+        List<Product> products = productRepository.getPnoList(funding.getFno())
+                .orElseThrow(()-> new IllegalArgumentException("요청하신 정보를 찾을 수 없습니다."));
+
+        List<Long> num = new ArrayList<>();
+
+        for(Product p : products){
+            num.add(p.getPno());
+        }
+
+        return FundingRegResponseDTO.builder().fundingDTO(entityToDTO(funding)).productNums(num).build();
     }
 
 
