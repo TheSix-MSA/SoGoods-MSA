@@ -87,15 +87,15 @@ public class AttachServiceImpl implements AttachService {
     @Override
     public List<UuidResponseDTO> uplaodtemp(MultipartFile[] files, String tableName, String keyValue, Integer mainIdx) {
         List<UuidResponseDTO> list = new ArrayList<>();
-        System.out.println(Arrays.toString(files));
+        log.info("Arrays.toString(files)" + Arrays.toString(files));
         if(files == null)return null;
         for (int i=0; i<files.length; i++) {
             MultipartFile file = files[i];
-            System.out.println(file.getName());
-            System.out.println(file.getSize());
-            System.out.println(file.getOriginalFilename());
+            log.info(file.getName());
+            log.info(file.getSize());
+            log.info(file.getOriginalFilename());
+            log.info("file.getContentType(): " + file.getContentType());
 
-            System.out.println("file.getContentType(): " + file.getContentType());
             if (file.getContentType()==null || file.getContentType().startsWith("image") == false) {
               throw new IllegalArgumentException("이미지 파일이 아닙니다.");
             }

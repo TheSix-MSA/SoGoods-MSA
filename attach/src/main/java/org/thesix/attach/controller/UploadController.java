@@ -25,10 +25,8 @@ import static org.thesix.util.ApiUtil.*;
  * @author 도원진
  */
 @RestController
-//
 @Log4j2
 @RequestMapping("/attach")
-@CrossOrigin
 @RequiredArgsConstructor
 public class UploadController {
     @Value("${spring.servlet.multipart.location}")
