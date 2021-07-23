@@ -2,15 +2,20 @@ package org.thesix.member.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.thesix.member.dto.AuthorInfoDTO;
-import org.thesix.member.dto.NovelsDTO;
-import org.thesix.member.dto.RequestAuthorDTO;
+import org.thesix.member.dto.*;
 import org.thesix.member.entity.Member;
 import org.thesix.member.entity.Novels;
 import org.thesix.member.repository.MemberRepository;
 import org.thesix.member.repository.NovelRepository;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -53,6 +58,28 @@ public class NovelServiceImpl implements NovelService{
                 .identificationUrl(member.getIdentificationUrl())
                 .introduce(member.getIntroduce())
                 .nickName(member.getNickName())
+                .build();
+    }
+
+    @Override
+    public ResponseNovelList getNovelList(RequestNovelPageDTO dto) {
+
+        Pageable pageable = PageRequest.of(dto.getPage(), dto.getSize(), Sort.by("nno").descending());
+        Page<Novels> onesNovels = novelRepository.getOnesNovels(pageable, Member.builder().email(dto.getEmail()).build());
+        List<NovelsDTO> novelList = onesNovels.stream().map(novels -> NovelsDTO.builder()
+                .email(novels.getMember().getEmail())
+                .image(novels.getImage())
+                .isbn(novels.getIsbn())
+                .publisher(novels.getPublisher())
+                .nno(novels.getNno())
+                .build()
+        ).collect(Collectors.toList());
+
+        PageMaker pageMaker = new PageMaker(pageable,RequestListDTO.builder().page(dto.getPage()).size(dto.getSize()).build(),onesNovels.getTotalPages());
+
+        return ResponseNovelList.builder()
+                .novelsDTO(novelList)
+                .pageMaker(pageMaker)
                 .build();
     }
 

@@ -8,6 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 import org.thesix.member.dto.MemberDTO;
 import org.thesix.member.entity.Member;
 import org.thesix.member.entity.MemberRole;
@@ -76,6 +78,16 @@ class MemberSearchImplTest {
     @Test
     public void approveAuthor(){
         Member member = memberRepository.findByEmail("diqksk@naver.com").orElseThrow(() -> new IllegalArgumentException());
+
+    }
+
+    @Test
+    public void test4(){
+        Pageable pageable = PageRequest.of(1, 5, Sort.by("nno").descending());
+
+        Page<Novels> onesNovels = novelRepository.getOnesNovels(pageable, Member.builder().email("diqksk@naver.com").build());
+        log.info("악앙강ㄱ@@@@@@@@@@@@@@@@@@@@");
+        onesNovels.getContent().forEach(novels -> log.info(novels));
 
     }
 

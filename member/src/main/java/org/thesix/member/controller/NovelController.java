@@ -3,9 +3,7 @@ package org.thesix.member.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.*;
-import org.thesix.member.dto.AuthorInfoDTO;
-import org.thesix.member.dto.NovelsDTO;
-import org.thesix.member.dto.RequestAuthorDTO;
+import org.thesix.member.dto.*;
 import org.thesix.member.service.NovelService;
 import static org.thesix.member.util.ApiUtil.ApiResult;
 import static org.thesix.member.util.ApiUtil.success;
@@ -18,6 +16,12 @@ public class NovelController {
 
     private final NovelService novelService;
 
+    /**
+     * 작품등록
+     *
+     * @param dto
+     * @return
+     */
     @PostMapping("/novels")
     public ApiResult<NovelsDTO> registerNovels(@RequestBody NovelsDTO dto){
         log.info(dto);
@@ -52,5 +56,12 @@ public class NovelController {
         log.info(dto);
         return success(novelService.requestBeAuthor(dto));
     }
+
+    @GetMapping("/novels")
+    public ApiResult<ResponseNovelList> getNovels(RequestNovelPageDTO dto){
+
+        return success(novelService.getNovelList(dto));
+    }
+
 
 }

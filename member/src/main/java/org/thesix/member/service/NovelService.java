@@ -1,8 +1,6 @@
 package org.thesix.member.service;
 
-import org.thesix.member.dto.AuthorInfoDTO;
-import org.thesix.member.dto.NovelsDTO;
-import org.thesix.member.dto.RequestAuthorDTO;
+import org.thesix.member.dto.*;
 import org.thesix.member.entity.Member;
 import org.thesix.member.entity.Novels;
 
@@ -10,6 +8,8 @@ public interface NovelService {
     NovelsDTO registerNovel(NovelsDTO dto);
 
     AuthorInfoDTO requestBeAuthor(RequestAuthorDTO dto);
+
+    ResponseNovelList getNovelList(RequestNovelPageDTO dto);
 
     default Novels dtoToEntity(NovelsDTO dto){
         return Novels.builder()
