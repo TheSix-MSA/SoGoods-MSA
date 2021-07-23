@@ -3,6 +3,7 @@ package org.thesix.member.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.thesix.member.dto.AuthorInfoDTO;
 import org.thesix.member.dto.NovelsDTO;
 import org.thesix.member.dto.RequestAuthorDTO;
@@ -25,6 +26,7 @@ public class NovelServiceImpl implements NovelService{
         return entityToNovels(novels);
     }
 
+    @Transactional
     @Override
     public AuthorInfoDTO requestBeAuthor(RequestAuthorDTO dto) {
 
@@ -33,23 +35,24 @@ public class NovelServiceImpl implements NovelService{
         member.changeAuthor(dto.getAuthorInfoDTO());
 
         member.changeApproval(true);
-
-        Member author = memberRepository.save(member);
+//
+//        Member author = memberRepository.save(member);
 
         NovelsDTO novels = dto.getNovelsDTO();
 
         novelRepository.save(Novels.builder()
                 .member(Member.builder().email(dto.getNovelsDTO().getEmail()).build())
                 .deleted(novels.isDeleted())
+                .image(novels.getImage())
                 .isbn(novels.getIsbn())
                 .publisher(novels.getPublisher())
                 .title(novels.getTitle())
                 .build());
 
         return AuthorInfoDTO.builder()
-                .identificationUrl(author.getIdentificationUrl())
-                .introduce(author.getIntroduce())
-                .nickName(author.getNickName())
+                .identificationUrl(member.getIdentificationUrl())
+                .introduce(member.getIntroduce())
+                .nickName(member.getNickName())
                 .build();
     }
 
