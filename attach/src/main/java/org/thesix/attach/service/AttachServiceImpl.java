@@ -41,6 +41,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.file.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -86,11 +87,16 @@ public class AttachServiceImpl implements AttachService {
     @Override
     public List<UuidResponseDTO> uplaodtemp(MultipartFile[] files, String tableName, String keyValue, Integer mainIdx) {
         List<UuidResponseDTO> list = new ArrayList<>();
-        if(files.length == 0)return null;
+        System.out.println(Arrays.toString(files));
+        if(files == null)return null;
         for (int i=0; i<files.length; i++) {
             MultipartFile file = files[i];
+            System.out.println(file.getName());
+            System.out.println(file.getSize());
+            System.out.println(file.getOriginalFilename());
+
             System.out.println("file.getContentType(): " + file.getContentType());
-            if (file.getContentType().startsWith("image") == false) {
+            if (file.getContentType()==null || file.getContentType().startsWith("image") == false) {
               throw new IllegalArgumentException("이미지 파일이 아닙니다.");
             }
 
