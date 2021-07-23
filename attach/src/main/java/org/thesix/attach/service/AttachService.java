@@ -15,9 +15,9 @@ import java.util.List;
 
 public interface AttachService {
 
-    void uplaodtemp(MultipartFile[] files, String tableName, String keyValue, Integer mainIdx) throws IOException;
+    List<UuidResponseDTO> uplaodtemp(MultipartFile[] files, String tableName, String keyValue, Integer mainIdx) throws IOException;
 
-    void registerConfimedImages(AttachConfimRequestDTO requestDTO) throws IOException;
+    List<UuidResponseDTO> registerConfimedImages(AttachConfimRequestDTO requestDTO) throws IOException;
 
     ResponseEntity<byte[]> getTempFile(String filename);
 

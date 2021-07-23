@@ -84,8 +84,8 @@ public class AttachServiceImpl implements AttachService {
     }
 
     @Override
-    public void uplaodtemp(MultipartFile[] files, String tableName, String keyValue, Integer mainIdx) {
-
+    public List<UuidResponseDTO> uplaodtemp(MultipartFile[] files, String tableName, String keyValue, Integer mainIdx) {
+        List<UuidResponseDTO> list = new ArrayList<>();
         for (int i=0; i<files.length; i++) {
             MultipartFile file = files[i];
             System.out.println("file.getContentType(): " + file.getContentType());
@@ -182,7 +182,8 @@ public class AttachServiceImpl implements AttachService {
             Attach attach = attachBuilder.build();
 
             //DB에 INSERT
-            attachRepository.save(attach);
+            Attach save = attachRepository.save(attach);
+            list.add(entityToDTO(save));
 
             try {
                 Files.delete(Path.of(severSideOriginFilePath));
@@ -194,17 +195,21 @@ public class AttachServiceImpl implements AttachService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
 
+
+        }
+        return list;
 
     }
 
     @Override
     @Transactional
-    public void registerConfimedImages(AttachConfimRequestDTO requestDTO) throws IOException {
+    public List<UuidResponseDTO> registerConfimedImages(AttachConfimRequestDTO requestDTO) throws IOException {
         String tableName = requestDTO.getTableName();
         String keyValue = requestDTO.getKeyValue();
         String mainFileName = requestDTO.getMainFileName();
+
+        List<UuidResponseDTO> list = new ArrayList<>();
 
         for (String tempFileName : requestDTO.getTempFileNameList()) {
             log.info(tempFileName);
@@ -266,7 +271,9 @@ public class AttachServiceImpl implements AttachService {
             Attach attach = attachBuilder.build();
 
             //DB에 INSERT
-            attachRepository.save(attach);
+            Attach save = attachRepository.save(attach);
+
+
 
             log.info(tempPath);
             log.info(s_tempPath);
@@ -281,8 +288,9 @@ public class AttachServiceImpl implements AttachService {
             예상결과만 리턴
             실제 원하는 행동은 안하고......
              */
-            
+            list.add(entityToDTO(save));
         }
+        return list;
     }
 
 

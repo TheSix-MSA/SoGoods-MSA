@@ -44,17 +44,17 @@ public class UploadController {
      * @param files URL: http://localhost:8022/attach/upload/temp
      */
     @PostMapping("/upload")
-    public ApiResult<Boolean> uplaodtemp(MultipartFile[] files, String tableName, String keyValue, Integer mainIdx) {
+    public ApiResult<List<UuidResponseDTO>> uplaodtemp(MultipartFile[] files, String tableName, String keyValue, Integer mainIdx) {
         makeFolder();
-        List<UploadResultDTO> resultDTOList = null;
+        List<UuidResponseDTO> res = null;
         try {
-            attachService.uplaodtemp(files, tableName, keyValue, mainIdx);
+            res = attachService.uplaodtemp(files, tableName, keyValue, mainIdx);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         //클라이언트가 업로드 된 이미지에 접근할 수 있도록 정보 응답
-        return success(true);
+        return success(res);
     }
 
     /**
@@ -65,14 +65,12 @@ public class UploadController {
      * @throws IOException 요청JSON 포멧은 아래 파라미터 AttachConfimRequestDTO 클래스 주석참고
      */
     @PostMapping("/upload/confirm")
-    public ApiResult<Boolean> uplaodConfirm(@RequestBody AttachConfimRequestDTO requestDTO) throws IOException {
+    public ApiResult<List<UuidResponseDTO>> uplaodConfirm(@RequestBody AttachConfimRequestDTO requestDTO) throws IOException {
 
-        attachService.registerConfimedImages(requestDTO);
-
-        List<UploadResultDTO> resultDTOList = new ArrayList<>();
+        List<UuidResponseDTO> res =  attachService.registerConfimedImages(requestDTO);
 
         //클라이언트가 업로드 된 이미지에 접근할 수 있도록 정보 응답
-        return success(true);
+        return success(res);
 
     }
 
