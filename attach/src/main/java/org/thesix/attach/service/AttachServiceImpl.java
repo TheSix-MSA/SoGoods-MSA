@@ -390,7 +390,7 @@ public class AttachServiceImpl implements AttachService {
         }else{
             dtoBuilder.key(Long.parseLong(attach.getKeyValue()));
         }
-
+        dtoBuilder.fileName(attach.getOriginalName());
         dtoBuilder.imgSrc(awsHost + "/" + attach.getOriginalName()).build();
         dtoBuilder.thumbSrc(awsHost + "/s_" + attach.getOriginalName()).build();
 
