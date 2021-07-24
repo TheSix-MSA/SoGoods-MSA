@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Data
@@ -25,9 +26,11 @@ public class OrderSaveRequestDTO {
 
     private String receiverRequest; // 수령인의 요청사항 ex) 벨 누르지말고 그냥 두고 가라던지 등
 
-    private String tid; // 계좌번호 등 결제 수단. 카카오 페이에선 TID라는 걸 제공하는 듯.
+    private String tid;
 
-    private Map<Long, Long> products = new HashMap<>();
+    private String orderId;
+
+    private Map<Long, Long> products = new LinkedHashMap<>();
     /**
      * key ==> product id
      * value ==> number of products

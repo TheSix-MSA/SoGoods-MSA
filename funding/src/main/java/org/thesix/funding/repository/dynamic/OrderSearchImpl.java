@@ -17,7 +17,7 @@ public class OrderSearchImpl extends QuerydslRepositorySupport implements OrderS
     public OrderSearchImpl(){super(Order.class);}
 
     @Override
-    public Page<Object[]> getSearchedOrder(String email, String searchCond, Pageable pageable) {
+    public Page<Object[]> getSearchedOrder(String email, String sortCond, Pageable pageable) {
         QOrder order = QOrder.order;
         QOrderDetails orderDetails = QOrderDetails.orderDetails;
         QProduct product = QProduct.product;
@@ -28,13 +28,7 @@ public class OrderSearchImpl extends QuerydslRepositorySupport implements OrderS
 
         JPQLQuery<Tuple> tuple = query.select(order, orderDetails, product);
 
-        if(searchCond!=null && !searchCond.equals("")){
-            /***
-             * 결제 조건 추가하는 부분. 일단 페이징부터 하고 해보자
-             */
-            System.out.println("Im here!");
-        }
-
+        tuple.where(order.ono.gt(0));
         tuple.where(order.buyer.eq(email));
         tuple.orderBy(order.modDate.desc());
         tuple.offset(pageable.getOffset());
@@ -47,5 +41,28 @@ public class OrderSearchImpl extends QuerydslRepositorySupport implements OrderS
         long totalCount = tuple.fetchCount();
 
         return new PageImpl<>(arrList, pageable, totalCount);
+    }
+
+    @Override
+    public List<Object[]> getDetailedOrder(Long ono) {
+        QOrder order = QOrder.order;
+        QOrderDetails orderDetails = QOrderDetails.orderDetails;
+        QProduct product = QProduct.product;
+        QFunding funding = QFunding.funding;
+
+        JPQLQuery<Order> query = from(order);
+        query.leftJoin(orderDetails).on(orderDetails.order.eq(order));
+        query.leftJoin(product).on(orderDetails.product.eq(product));
+        query.leftJoin(funding).on(product.funding.eq(funding));
+
+        JPQLQuery<Tuple> tuple = query.select(order, orderDetails, product, funding);
+
+        tuple.where(order.ono.eq(ono));
+
+        List<Tuple> list = tuple.fetch();
+
+        List<Object[]> arrList = list.stream().map(tuple1-> tuple1.toArray()).collect(Collectors.toList());
+
+        return arrList;
     }
 }

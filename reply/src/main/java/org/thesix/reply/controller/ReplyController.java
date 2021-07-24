@@ -53,7 +53,7 @@ public class ReplyController {
     }
 
     @DeleteMapping("/{rno}")
-    public ApiResult<Map<String,String>> updateReply(@PathVariable Long rno){
+    public ApiResult<Map<String,String>> deleteReply(@PathVariable Long rno){
         /**
          * 댓글 삭제 컨트롤러.
          * 대댓글도 이 컨트롤러를 통해서 삭제 처리한다.

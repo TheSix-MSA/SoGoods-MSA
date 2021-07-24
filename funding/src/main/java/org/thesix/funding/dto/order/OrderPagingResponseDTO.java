@@ -14,7 +14,5 @@ import java.util.List;
 @NoArgsConstructor
 public class OrderPagingResponseDTO {
     private List<OrderBriefResponseDTO> resDto;
-    private List<Integer> totalPrices;
-    private List<String> prodsNames;
     private PageMaker pageMaker;
 }

@@ -6,13 +6,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.thesix.funding.dto.funding.FundingDTO;
+import org.thesix.funding.dto.order.ProductInOrderDTO;
+import org.thesix.funding.entity.Funding;
 import org.thesix.funding.entity.Order;
 import org.thesix.funding.entity.OrderDetails;
 import org.thesix.funding.entity.Product;
+import org.thesix.funding.service.OrderService;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @SpringBootTest
 public class OrderRepoTests {
@@ -20,6 +22,10 @@ public class OrderRepoTests {
     private OrderRepository orderRepository;
     @Autowired
     private OrderDetailsRepository orderDetailsRepository;
+    @Autowired
+    private FundingRepository fundingRepository;
+    @Autowired
+    private OrderService orderService;
 
     @Test
     public void insertTest() {
@@ -47,5 +53,29 @@ public class OrderRepoTests {
         Page<Object[]> res = orderRepository.getSearchedOrder("buyer@hogang.mem","",pageable);
 
         res.getContent().forEach(obj -> System.out.println(Arrays.toString(obj)));
+    }
+
+    @Test
+    public void testReadOne(){
+        List<Object[]> res = orderRepository.getDetailedOrder(1L);
+
+        if(res.size()==0){
+            throw new IllegalArgumentException("해당 결제 내역이 존재하지 않습니다.");
+        }
+
+        Order order = (Order)res.get(0)[0];
+        Long totalPrice = 0L;
+        Set<ProductInOrderDTO> prods = new HashSet<>();
+        Funding fundInfo = (Funding)res.get(0)[3];
+
+//                fundingRepository.getFundingById(((Product)res.get(0)[2])
+//                .getFunding().getFno()).orElseThrow(() -> new NullPointerException("존재하지 않는 펀딩입니다"));
+
+        System.out.println(fundInfo);
+
+        for(Object[] obj: res){
+            totalPrice += ((Product)obj[2]).getPrice();
+            prods.add(orderService.produdctEntityToInOrderDTO((Product)obj[2], ((OrderDetails)obj[1]).getNumProds()));
+        }
     }
 }
