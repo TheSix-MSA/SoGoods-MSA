@@ -48,6 +48,14 @@ public class LoginServiceImpl implements LoginService{
         boolean matchResult = encoder.matches(dto.getPassword(), member.getPassword());
 
         if (matchResult) {
+
+            if(member.isRemoved()==true){
+                throw new IllegalArgumentException("삭제된 회원입니다.");
+            }else if(member.isBanned()==true){
+                throw new IllegalArgumentException("정지된 회원입니다.");
+            }
+
+
             String jwtToken = jwtUtil.generateJWTToken(member.getEmail(), member.getRoleSet().stream().collect(Collectors.toList()));
 
             String refreshTk = jwtUtil.makeRefreshToken(dto.getEmail());
@@ -111,11 +119,11 @@ public class LoginServiceImpl implements LoginService{
         content.append("< h1 style='text-align: center; color: #414141;'><span style='color: #8FAB49;'>SoGoods</span>에 오신것을 환영합니다.</h1>");
         content.append(" </div>");
         content.append("<div>");
-        content.append(" <div>");
-        content.append(" </div>");
+        content.append("<div>");
+        content.append("</div>");
         content.append("<div><strong>인증번호 : </strong><strong style='color:red'>"+randomCode+"</strong></div>");
         content.append("</div>");
-        content.append(" </div>");
+        content.append("</div>");
         content.append("</div>");
         content.append("</div>");
         content.append("</body>");
