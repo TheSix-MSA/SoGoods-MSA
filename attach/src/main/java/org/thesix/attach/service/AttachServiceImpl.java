@@ -40,10 +40,7 @@ import java.io.*;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
 
@@ -119,7 +116,7 @@ public class AttachServiceImpl implements AttachService {
                 //  2. 썸네일
 
                 File thumbnailFile = new File(serverSideThumbnailFilePath);
-                Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 100, 100);
+                Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 130, 130);
 
             } catch (IOException e) {
                 throw new InternalException();
@@ -366,9 +363,30 @@ public class AttachServiceImpl implements AttachService {
         String type = requestDTO.getType();
         String[] keyValues = requestDTO.getKeyValues();
         if(keyValues.length == 0)throw new IllegalArgumentException("파라미터 키,값에 문제가 있습니다");
-        List<Attach> res = attachRepository.getAttachesByValues(type, keyValues);
 
-        return res.stream().map((attach -> entityToDTO(attach))).collect(Collectors.toList());
+
+        List<Attach> resFromDB = attachRepository.getAttachesByValues(type, keyValues);
+        Map<String, Attach> map = new HashMap<>();
+
+        for(Attach el : resFromDB){
+            map.put(el.getKeyValue(), el);
+        }
+
+        List<UuidResponseDTO> ret = new ArrayList<>();
+        for(String keyValue : keyValues){
+            if(map.containsKey(keyValue)){
+                Attach tmp = map.get(keyValue);
+                ret.add(entityToDTO(tmp));
+            }
+            else {
+                UuidResponseDTO dto = UuidResponseDTO.builder()
+                        .key(keyValue)
+                        .build();
+                ret.add(dto);
+            }
+        }
+
+        return ret;
     }
 
     @Override
