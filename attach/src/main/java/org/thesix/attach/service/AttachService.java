@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
 
 public interface AttachService {
 
@@ -25,7 +26,8 @@ public interface AttachService {
 
     List<UuidResponseDTO> getUuidInBoardList(UuidRequestDTO requestDTO);
 
-    List<UuidResponseDTO> getUuidInBoard(UuidRequestDTO requestDTO);
+    Map<String, List<UuidResponseDTO>> getUuidList(UuidRequestDTO requestDTO);
+
 
 
 }

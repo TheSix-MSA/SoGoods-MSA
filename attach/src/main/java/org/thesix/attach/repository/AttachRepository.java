@@ -17,15 +17,16 @@ public interface AttachRepository extends JpaRepository<Attach, Long> {
 
 
     @Query("SELECT a FROM Attach a " +
-            "WHERE a.main = :main " +
+            "WHERE a.main = true " +
             "   AND a.tableName = :tableName" +
             "   AND a.keyValue IN (:keyValues)")
-    List<Attach> getAttachesByValues(Boolean main, String tableName, String[] keyValues);
+    List<Attach> getAttachesByValues(String tableName, String[] keyValues);
 
     @Query("SELECT a FROM Attach a " +
-            "WHERE " +
-            "       a.tableName = :tableName" +
-            "   AND a.keyValue = :keyValue")
-    List<Attach> getAttachesByValue(String tableName, String keyValue);//특정 게시물의 모든 사진들
+            "WHERE a.main IN (:mainList) " +
+            "   AND a.tableName = :tableName" +
+            "   AND a.keyValue = :keyValue" +
+            " ORDER BY a.main DESC ")
+    List<Attach> getAttachesByValue(Boolean[] mainList, String tableName, String keyValue);
 
 }

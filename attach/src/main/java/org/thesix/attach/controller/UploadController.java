@@ -99,19 +99,17 @@ public class UploadController {
         return success(true);
     }
 
-    //s3 조회
+    //s3 조회 One to One
     @GetMapping("/list/uuid")
     public ApiResult<List<UuidResponseDTO>> getUuidInList(UuidRequestDTO requestDTO){
-        log.info(requestDTO);
         List<UuidResponseDTO> res = attachService.getUuidInBoardList(requestDTO);
         return success(res);
     }
 
-    @DeleteMapping("/detail/uuid")
-    public ApiResult<List<UuidResponseDTO>> getUuidInDetail(UuidRequestDTO requestDTO){
-
-        List<UuidResponseDTO> res = attachService.getUuidInBoard(requestDTO);
-
+    //s3 조회 One to Many
+    @GetMapping("/list/uuidlist")
+    public ApiResult<Map<String, List<UuidResponseDTO>>> getUuidList(UuidRequestDTO requestDTO){
+        Map<String, List<UuidResponseDTO>> res = attachService.getUuidList(requestDTO);
         return success(res);
     }
 

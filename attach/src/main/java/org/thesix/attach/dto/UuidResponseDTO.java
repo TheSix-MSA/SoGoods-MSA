@@ -15,6 +15,8 @@ public class UuidResponseDTO {
 
     private String fileName;
 
+    private Boolean main;
+
     private String imgSrc;
 
     private String thumbSrc;

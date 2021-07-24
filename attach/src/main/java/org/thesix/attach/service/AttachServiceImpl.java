@@ -362,10 +362,10 @@ public class AttachServiceImpl implements AttachService {
 
         String type = requestDTO.getType();
         String[] keyValues = requestDTO.getKeyValues();
-        Boolean main = requestDTO.getMain();
+
         if(keyValues.length == 0)throw new IllegalArgumentException("파라미터 키,값에 문제가 있습니다");
 
-        List<Attach> resFromDB = attachRepository.getAttachesByValues(main, type, keyValues);
+        List<Attach> resFromDB = attachRepository.getAttachesByValues(type, keyValues);
         Map<String, Attach> map = new HashMap<>();
 
         for(Attach el : resFromDB){
@@ -398,14 +398,23 @@ public class AttachServiceImpl implements AttachService {
     }
 
     @Override
-    public List<UuidResponseDTO> getUuidInBoard(UuidRequestDTO requestDTO) {
+    public Map<String, List<UuidResponseDTO>> getUuidList(UuidRequestDTO requestDTO) {
 
         String type = requestDTO.getType();
-        String keyValue = requestDTO.getKeyValue();
-        List<Attach> res = attachRepository.getAttachesByValue(type, keyValue);
+        String[] keyValues = requestDTO.getKeyValues();
+        Boolean[] mainList = requestDTO.getMainList();
 
-        return res.stream().map((attach -> entityToDTO(attach))).collect(Collectors.toList());
+        if(keyValues.length == 0 || mainList.length == 0)throw new IllegalArgumentException("파라미터 키,값에 문제가 있습니다");
+
+        Map<String, List<UuidResponseDTO>> res = new HashMap<>();
+
+        for(String keyValue: keyValues){
+            List<Attach> part = attachRepository.getAttachesByValue(mainList, type, keyValue);
+            res.put(keyValue, part.stream().map(ele->entityToDTO(ele)).collect(Collectors.toList()));
+        }
+        return res;
     }
+
 
     UuidResponseDTO entityToDTO(Attach attach){
 
@@ -417,6 +426,7 @@ public class AttachServiceImpl implements AttachService {
             dtoBuilder.key(Long.parseLong(attach.getKeyValue()));
         }
         dtoBuilder.fileName(attach.getOriginalName());
+        dtoBuilder.main(attach.isMain());
         dtoBuilder.imgSrc(awsHost + "/" + attach.getOriginalName()).build();
         dtoBuilder.thumbSrc(awsHost + "/s_" + attach.getOriginalName()).build();
 
