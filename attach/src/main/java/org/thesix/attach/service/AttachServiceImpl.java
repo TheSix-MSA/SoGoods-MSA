@@ -91,10 +91,6 @@ public class AttachServiceImpl implements AttachService {
         if(files == null)return null;
         for (int i=0; i<files.length; i++) {
             MultipartFile file = files[i];
-            log.info(file.getName());
-            log.info(file.getSize());
-            log.info(file.getOriginalFilename());
-            log.info("file.getContentType(): " + file.getContentType());
 
             if (file.getContentType()==null || file.getContentType().startsWith("image") == false) {
               throw new IllegalArgumentException("이미지 파일이 아닙니다.");
@@ -104,7 +100,6 @@ public class AttachServiceImpl implements AttachService {
             String originalName = file.getOriginalFilename();
             int pos = originalName.lastIndexOf("\\") + 1;
             String fileName = originalName.substring(pos);
-            log.info(fileName);
 
             //UUID
             String uuid = UUID.randomUUID().toString();
@@ -152,11 +147,12 @@ public class AttachServiceImpl implements AttachService {
                     // IOUtils.copy(new FileInputStream(file), fileItem.getOutputStream());
                 } catch (IOException ex) {
                     // do something.
+                    throw new InternalException();
                 }finally {
                     try {
                         input.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        throw new InternalException("file -> multipart ");
                     }
                     try {
                         os.close();
@@ -170,7 +166,7 @@ public class AttachServiceImpl implements AttachService {
                     s3Client.putObject(new PutObjectRequest(bucket, multipartFile.getOriginalFilename(), multipartFile.getInputStream(), null)
                             .withCannedAcl(CannedAccessControlList.PublicRead));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new InternalException("S3 INSERT 문제 발생");
                 }
             }
 
@@ -195,12 +191,12 @@ public class AttachServiceImpl implements AttachService {
             try {
                 Files.delete(Path.of(severSideOriginFilePath));
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new InternalException("임시저장 파일 삭제 오류 ");
             }
             try {
                 Files.delete(Path.of(serverSideThumbnailFilePath));
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new InternalException("임시저장 썸네일 파일 삭제 오류 ");
             }
 
 
@@ -369,6 +365,7 @@ public class AttachServiceImpl implements AttachService {
 
         String type = requestDTO.getType();
         String[] keyValues = requestDTO.getKeyValues();
+        if(keyValues.length == 0)throw new IllegalArgumentException("파라미터 키,값에 문제가 있습니다");
         List<Attach> res = attachRepository.getAttachesByValues(type, keyValues);
 
         return res.stream().map((attach -> entityToDTO(attach))).collect(Collectors.toList());

@@ -90,7 +90,7 @@ public class UploadController {
     }
 
 
-
+    //s3 삭제
     @DeleteMapping("/remove")
     public ApiResult<Boolean> removeFile(String[] fileNames) {
 
@@ -99,13 +99,14 @@ public class UploadController {
         return success(true);
     }
 
-    @PostMapping("/list/uuid")
+    //s3 조회
+    @GetMapping("/list/uuid")
     public ApiResult<List<UuidResponseDTO>> getUuidInList(UuidRequestDTO requestDTO){
         List<UuidResponseDTO> res = attachService.getUuidInBoardList(requestDTO);
         return success(res);
     }
 
-    @PostMapping("/detail/uuid")
+    @DeleteMapping("/detail/uuid")
     public ApiResult<List<UuidResponseDTO>> getUuidInDetail(UuidRequestDTO requestDTO){
 
         List<UuidResponseDTO> res = attachService.getUuidInBoard(requestDTO);
