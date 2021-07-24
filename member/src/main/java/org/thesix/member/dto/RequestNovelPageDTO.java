@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RequestNovelPageDTO {
+
     private String email;
     @Builder.Default
     private int page = 1;

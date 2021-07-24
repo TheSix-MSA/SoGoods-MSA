@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.stream.IntStream;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Log4j2
 public class PageMaker {
 
     private long page;
@@ -36,10 +38,12 @@ public class PageMaker {
 
         int tempEnd = (int)Math.ceil(page / 10.0) * 10;
         this.startPage = tempEnd-9;
+
         this.endPage = tempEnd < totalPage ? tempEnd : totalPage;
 
-        prev = startPage > 1;
-        next = tempEnd <  totalPage;
+        this.prev = this.startPage > 1;
+        this.next = tempEnd < totalPage;
+
 
         pageList = IntStream.rangeClosed(startPage,endPage).boxed().collect(Collectors.toList());
 

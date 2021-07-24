@@ -57,10 +57,31 @@ public class NovelController {
         return success(novelService.requestBeAuthor(dto));
     }
 
+    /**
+     * 목록조회
+     * -사용자가 등록한 작품리스트를 가져온다.
+     *
+     * @param dto
+     * @return
+     */
     @GetMapping("/novels")
     public ApiResult<ResponseNovelList> getNovels(RequestNovelPageDTO dto){
         log.info(dto);
-        return success(novelService.getNovelList(dto));
+        ResponseNovelList novelList = novelService.getNovelList(dto);
+        return success(novelList);
+    }
+
+    /**
+     * 소설삭제
+     * - 등록된 소설의 삭제상태를 true로 만듬.
+     *
+     * @param dto
+     * @return
+     */
+    @DeleteMapping("/novels")
+    public ApiResult<NovelsDTO> removeNovels(@RequestBody NovelsDTO dto){
+        log.info(dto);
+        return success(novelService.removeNovel(dto));
     }
 
 
