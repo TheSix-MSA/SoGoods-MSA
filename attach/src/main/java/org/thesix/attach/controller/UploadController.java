@@ -102,6 +102,7 @@ public class UploadController {
     //s3 조회
     @GetMapping("/list/uuid")
     public ApiResult<List<UuidResponseDTO>> getUuidInList(UuidRequestDTO requestDTO){
+        log.info(requestDTO);
         List<UuidResponseDTO> res = attachService.getUuidInBoardList(requestDTO);
         return success(res);
     }

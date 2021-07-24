@@ -17,6 +17,6 @@ public class UuidRequestDTO {
 
     private String keyValue;
 
-    private boolean main;
+    private Boolean main;
 
 }

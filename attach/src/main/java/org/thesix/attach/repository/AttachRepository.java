@@ -17,10 +17,10 @@ public interface AttachRepository extends JpaRepository<Attach, Long> {
 
 
     @Query("SELECT a FROM Attach a " +
-            "WHERE a.main = true " +
+            "WHERE a.main = :main " +
             "   AND a.tableName = :tableName" +
             "   AND a.keyValue IN (:keyValues)")
-    List<Attach> getAttachesByValues(String tableName, String[] keyValues);
+    List<Attach> getAttachesByValues(Boolean main, String tableName, String[] keyValues);
 
     @Query("SELECT a FROM Attach a " +
             "WHERE " +

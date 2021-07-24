@@ -362,10 +362,10 @@ public class AttachServiceImpl implements AttachService {
 
         String type = requestDTO.getType();
         String[] keyValues = requestDTO.getKeyValues();
+        Boolean main = requestDTO.getMain();
         if(keyValues.length == 0)throw new IllegalArgumentException("파라미터 키,값에 문제가 있습니다");
 
-
-        List<Attach> resFromDB = attachRepository.getAttachesByValues(type, keyValues);
+        List<Attach> resFromDB = attachRepository.getAttachesByValues(main, type, keyValues);
         Map<String, Attach> map = new HashMap<>();
 
         for(Attach el : resFromDB){
