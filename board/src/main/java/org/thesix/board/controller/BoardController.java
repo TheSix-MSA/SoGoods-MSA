@@ -78,11 +78,12 @@ public class BoardController {
      */
     @GetMapping("/{boardType}/list")
     public ApiResult<BoardListResponseDTO<BoardDTO>> getList(BoardListRequestDTO boardListRequestDTO,
-                                                                  @PathVariable String boardType) {
+                                                             @PathVariable String boardType) {
         BoardListResponseDTO<BoardDTO> boardListDTO = boardService.getList(boardListRequestDTO, boardType);
         log.info("BoardListDTO: " + boardListDTO);
         return success(boardService.getList(boardListRequestDTO, boardType));
     }
+
 
     /*
         자신이 작성한 게시글 목록("/board/{writer}")

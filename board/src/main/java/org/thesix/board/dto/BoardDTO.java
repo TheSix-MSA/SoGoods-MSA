@@ -26,5 +26,4 @@ public class BoardDTO {
     private boolean isPrivate;
     private Long replyCnt;
 
-
 }

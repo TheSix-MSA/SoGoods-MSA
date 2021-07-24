@@ -56,11 +56,10 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     public BoardDTO remove(Long bno, String boardType) {
         Board result = boardRepository.findById(bno).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
-            result.changeRemoved(true);
-            Board removeResult = boardRepository.save(result);
-            return entityToDTO(removeResult);
+        result.changeRemoved(true);
+        Board removeResult = boardRepository.save(result);
+        return entityToDTO(removeResult);
     }
-
     /*
         공지사항 공개/비공개 처리
      */
@@ -80,8 +79,10 @@ public class BoardServiceImpl implements BoardService {
      */
     @Override
     public BoardDTO read(Long bno) {
+
         Board result = boardRepository.findById(bno).orElseThrow(()-> new IllegalArgumentException("존재하지 않는 게시글입니다."));
         return entityToDTO(result);
+
     }
 
     /*
@@ -90,18 +91,18 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public BoardListResponseDTO<BoardDTO> getList(BoardListRequestDTO boardListRequestDTO, String boardType) {
         log.info(boardListRequestDTO + " : " + boardType);
-            Page<Board> list = boardRepository.getBoardList(
-                    boardType,
-                    boardListRequestDTO.getType(),
-                    boardListRequestDTO.getKeyword(),
-                    boardListRequestDTO.getPageable()
-            );
-            BoardListResponseDTO boardListResponseDTO = BoardListResponseDTO.builder()
-                    .pageMaker(new PageMaker(boardListRequestDTO.getPage(), boardListRequestDTO.getSize(), (int) list.getTotalElements()))
-                    .boardDtoList(list.stream().map((board) -> entityToDTO(board)).collect(Collectors.toList()))
-                    .boardListRequestDTO(boardListRequestDTO)
-                    .build();
-            return boardListResponseDTO;
+        Page<Board> list = boardRepository.getBoardList(
+                boardType,
+                boardListRequestDTO.getType(),
+                boardListRequestDTO.getKeyword(),
+                boardListRequestDTO.getPageable()
+        );
+        BoardListResponseDTO boardListResponseDTO = BoardListResponseDTO.builder()
+                .pageMaker(new PageMaker(boardListRequestDTO.getPageable(), (int) list.getTotalElements()))
+                .boardDtoList(list.stream().map((board) -> entityToDTO(board)).collect(Collectors.toList()))
+                .boardListRequestDTO(boardListRequestDTO)
+                .build();
+        return boardListResponseDTO;
     }
 
     /*
@@ -118,7 +119,7 @@ public class BoardServiceImpl implements BoardService {
         );
 
         BoardListResponseDTO boardListResponseDTO = BoardListResponseDTO.builder()
-                .pageMaker(new PageMaker(boardListRequestDTO.getPage(), boardListRequestDTO.getSize(), (int) list.getTotalElements()))
+                .pageMaker(new PageMaker(boardListRequestDTO.getPageable(), (int) list.getTotalElements()))
                 .boardDtoList(list.stream().map((board)->entityToDTO(board)).collect(Collectors.toList()))
                 .boardListRequestDTO(boardListRequestDTO)
                 .build();

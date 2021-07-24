@@ -25,7 +25,7 @@ public class PageMaker {
         //temp end page
         int tempEnd = (int) (Math.ceil(page / 10.0)) * 10;
 
-        int start = tempEnd - 19;
+        int start = tempEnd - 9;
 
         prev = start > 1;
 
