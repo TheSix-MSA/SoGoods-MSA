@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.thesix.funding.common.dto.ListRequestDTO;
 import org.thesix.funding.common.dto.ListResponseDTO;
 import org.thesix.funding.common.dto.PageMaker;
-import org.thesix.funding.dto.*;
+import org.thesix.funding.dto.funding.*;
 import org.thesix.funding.entity.Favorite;
 import org.thesix.funding.entity.Funding;
 import org.thesix.funding.entity.Product;

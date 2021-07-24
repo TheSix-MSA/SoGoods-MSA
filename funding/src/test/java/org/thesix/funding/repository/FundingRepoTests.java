@@ -134,7 +134,6 @@ public class FundingRepoTests {
 
         String keyword = "10";
         String type = "tcw";
-        String state = "open";
 
         Page<Object[]> list = fundingRepository.getListSearch(keyword, type, pageable);
 
@@ -199,7 +198,7 @@ public class FundingRepoTests {
         res.add(result.get(0)[1]);
         proList.forEach(r-> System.out.println(r));
     }
-    
+
 
 
 

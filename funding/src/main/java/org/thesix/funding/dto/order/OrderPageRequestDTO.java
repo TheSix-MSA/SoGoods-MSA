@@ -1,4 +1,4 @@
-package org.thesix.funding.dto;
+package org.thesix.funding.dto.order;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,10 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListFundingDTO {
-
-    private FundingDTO fundingDTO;  // 펀딩 글 객체
-
-    private long favoriteCnt;  // 찜 개수
-
+public class OrderPageRequestDTO {
+    private int page;
+    private String email;
+    private String sortCondition;
 }
