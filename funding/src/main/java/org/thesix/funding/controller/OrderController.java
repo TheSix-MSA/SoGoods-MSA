@@ -10,8 +10,7 @@ import static org.thesix.funding.util.ApiUtil.ApiResult;
 import static org.thesix.funding.util.ApiUtil.success;
 
 @RestController
-@RequestMapping("/order")
-@CrossOrigin("*")
+@RequestMapping("/funding/order")
 @Log4j2
 @RequiredArgsConstructor
 public class OrderController {
@@ -69,5 +68,4 @@ public class OrderController {
     public ApiResult<OrderDetailResponseDTO> shipOrder(@PathVariable Long ono){
         return success(orderService.shipOrder(ono));
     }
-
 }
