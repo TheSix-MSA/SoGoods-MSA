@@ -379,8 +379,16 @@ public class AttachServiceImpl implements AttachService {
                 ret.add(entityToDTO(tmp));
             }
             else {
+
+                Object key = null;
+                if(type.equals("MEMBER")){
+                    key = keyValue;
+                }else{
+                    key = Long.parseLong(keyValue);
+                }
+
                 UuidResponseDTO dto = UuidResponseDTO.builder()
-                        .key(keyValue)
+                        .key(key)
                         .build();
                 ret.add(dto);
             }
