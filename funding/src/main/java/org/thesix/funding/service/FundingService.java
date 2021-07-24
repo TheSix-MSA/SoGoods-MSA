@@ -170,6 +170,13 @@ public interface FundingService {
     FundingResponseDTO remove(Long fno);
 
     /**
+     * 게시글의 찜 리스트를 불러오는 추상메서드
+     * @param fno
+     * @return FavoriteResponseDTO
+     */
+    FavoriteResponseDTO getFavoriteList(Long fno);
+
+    /**
      * 찜하기 기능을 위한 추상메서드
      * @param favoriteRequestDTO
      * @return FavoriteDTO
@@ -202,4 +209,5 @@ public interface FundingService {
      * @return
      */
     ListResponseDTO<FundingDTO> getNotAuthorizedFunding(ListRequestDTO dto);
+
 }

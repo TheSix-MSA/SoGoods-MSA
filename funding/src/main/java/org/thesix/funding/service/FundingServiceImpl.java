@@ -234,7 +234,31 @@ public class FundingServiceImpl implements FundingService {
     }
 
     /**
+     * 해당 펀딩 글의 찜 리스트를 불러오는 기능
+     * @param fno
+     * @return FavoriteResponseDTO
+     */
+    @Override
+    public FavoriteResponseDTO getFavoriteList(Long fno) {
+
+        List<Favorite> list = favoriteRepository.getFavorite(fno)
+                .orElseThrow(()-> new IllegalArgumentException("요청하신 정보를 찾을 수 없습니다."));
+
+        log.info(list);
+
+        Long favCnt = favoriteRepository.getFavoriteCntById(fno)
+                .orElseThrow(()-> new IllegalArgumentException("요청하신 정보를 찾을 수 없습니다."));
+
+        log.info(favCnt);
+
+        return FavoriteResponseDTO.builder()
+                .favoriteDTOList(list.stream().map(f-> entityToDTO(f)).collect(Collectors.toList()))
+                .favoriteCnt(favCnt).build();
+    }
+
+    /**
      * 펀딩 글 찜하기 기능
+     * 유저 정보를 확인하여 insert
      * @param dto
      * @return FavoriteResponseDTO
      */
@@ -262,11 +286,11 @@ public class FundingServiceImpl implements FundingService {
             favoriteRepository.save(favorite);
         }
 
+        // 반환할 결과
         List<Favorite> list = favoriteRepository.getFavorite(dto.getFno())
                 .orElseThrow(()-> new IllegalArgumentException("요청하신 정보를 찾을 수 없습니다."));
-
         Long favCnt = favoriteRepository.getFavoriteCntById(dto.getFno())
-                .orElseThrow(()-> new IllegalArgumentException("요청하신 정보를 찾을 수 없습니다."));;
+                .orElseThrow(()-> new IllegalArgumentException("요청하신 정보를 찾을 수 없습니다."));
 
 
         return FavoriteResponseDTO.builder()

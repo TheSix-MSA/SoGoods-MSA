@@ -90,10 +90,22 @@ public class FundingController {
         return success(fundingService.remove(fno));
     }
 
+
+    /**
+     * 해당 게시글의 찜 리스트 가져오기
+     * @param fno
+     * @return ApiResult<FavoriteResponseDTO>
+     */
+    @GetMapping("/fav/{fno}")
+     public ApiResult<FavoriteResponseDTO> getFavoriteList(@PathVariable Long fno){
+
+        return success(fundingService.getFavoriteList(fno));
+     }
+
     /**
      * 찜하기 기능
      * @param favoriteRequestDTO
-     * @return ApiResult<Long>  => 추가된 게시판의 총 좋아요 수 반환
+     * @return FavoriteResponseDTO
      */
     @PostMapping("/fav")
     public ApiResult<FavoriteResponseDTO> changeFavorite(@RequestBody FavoriteRequestDTO favoriteRequestDTO){
