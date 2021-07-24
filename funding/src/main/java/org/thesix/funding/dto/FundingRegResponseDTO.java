@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.thesix.funding.entity.Funding;
+import org.thesix.funding.dto.funding.FundingDTO;
 
 import java.util.List;
 

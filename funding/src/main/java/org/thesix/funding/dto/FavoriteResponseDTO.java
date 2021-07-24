@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.thesix.funding.dto.funding.FavoriteDTO;
 
 import java.util.List;
 
