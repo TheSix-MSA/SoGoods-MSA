@@ -33,7 +33,7 @@ public class OrderController {
      * @return
      */
     @GetMapping("/list")
-    public ApiResult<OrderPagingResponseDTO> getUsersOrders(@RequestBody OrderPageRequestDTO dto){
+    public ApiResult<OrderPagingResponseDTO> getUsersOrders(OrderPageRequestDTO dto){
         return success(orderService.getUsersOrders(dto));
     }
 
@@ -53,7 +53,7 @@ public class OrderController {
      * @param ono
      * @return
      */
-    @PutMapping("/cancelOrder/{ono}")
+    @PutMapping("/cancel/{ono}")
     public ApiResult<OrderDetailResponseDTO> cancelOrder(@PathVariable Long ono){
         return success(orderService.cancelOrder(ono));
     }
