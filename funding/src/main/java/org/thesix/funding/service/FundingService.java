@@ -176,7 +176,6 @@ public interface FundingService {
      */
     FavoriteResponseDTO insertFavorite(FavoriteRequestDTO favoriteRequestDTO);
 
-
     /**
      * 찜한 게시글을 가져올 추상메서드
      * @param email

@@ -34,12 +34,13 @@ public class FundingController {
     }
 
     /**
-     * 전체 글 리스트와 상품 수, 찜 수를 가져올 메서드
+     * 펀딩의 글 리스트와 상품 수, 찜 수를 가져올 메서드
+     * param state : open -> 진행중인 펀딩, close => 종료된 펀딩
      * @param fundingRequestDTO
      * @return ApiResult<ListResponseDTO<ListFundingDTO>>
      */
     @GetMapping("/list")
-    public ApiResult<ListResponseDTO<ListFundingDTO>> getList(FundingRequestDTO fundingRequestDTO){
+    public ApiResult<ListResponseDTO<ListFundingDTO>> getOpenList(FundingRequestDTO fundingRequestDTO){
 
         return success(fundingService.getSearchList(fundingRequestDTO));
     }

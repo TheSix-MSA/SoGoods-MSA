@@ -35,7 +35,7 @@ public class FundingServiceImpl implements FundingService {
     private final FavoriteRepository favoriteRepository;
 
     /**
-     * 검색 + 페이징 + 전체리스트
+     * 펀딩리스트에서 검색 + 페이징을 처리
      * 삭제여부 false, 인증여부 true만 통과
      * @param dto
      * @return ListResponseDTO<ListFundingDTO>
@@ -44,7 +44,7 @@ public class FundingServiceImpl implements FundingService {
 
         Pageable pageable = dto.getPageable();
 
-        Page<Object[]> result = fundingRepository.getListSearch(dto.getKeyword(), dto.getType(), pageable);
+        Page<Object[]> result = fundingRepository.getListSearch(dto.getKeyword(), dto.getType(), dto.getState(), pageable);
 
         List<ListFundingDTO> dtoList = result.getContent().stream().map(arr -> arrToDTO(arr)).collect(Collectors.toList());
 
@@ -52,6 +52,7 @@ public class FundingServiceImpl implements FundingService {
 
         return ListResponseDTO.<ListFundingDTO>builder().listRequestDTO(dto).dtoList(dtoList).pageMaker(pageMaker).build();
     }
+
 
     /**
      * 글 등록 처리를 위한 메서드

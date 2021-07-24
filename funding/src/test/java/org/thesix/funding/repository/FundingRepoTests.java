@@ -136,9 +136,9 @@ public class FundingRepoTests {
         String keyword = "10";
         String type = "tcw";
 
-        Page<Object[]> list = fundingRepository.getListSearch(keyword, type, pageable);
+       // Page<Object[]> list = fundingRepository.getListSearch(keyword, type, pageable);
 
-        list.getContent().forEach(list1-> System.out.println(Arrays.toString(list1)));
+        //list.getContent().forEach(list1-> System.out.println(Arrays.toString(list1)));
 
     }
 
