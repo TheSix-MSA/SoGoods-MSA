@@ -108,8 +108,8 @@ public class UploadController {
 
     //s3 조회 One to Many
     @GetMapping("/list/uuidlist")
-    public ApiResult<Map<String, List<UuidResponseDTO>>> getUuidList(UuidRequestDTO requestDTO){
-        Map<String, List<UuidResponseDTO>> res = attachService.getUuidList(requestDTO);
+    public ApiResult<List<List<UuidResponseDTO>>> getUuidList(UuidRequestDTO requestDTO){
+        List<List<UuidResponseDTO>> res = attachService.getUuidList(requestDTO);
         return success(res);
     }
 

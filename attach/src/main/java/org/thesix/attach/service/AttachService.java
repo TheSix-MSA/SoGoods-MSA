@@ -26,7 +26,7 @@ public interface AttachService {
 
     List<UuidResponseDTO> getUuidInBoardList(UuidRequestDTO requestDTO);
 
-    Map<String, List<UuidResponseDTO>> getUuidList(UuidRequestDTO requestDTO);
+    List<List<UuidResponseDTO>> getUuidList(UuidRequestDTO requestDTO);
 
 
 

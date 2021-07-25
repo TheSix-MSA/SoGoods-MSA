@@ -398,7 +398,7 @@ public class AttachServiceImpl implements AttachService {
     }
 
     @Override
-    public Map<String, List<UuidResponseDTO>> getUuidList(UuidRequestDTO requestDTO) {
+    public List<List<UuidResponseDTO>> getUuidList(UuidRequestDTO requestDTO) {
 
         String type = requestDTO.getType();
         String[] keyValues = requestDTO.getKeyValues();
@@ -406,11 +406,11 @@ public class AttachServiceImpl implements AttachService {
 
         if(keyValues.length == 0 || mainList.length == 0)throw new IllegalArgumentException("파라미터 키,값에 문제가 있습니다");
 
-        Map<String, List<UuidResponseDTO>> res = new HashMap<>();
+        List<List<UuidResponseDTO>> res = new ArrayList<>();
 
         for(String keyValue: keyValues){
             List<Attach> part = attachRepository.getAttachesByValue(mainList, type, keyValue);
-            res.put(keyValue, part.stream().map(ele->entityToDTO(ele)).collect(Collectors.toList()));
+            res.add(part.stream().map(ele->entityToDTO(ele)).collect(Collectors.toList()));
         }
         return res;
     }
