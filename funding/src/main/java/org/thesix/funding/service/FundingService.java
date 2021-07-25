@@ -2,11 +2,14 @@ package org.thesix.funding.service;
 
 import org.thesix.funding.common.dto.ListResponseDTO;
 import org.thesix.funding.dto.funding.*;
+import org.thesix.funding.dto.order.OrderResponseDTO;
 import org.thesix.funding.entity.Favorite;
 import org.thesix.funding.entity.Funding;
+import org.thesix.funding.entity.Order;
 import org.thesix.funding.entity.Product;
 
 import java.util.List;
+import java.util.Map;
 
 
 public interface FundingService {
@@ -135,6 +138,15 @@ public interface FundingService {
                 .funFno(funding.getFno()).build();
     }
 
+    default OrderResponseDTO orderToDto(Order dto){
+        return OrderResponseDTO.builder().ono(dto.getOno()).buyer(dto.getBuyer()).tid(dto.getTid())
+                .receiverAddress(dto.getReceiverAddress()).receiverDetailedAddress(dto.getReceiverDetailedAddress())
+                .receiverName(dto.getReceiverName()).receiverPhone(dto.getReceiverPhone())
+                .receiverRequest(dto.getReceiverRequest()).regDate(dto.getRegDate().toLocalDate())
+                .modDate(dto.getModDate().toLocalDate()).shippedDate(dto.getShippedDate())
+                .cancelledDate(dto.getCancelledDate()).build();
+    }
+
     /**
      * 글 리스트를 가져올 추상메서드
      * @param dto
@@ -169,7 +181,7 @@ public interface FundingService {
      * @param fno
      * @return FundingResponseDTO
      */
-    FundingResponseDTO remove(Long fno);
+    FundingDeletionResponseDTO remove(Long fno);
 
     /**
      * 찜하기 기능을 위한 추상메서드

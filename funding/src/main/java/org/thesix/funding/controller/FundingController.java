@@ -80,7 +80,7 @@ public class FundingController {
      * @return ApiResult<FundingResponseDTO>
      */
     @DeleteMapping("/{fno}")
-    public ApiResult<FundingResponseDTO> changeRemoved(@PathVariable Long fno){
+    public ApiResult<FundingDeletionResponseDTO> changeRemoved(@PathVariable Long fno){
 
         return success(fundingService.remove(fno));
     }

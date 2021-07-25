@@ -8,16 +8,14 @@ import org.springframework.stereotype.Service;
 import org.thesix.funding.common.dto.ListResponseDTO;
 import org.thesix.funding.common.dto.PageMaker;
 import org.thesix.funding.dto.funding.*;
-import org.thesix.funding.entity.Favorite;
-import org.thesix.funding.entity.Funding;
-import org.thesix.funding.entity.Product;
+import org.thesix.funding.dto.order.OrderResponseDTO;
+import org.thesix.funding.entity.*;
 import org.thesix.funding.repository.FavoriteRepository;
 import org.thesix.funding.repository.FundingRepository;
+import org.thesix.funding.repository.OrderRepository;
 import org.thesix.funding.repository.ProductRepository;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -29,6 +27,7 @@ public class FundingServiceImpl implements FundingService {
     private final FundingRepository fundingRepository;
     private final ProductRepository productRepository;
     private final FavoriteRepository favoriteRepository;
+    private final OrderRepository orderRepository;
 
     /**
      * 검색 + 페이징 + 전체리스트
@@ -161,17 +160,18 @@ public class FundingServiceImpl implements FundingService {
 
     /**
      * 삭제 여부를 변경하는 메서드
+     *
+     * 07/25 종현 : 아직 마감하지 않은 펀딩이 작가에 의해 삭제될 때, 해당 펀딩에
+     * 주문들을 전부 결제 취소할수 있게 값을 리턴.
      * @param fno
      * @return FundingResponseDTO
      */
     @Override
-    @Transactional
-    public FundingResponseDTO remove(Long fno) {
-
+    public FundingDeletionResponseDTO remove(Long fno) {
         Funding fundingResult = fundingRepository.findById(fno)
                 .orElseThrow(()-> new NullPointerException("요청하신 정보를 찾을 수 없습니다."));
 
-        if (fundingResult.isRemoved() == false) {
+        if (!fundingResult.isRemoved()) {
             // 게시글의 삭제 정보를 true로 변경
             fundingResult.changeRemoved(true);
             fundingRepository.save(fundingResult);
@@ -183,27 +183,57 @@ public class FundingServiceImpl implements FundingService {
         List<Product> products = productRepository.getProductById(fno)
                 .orElseThrow(()-> new NullPointerException("요청하신 정보를 찾을 수 없습니다."));
 
+        /***
+         * simultaneous Order cancellation when funding is deleted.
+         */
+        List<OrderResponseDTO> orderList = new ArrayList<>();
+
+        Map<Long, Long> priceMap = new HashMap<>();
+
+        long totalPrice = 0L;
+        List<Object[]> orderInfoFromProd = null;
+
         for (Product p : products) {
-            if (p.isRemoved() == false) {
+            if (!p.isRemoved()) {
                 // 해당 게시글의 제품 리스트 삭제 정보를 true로 변경
                 p.changeRemoved(true);
                 productRepository.save(p);
             }
+            if(!fundingResult.isSuccess()){
+                orderInfoFromProd = orderRepository.getOrderInfoFromProduct(p);
+                for(Object[] obj: orderInfoFromProd){
+                    if(obj[0]!=null){
+                        totalPrice += p.getPrice()*((Long)obj[1]);
+
+                        if(!orderList.contains(orderToDto((Order)obj[0]))){
+                            orderList.add(orderToDto((Order)obj[0]));
+                        }
+
+                        if(priceMap.containsKey(((Order)obj[0]).getOno())){
+                            priceMap.put(((Order)obj[0]).getOno(),
+                                    priceMap.get(((Order)obj[0]).getOno())+totalPrice);
+                        } else {
+                            priceMap.put(((Order)obj[0]).getOno(), totalPrice);
+                        }
+                    }
+                    totalPrice = 0L;
+                }
+            }
         }
 
-        // 삭제 완료 후 해당 게시글의 데이터 반환 (removed처리 확인)
-        Funding funding = fundingRepository.findById(fno)
-                .orElseThrow(()-> new NullPointerException("요청하신 정보를 찾을 수 없습니다."));
+        List<Long> priceLists = new ArrayList<>(priceMap.values());
 
-        List<Product> productList = productRepository.getProductById(fno)
-                .orElseThrow(()-> new NullPointerException("요청하신 정보를 찾을 수 없습니다."));
+        FundingDTO dto = entityToDTO(fundingResult);
 
-        FundingDTO dto = entityToDTO(funding);
-
-        return FundingResponseDTO.builder()
-                .fundingDTO(dto)
-                .productDTOs(productList.stream().map(list-> entityToDTO(list))
-                        .collect(Collectors.toList())).build();
+        return FundingDeletionResponseDTO.builder()
+                .fundingResponseDTO(FundingResponseDTO.builder()
+                        .fundingDTO(dto)
+                        .productDTOs(products.stream().map(list-> entityToDTO(list))
+                                .collect(Collectors.toList()))
+                        .build())
+                .orderList(orderList)
+                .returnAmountList(priceLists)
+                .success(fundingResult.isSuccess()).build();
     }
 
     /**

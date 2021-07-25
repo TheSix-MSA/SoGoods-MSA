@@ -1,10 +1,9 @@
 package org.thesix.funding.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.thesix.funding.entity.Product;
-import javax.transaction.Transactional;
+
 import java.util.List;
 import java.util.Optional;
 
