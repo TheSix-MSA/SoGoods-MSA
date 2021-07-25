@@ -171,7 +171,6 @@ public class FundingServiceImpl implements FundingService {
         // 글 내용 수정
         funding.changeTitle(fundingEntity.getTitle());
         funding.changeContent(fundingEntity.getContent());
-        funding.changeTotalAmount(fundingEntity.getTotalAmount());
 
         fundingRepository.save(funding);
 

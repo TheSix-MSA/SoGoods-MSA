@@ -28,7 +28,7 @@ public class OrderServiceImpl implements OrderService{
     private final OrderRepository orderRepository;
     private final OrderDetailsRepository orderDetailsRepository;
     private final FundingService fundingService;
-    private final ProductRepository productRepository;
+    private final FundingRepository fundingRepository;
 
     /***
      * 주문 insert 함수.
@@ -44,6 +44,11 @@ public class OrderServiceImpl implements OrderService{
         }
         Order order = dtoToOrder(dto);
         order = orderRepository.save(order);
+
+        Funding funding = fundingRepository.findById(dto.getFno())
+                .orElseThrow(()->new NullPointerException("존재하지 않는 펀딩입니다."));
+
+        funding.addTotalAmount(dto.getTotalPrice());
 
         if(dto.getProducts().size() == 0){
             throw new IllegalArgumentException("상품을 주문하지 않았습니다.");

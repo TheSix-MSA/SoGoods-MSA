@@ -35,4 +35,8 @@ public class OrderSaveRequestDTO {
      * key ==> product id
      * value ==> number of products
      */
+
+    private Long totalPrice;
+
+    private Long fno;
 }

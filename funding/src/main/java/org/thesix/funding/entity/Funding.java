@@ -58,7 +58,8 @@ public class Funding extends BaseEntity {
         this.content = content;
     }
 
-    public void changeTotalAmount(Long totalAmount){this.totalAmount = totalAmount;}
+    public void addTotalAmount(Long totalAmount){this.totalAmount += totalAmount;}
+    public void subtractTotalAmount(Long totalAmount){this.totalAmount -= totalAmount;}
 
     public void changeRemoved(boolean removed){
         this.removed = removed;
