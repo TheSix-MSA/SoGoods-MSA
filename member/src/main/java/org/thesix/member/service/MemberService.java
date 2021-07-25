@@ -25,6 +25,8 @@ public interface MemberService {
 
     MemberDTO changeBanned(String email);
 
+    MemberDTO rejectRequest(String email);
+
     /**
      *
      * @param dto 가입입력정보

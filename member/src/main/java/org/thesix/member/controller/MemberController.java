@@ -114,4 +114,9 @@ public class MemberController {
         return success(memberService.changeBanned(email));
     }
 
+    @PutMapping("/reject/{email}")
+    public ApiResult<MemberDTO> rejectApproval(@PathVariable("email") String email) {
+        return success(memberService.rejectRequest(email));
+    }
+
 }
