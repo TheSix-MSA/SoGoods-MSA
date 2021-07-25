@@ -26,6 +26,8 @@ public class OrderRepoTests {
     private FundingRepository fundingRepository;
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private ProductRepository productRepository;
 
     @Test
     public void insertTest() {
@@ -77,5 +79,13 @@ public class OrderRepoTests {
             totalPrice += ((Product)obj[2]).getPrice();
             prods.add(orderService.produdctEntityToInOrderDTO((Product)obj[2], ((OrderDetails)obj[1]).getNumProds()));
         }
+    }
+
+    @Test
+    public void orderDetailTest(){
+        Product product = Product.builder().pno(83L).build();
+//        List<OrderDetails> res = orderDetailsRepository.findByProduct(product);
+        List<Object[]> res = orderRepository.getOrderInfoFromProduct(product);
+        res.stream().forEach(r-> System.out.println(Arrays.toString(r)));
     }
 }
