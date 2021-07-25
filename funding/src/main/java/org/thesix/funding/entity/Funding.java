@@ -64,6 +64,8 @@ public class Funding extends BaseEntity {
         this.removed = removed;
     }
 
+    public void changeSuccessed(boolean success){ this.success = success;}
+
     public void changeAuthorized(boolean authorized){
         this.authorized = authorized;
     }

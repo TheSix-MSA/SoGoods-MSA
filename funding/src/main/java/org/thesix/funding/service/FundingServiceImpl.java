@@ -19,7 +19,9 @@ import org.thesix.funding.repository.FavoriteRepository;
 import org.thesix.funding.repository.FundingRepository;
 import org.thesix.funding.repository.ProductRepository;
 import javax.transaction.Transactional;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,12 +39,27 @@ public class FundingServiceImpl implements FundingService {
     /**
      * 펀딩리스트에서 검색 + 페이징을 처리
      * 삭제여부 false, 인증여부 true만 통과
+     * 마감일자가 되면 자동으로 펀딩종료 처리
      * @param dto
      * @return ListResponseDTO<ListFundingDTO>
      */
     public ListResponseDTO<ListFundingDTO> getSearchList(FundingRequestDTO dto) {
 
         Pageable pageable = dto.getPageable();
+
+        List<Funding> fundings = fundingRepository.findAll();
+
+        // 리스트 조회 시 마감일자가 오늘일 경우 success = true 처리
+        Date from = new Date();
+        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String to = transFormat.format(from);
+
+        for(Funding f : fundings){
+            if(f.getDueDate().equals(to)){
+                f.changeSuccessed(true);
+                fundingRepository.save(f);
+            }
+        }
 
         Page<Object[]> result = fundingRepository.getListSearch(dto.getKeyword(), dto.getType(), dto.getState(), pageable);
 

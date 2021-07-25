@@ -8,6 +8,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.thesix.funding.entity.*;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +28,7 @@ public class FundingSearchImpl extends QuerydslRepositorySupport implements Fund
      * @param keyword
      * @param type
      * @param pageable
-     * @return
+     * @return Page<Object[]>
      */
     @Override
     public Page<Object[]> getListSearch(String keyword, String type, String state, Pageable pageable) {
@@ -68,7 +71,7 @@ public class FundingSearchImpl extends QuerydslRepositorySupport implements Fund
 
        if(state != null){
 
-            BooleanBuilder stateCondition = new BooleanBuilder();
+           BooleanBuilder stateCondition = new BooleanBuilder();
 
             if(state.equals("open")){
                 stateCondition.or(funding.success.eq(false));
@@ -81,7 +84,6 @@ public class FundingSearchImpl extends QuerydslRepositorySupport implements Fund
         tuple.where(funding.fno.gt(0L));
         tuple.where(funding.removed.eq(false));
         //tuple.where(funding.authorized.eq(true));
-        //tuple.where(funding.success.eq());
         tuple.groupBy(funding);
         tuple.orderBy(funding.fno.desc());
 

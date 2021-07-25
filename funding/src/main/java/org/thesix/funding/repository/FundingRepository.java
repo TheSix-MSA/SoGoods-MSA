@@ -28,7 +28,7 @@ public interface FundingRepository extends JpaRepository<Funding, Long>, Funding
     Optional<List<Funding>> getFavoriteFundingByEmail(String email);
 
 
-    @Query("select f from Funding f where f.email=:email")
+    @Query("select f from Funding f where f.email=:email and f.removed=false")
     Optional<List<Funding>> getFundingListByEmail(String email);
 
     @Query("select p,f " +
