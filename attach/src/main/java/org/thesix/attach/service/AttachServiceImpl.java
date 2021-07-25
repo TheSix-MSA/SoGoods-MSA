@@ -425,6 +425,8 @@ public class AttachServiceImpl implements AttachService {
         }else{
             dtoBuilder.key(Long.parseLong(attach.getKeyValue()));
         }
+
+        dtoBuilder.ano(attach.getAno());
         dtoBuilder.fileName(attach.getOriginalName());
         dtoBuilder.main(attach.isMain());
         dtoBuilder.imgSrc(awsHost + "/" + attach.getOriginalName()).build();

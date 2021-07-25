@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UuidResponseDTO {
 
+    private Long ano;
+
     private Object key;
 
     private String fileName;
