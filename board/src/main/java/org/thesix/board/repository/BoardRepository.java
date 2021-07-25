@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.thesix.board.entity.Board;
+import org.thesix.board.entity.BoardType;
 import org.thesix.board.repository.search.BoardSearch;
 
 import java.util.List;
@@ -26,5 +27,9 @@ public interface BoardRepository extends JpaRepository<Board, Long>, BoardSearch
     @EntityGraph(attributePaths = "writer", type= EntityGraph.EntityGraphType.LOAD)
     @Query("select b from Board b where b.writer = :writer")
     Optional<Board> findByWriterBoard(String writer);
+
+    @EntityGraph(attributePaths = "boardType", type= EntityGraph.EntityGraphType.LOAD)
+    @Query("select b from Board b where b.email = :email and b.boardType = :boardType and b.removed = false")
+    Page<Board> findByBoardWith(String email, BoardType boardType, Pageable pageable);
 
 }

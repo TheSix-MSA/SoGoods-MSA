@@ -88,9 +88,10 @@ public class BoardController {
     /*
         자신이 작성한 게시글 목록("/board/{writer}")
      */
-    @GetMapping("/{writer}")
-    public ApiResult<BoardListResponseDTO<BoardDTO>> writerList(BoardListRequestDTO boardListRequestDTO, @PathVariable String writer) {
-        BoardListResponseDTO<BoardDTO> writerListDTO = boardService.writerList(boardListRequestDTO, writer);
+    @GetMapping("/member/{boardType}/{email}")
+    public ApiResult<BoardListResponseDTO<BoardDTO>> writerList(@PathVariable String boardType, @PathVariable String email) {
+        BoardListRequestDTO boardListRequestDTO = new BoardListRequestDTO();
+        BoardListResponseDTO<BoardDTO> writerListDTO = boardService.writerList(boardListRequestDTO, email, boardType);
         log.info("WriterBoardDTO: " + writerListDTO);
         return success(writerListDTO);
     }

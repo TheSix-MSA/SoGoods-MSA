@@ -3,6 +3,7 @@ package org.thesix.board.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thesix.board.dto.BoardDTO;
@@ -109,14 +110,14 @@ public class BoardServiceImpl implements BoardService {
         자신이 작성한 게시글 목록("/board/{writer}")
      */
     @Override
-    public BoardListResponseDTO<BoardDTO> writerList(BoardListRequestDTO boardListRequestDTO, String writer) {
-        log.info(boardListRequestDTO + " : " + writer);
-        Page<Board> list = boardRepository.getWriterBoardList(
-                writer,
-                boardListRequestDTO.getType(),
-                boardListRequestDTO.getKeyword(),
+    public BoardListResponseDTO<BoardDTO> writerList(BoardListRequestDTO boardListRequestDTO, String email, String boardType) {
+        BoardType boardCate = BoardType.valueOf(boardType);
+        log.info(boardListRequestDTO + " : " + email);
+        Page<Board> list = boardRepository.findByBoardWith(
+                email,
+                boardCate,
                 boardListRequestDTO.getPageable()
-        );
+                );
 
         BoardListResponseDTO boardListResponseDTO = BoardListResponseDTO.builder()
                 .pageMaker(new PageMaker(boardListRequestDTO.getPageable(), (int) list.getTotalElements()))

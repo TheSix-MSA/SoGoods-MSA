@@ -61,4 +61,14 @@ public class BoardRepoTests {
         Page<Board> list = boardRepository.getBoardList(boardType, type, keyword, pageable);
         list.getContent().forEach(i -> System.out.println(i));
     }
+
+    @Test
+    public void testWriter() {
+        String boardType = "NOTICE";
+        BoardType boardCate = BoardType.valueOf(boardType);
+        String writer = "석현일";
+
+        Page<Board> list = boardRepository.findByBoardWith(writer,boardCate,PageRequest.of(0, 10, Sort.by("bno").descending()));
+        list.getContent().forEach(i -> System.out.println(i));
+    }
 }

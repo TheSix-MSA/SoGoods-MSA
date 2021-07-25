@@ -36,12 +36,12 @@ public interface BoardService {
     /*
         특정 게시판의 목록 가져오기
      */
-    BoardListResponseDTO<BoardDTO> getList(BoardListRequestDTO boardListRequestDTO, String board_type);
+    BoardListResponseDTO<BoardDTO> getList(BoardListRequestDTO boardListRequestDTO, String boardType);
 
-    /*
+    /**
         자신이 작성한 게시글 목록
      */
-    BoardListResponseDTO<BoardDTO> writerList(BoardListRequestDTO boardListRequestDTO, String writer);
+    BoardListResponseDTO<BoardDTO> writerList(BoardListRequestDTO boardListRequestDTO, String email, String boardType);
 
     /*
         댓글 증가
