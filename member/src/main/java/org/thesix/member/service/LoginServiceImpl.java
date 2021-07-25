@@ -64,6 +64,7 @@ public class LoginServiceImpl implements LoginService{
             return TokenDTO.builder()
                     .accessToken(jwtToken)
                     .refreshToken(refreshTk)
+                    .approval(member.isApproval())
                     .name(member.getName())
                     .email(dto.getEmail())
                     .roles(member.getRoleSet())
