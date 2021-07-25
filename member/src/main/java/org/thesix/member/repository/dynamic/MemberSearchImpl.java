@@ -84,7 +84,7 @@ public class MemberSearchImpl extends QuerydslRepositorySupport implements Membe
                         .roleSet(memberObj.getRoleSet())
                         .introduce(memberObj.getIntroduce())
                         .nickName(memberObj.getNickName())
-                        .identificationUrl(memberObj.getEmail())
+                        .identificationUrl(memberObj.getIdentificationUrl())
                         .build()
         ).collect(Collectors.toList());
 
