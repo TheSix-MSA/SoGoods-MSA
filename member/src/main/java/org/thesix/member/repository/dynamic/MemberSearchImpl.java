@@ -59,7 +59,7 @@ public class MemberSearchImpl extends QuerydslRepositorySupport implements Membe
             query.where(member.approval.eq(true));
         }
 
-        query.orderBy(member.email.desc());
+        query.orderBy(member.regDate.desc());
 
         query.limit(pageable.getPageSize());
         query.offset(pageable.getOffset());
