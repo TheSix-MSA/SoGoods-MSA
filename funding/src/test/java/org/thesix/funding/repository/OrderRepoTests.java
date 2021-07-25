@@ -31,15 +31,16 @@ public class OrderRepoTests {
 
     @Test
     public void insertTest() {
-        Order order = Order.builder().buyer("판매자 놈").tid("결제수단")
+        Order order = Order.builder().buyer("판매자 놈1").tid("T2922968078503176719")
                 .receiverAddress("주소").receiverDetailedAddress("상세주소")
                 .receiverName("받는 놈").receiverPhone("010-1234-5678")
-                .receiverRequest("받는 놈 요청").build();
+                .receiverRequest("받는 놈 요청").kakaoPayOrderId("카카오").build();
 
         orderRepository.save(order);
         Map<Long, Long> prods = new HashMap<>();
-        prods.put(49L,2L);
-        prods.put(169L,3L);
+        prods.put(601L,2L);
+        prods.put(602L,2L);
+        prods.put(603L,2L);
 
         for(Long i: prods.keySet()){
             OrderDetails details = OrderDetails.builder().order(order)
@@ -87,5 +88,45 @@ public class OrderRepoTests {
 //        List<OrderDetails> res = orderDetailsRepository.findByProduct(product);
         List<Object[]> res = orderRepository.getOrderInfoFromProduct(product);
         res.stream().forEach(r-> System.out.println(Arrays.toString(r)));
+    }
+
+
+    @Test
+    public void orderCancelTest() {
+        Funding funding = Funding.builder()
+                .title("삭제 테스트")
+                .writer("작성자")
+                .email("user@aaa.com")
+                .content("내용....")
+                .dueDate("2022-07-20 20:22:32")
+                .success(false)
+                .removed(false)
+                .build();
+
+        fundingRepository.save(funding);
+
+        Product product = Product.builder()
+                .name("삭제 테스트 상품 1")
+                .des("1 번 굿즈입니다.")
+                .price(1000)
+                .funding(funding).build();
+
+        productRepository.save(product);
+
+        Product product1 = Product.builder()
+                .name("삭제 테스트 상품 2")
+                .des("2 번 굿즈입니다.")
+                .price(1000)
+                .funding(funding).build();
+
+        productRepository.save(product1);
+
+        Product product2 = Product.builder()
+                .name("삭제 테스트 상품 3")
+                .des("3 번 굿즈입니다.")
+                .price(1000)
+                .funding(funding).build();
+
+        productRepository.save(product2);
     }
 }

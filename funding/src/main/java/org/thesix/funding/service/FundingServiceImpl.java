@@ -2,9 +2,17 @@ package org.thesix.funding.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 import org.thesix.funding.common.dto.ListRequestDTO;
 import org.thesix.funding.common.dto.ListResponseDTO;
 import org.thesix.funding.common.dto.PageMaker;
@@ -19,6 +27,8 @@ import org.thesix.funding.repository.FundingRepository;
 import org.thesix.funding.repository.OrderRepository;
 import org.thesix.funding.repository.ProductRepository;
 import javax.transaction.Transactional;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,7 +36,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 
 @Service
 @Log4j2
@@ -197,6 +206,12 @@ public class FundingServiceImpl implements FundingService {
                         .collect(Collectors.toList())).build();
     }
 
+    @Value("${kakaoPay.adminKey}")
+    private String kakaoAK;
+
+    @Value("${kakaoPay.cid}")
+    private String cid;
+
     /**
      * 삭제 여부를 변경하는 메서드
      *
@@ -270,6 +285,39 @@ public class FundingServiceImpl implements FundingService {
         }
 
         List<Long> priceLists = new ArrayList<>(priceMap.values());
+        /***
+         * 카카오페이 삭제 요청보내는 부분
+         */
+        for(int i = 0; i < orderList.size(); i++){
+            RestTemplate restTemplate = new RestTemplate();
+
+            // 서버로 요청할 Header
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", "KakaoAK " + kakaoAK);
+            headers.add("Accept", MediaType.APPLICATION_JSON_VALUE);
+            headers.add("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE + ";charset=UTF-8");
+
+            // 서버로 요청할 Body
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
+            params.add("cid", cid);
+            params.add("tid", orderList.get(i).getTid());
+            params.add("cancel_amount", String.valueOf(priceLists.get(i)));
+            params.add("cancel_tax_free_amount", "0");
+
+            HttpEntity<MultiValueMap<String, String>> body = new HttpEntity<MultiValueMap<String, String>>(params, headers);
+
+            try {
+                restTemplate.postForObject(new URI("https://kapi.kakao.com/v1/payment/cancel"), body, Map.class);
+
+            } catch (RestClientException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (URISyntaxException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
 
         FundingDTO dto = entityToDTO(fundingResult);
 

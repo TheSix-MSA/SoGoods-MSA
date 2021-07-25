@@ -32,7 +32,7 @@ public class OrderSearchImpl extends QuerydslRepositorySupport implements OrderS
 
         tuple.where(order.ono.gt(0));
         tuple.where(order.buyer.eq(email));
-        tuple.orderBy(order.modDate.desc());
+        tuple.orderBy(order.regDate.desc());
         tuple.offset(pageable.getOffset());
         tuple.limit(pageable.getPageSize());
 
