@@ -16,4 +16,5 @@ public class OrderBriefResponseDTO {
     private OrderResponseDTO dto;
     private int totalPrices;
     private String prodNames;
+    private Long pno;
 }

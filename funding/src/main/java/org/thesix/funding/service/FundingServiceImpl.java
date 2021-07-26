@@ -22,10 +22,8 @@ import org.thesix.funding.dto.FundingRegResponseDTO;
 import org.thesix.funding.dto.funding.*;
 import org.thesix.funding.dto.order.OrderResponseDTO;
 import org.thesix.funding.entity.*;
-import org.thesix.funding.repository.FavoriteRepository;
-import org.thesix.funding.repository.FundingRepository;
-import org.thesix.funding.repository.OrderRepository;
-import org.thesix.funding.repository.ProductRepository;
+import org.thesix.funding.repository.*;
+
 import javax.transaction.Transactional;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -46,6 +44,7 @@ public class FundingServiceImpl implements FundingService {
     private final ProductRepository productRepository;
     private final FavoriteRepository favoriteRepository;
     private final OrderRepository orderRepository;
+    private final OrderDetailsRepository orderDetailsRepository;
 
     /**
      * 펀딩리스트에서 검색 + 페이징을 처리
@@ -135,15 +134,31 @@ public class FundingServiceImpl implements FundingService {
     public FundingResponseDTO getDetailFundingData(Long fno){
         List<Object[]> result = fundingRepository.getFundingALLData(fno)
                 .orElseThrow(()-> new NullPointerException("요청하신 정보를 찾을 수 없습니다."));
-        log.info(result.get(0)[0]);
-        log.info(result.get(0)[1]);
+
+        if(result.size() == 0){
+            throw new NullPointerException("요청하신 정보를 찾을 수 없습니다.");
+        }
         List<Object> res = new ArrayList<>();
-        List<ProductDTO> proList = result.stream().map(obj -> entityToDTO((Product)obj[0])).collect(Collectors.toList());
-        res.add(proList);
-        res.add(result.get(0)[1]);
 
         Long favCnt = favoriteRepository.getFavoriteCntById(fno)
                 .orElseThrow(()-> new IllegalArgumentException("요청하신 정보를 찾을 수 없습니다."));
+
+        List<Product> proEntityList = result.stream().map(obj -> ((Product)obj[0])).collect(Collectors.toList());
+
+        List<ProductDTO> proList = new ArrayList<>();
+
+        List<OrderDetails> details = null;
+        boolean deletable = true;
+        for(Product prod: proEntityList){
+            details = orderDetailsRepository.findByProduct(prod);
+            ProductDTO productDTO = entityToDTO(prod);
+            if(details.size() != 0){
+                productDTO.setDeletable(false);
+            } else {
+                productDTO.setDeletable(true);
+            }
+            proList.add(productDTO);
+        }
 
         return FundingResponseDTO.builder()
                 .fundingDTO(arrToEntity(result.get(0)))
@@ -202,9 +217,24 @@ public class FundingServiceImpl implements FundingService {
         FundingDTO dto = entityToDTO(funding);
         Optional<List<Product>> productList = productRepository.getProductById(fno);
 
+        List<ProductDTO> prolist = new ArrayList<>();
+        boolean deletable = true;
+        List<OrderDetails> details = null;
+        for(Product prod: productList.get()){
+            details = orderDetailsRepository.findByProduct(prod);
+            if(details.size() != 0){
+                deletable = false;
+            } else {
+                deletable = true;
+            }
+            ProductDTO prodDTO = entityToDTO(prod);
+            prodDTO.setDeletable(deletable);
+            prolist.add(prodDTO);
+
+        }
+
         return FundingResponseDTO.builder().fundingDTO(dto)
-                .productDTOs(productList.get().stream().map(product -> entityToDTO(product))
-                        .collect(Collectors.toList())).build();
+                .productDTOs(prolist).build();
     }
 
     @Value("${kakaoPay.adminKey}")

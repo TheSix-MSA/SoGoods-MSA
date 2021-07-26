@@ -98,7 +98,9 @@ public class OrderServiceImpl implements OrderService{
         for(Object[] objArr: res.getContent()){
             if(!dtoRes.equals((Order)objArr[0])){
                 dtoList.add(OrderBriefResponseDTO.builder()
-                        .dto(entityToDto(dtoRes)).totalPrices(totalPrice).prodNames(prodName.substring(0,prodName.length()-2)).build());
+                        .dto(entityToDto(dtoRes)).totalPrices(totalPrice)
+                        .prodNames(prodName.substring(0,prodName.length()-2))
+                        .pno(((Product)objArr[2]).getPno()).build());
                 dtoRes = (Order)objArr[0];
                 totalPrice = 0;
                 prodName = "";
@@ -108,7 +110,9 @@ public class OrderServiceImpl implements OrderService{
         }
 
         dtoList.add(OrderBriefResponseDTO.builder()
-                .dto(entityToDto(dtoRes)).totalPrices(totalPrice).prodNames(prodName.substring(0,prodName.length()-2)).build());
+                .dto(entityToDto(dtoRes)).totalPrices(totalPrice)
+                .prodNames(prodName.substring(0,prodName.length()-2))
+                .pno(((Product)res.getContent().get(res.getContent().size()-1)[2]).getPno()).build());
 
         return OrderPagingResponseDTO.builder().resDto(dtoList).pageMaker(pageMaker).build();
     }
