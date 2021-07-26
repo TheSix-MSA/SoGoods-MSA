@@ -222,4 +222,5 @@ public interface FundingService {
      */
     ListResponseDTO<FundingDTO> getNotAuthorizedFunding(ListRequestDTO dto);
 
+    long getCurrentTotalPrice();
 }

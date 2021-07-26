@@ -38,4 +38,7 @@ public interface FundingRepository extends JpaRepository<Funding, Long>, Funding
     Optional<List<Object[]>> getFundingALLData(Long fno);
 
     Page<Funding> findAllByAuthorizedFalseAndRemovedFalse(Pageable pageable);
+
+    @Query("select SUM(f.totalAmount) from Funding f where f.success=false")
+    long getTotalCurrent();
 }
