@@ -26,6 +26,8 @@ public class ProductDTO {
 
     private boolean removed; // 삭제 여부
 
+    private boolean deletable;
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime regDate; // 제품 등록일
 
