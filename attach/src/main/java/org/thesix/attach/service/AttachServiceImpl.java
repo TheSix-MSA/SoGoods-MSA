@@ -119,7 +119,7 @@ public class AttachServiceImpl implements AttachService {
                 Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 130, 130);
 
             } catch (IOException e) {
-                throw new InternalException();
+                throw new InternalException(e.getMessage());
             }//원본, 썸네일 파일 저장 완료...........................
 
             //tempFile은 uuid + 원본파일명 의 값을 갖는다.
