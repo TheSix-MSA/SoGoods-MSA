@@ -10,6 +10,7 @@ import org.thesix.member.entity.Novels;
 
 public interface NovelRepository extends JpaRepository<Novels,Long> {
 
-    @Query("select n from Novels n where n.member = :member")
+    @Query("select n from Novels n where n.member = :member and n.deleted = false")
     Page<Novels> getOnesNovels(Pageable pageable,@Param("member") Member member);
+
 }

@@ -7,10 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.thesix.member.dto.MemberDTO;
-import org.thesix.member.dto.PageMaker;
-import org.thesix.member.dto.RequestListDTO;
-import org.thesix.member.dto.ResponseListDTO;
+import org.thesix.member.dto.*;
 import org.thesix.member.entity.Member;
 import org.thesix.member.entity.MemberRole;
 import org.thesix.member.repository.MemberRepository;
@@ -175,6 +172,20 @@ public class MemberServiceImpl implements MemberService{
         }
 
         return entityToMeberDTO(memberRepository.save(memberResult));
+    }
+
+    @Override
+    public MemberDTO rejectRequest(String email) {
+
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("잘못된 동작입니다."));
+
+        member.changeApproval(false);
+
+        member.changeAuthor(AuthorInfoDTO.builder().build());
+
+        Member result = memberRepository.save(member);
+
+        return entityToMeberDTO(result);
     }
 
 }

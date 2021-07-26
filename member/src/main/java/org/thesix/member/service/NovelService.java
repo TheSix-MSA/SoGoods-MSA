@@ -11,6 +11,8 @@ public interface NovelService {
 
     ResponseNovelList getNovelList(RequestNovelPageDTO dto);
 
+    NovelsDTO removeNovel(NovelsDTO dto);
+
     default Novels dtoToEntity(NovelsDTO dto){
         return Novels.builder()
                 .nno(dto.getNno())

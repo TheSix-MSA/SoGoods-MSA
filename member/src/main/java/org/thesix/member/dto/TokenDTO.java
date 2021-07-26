@@ -18,5 +18,6 @@ public class TokenDTO {
     private String refreshToken;
     private String name;
     private String email;
+    private boolean approval;
     private Set<MemberRole> roles;
 }

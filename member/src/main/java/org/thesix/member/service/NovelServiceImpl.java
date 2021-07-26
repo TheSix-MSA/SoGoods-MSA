@@ -64,23 +64,38 @@ public class NovelServiceImpl implements NovelService{
     @Override
     public ResponseNovelList getNovelList(RequestNovelPageDTO dto) {
 
-        Pageable pageable = PageRequest.of(dto.getPage(), dto.getSize(), Sort.by("nno").descending());
+        Pageable pageable = PageRequest.of(dto.getPage()-1, dto.getSize(), Sort.by("nno").descending());
+
         Page<Novels> onesNovels = novelRepository.getOnesNovels(pageable, Member.builder().email(dto.getEmail()).build());
+
         List<NovelsDTO> novelList = onesNovels.stream().map(novels -> NovelsDTO.builder()
                 .email(novels.getMember().getEmail())
                 .image(novels.getImage())
+                .title(novels.getTitle())
                 .isbn(novels.getIsbn())
                 .publisher(novels.getPublisher())
                 .nno(novels.getNno())
                 .build()
         ).collect(Collectors.toList());
 
-        PageMaker pageMaker = new PageMaker(pageable,RequestListDTO.builder().page(dto.getPage()).size(dto.getSize()).build(),onesNovels.getTotalPages());
+        PageMaker pageMaker = new PageMaker(pageable,RequestListDTO.builder().page(dto.getPage()).size(dto.getSize()).build(),(int)onesNovels.getTotalElements());
 
         return ResponseNovelList.builder()
                 .novelsDTO(novelList)
                 .pageMaker(pageMaker)
                 .build();
+    }
+
+    @Override
+    public NovelsDTO removeNovel(NovelsDTO dto) {
+
+        Novels novels = novelRepository.findById(dto.getNno()).orElseThrow(() -> new NullPointerException("해당 책이 존재하지 않습니다."));
+
+        novels.changeDelete();
+
+        Novels novel = novelRepository.save(novels);
+
+        return entityToNovels(novel);
     }
 
 

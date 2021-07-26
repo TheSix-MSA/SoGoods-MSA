@@ -35,4 +35,8 @@ public class Novels extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
+    public void changeDelete(){
+        this.deleted = true;
+    }
+
 }

@@ -25,6 +25,8 @@ public interface MemberService {
 
     MemberDTO changeBanned(String email);
 
+    MemberDTO rejectRequest(String email);
+
     /**
      *
      * @param dto 가입입력정보
@@ -45,6 +47,10 @@ public interface MemberService {
                 .provider(dto.getProvider())
                 .social(dto.isSocial())
                 .roleSet(dto.getRoleSet())
+                .approval(dto.isApproval())
+                .identificationUrl(dto.getIdentificationUrl())
+                .introduce(dto.getIntroduce())
+                .nickName(dto.getNickName())
                 .build();
 
         return member;
@@ -71,6 +77,10 @@ public interface MemberService {
                 .regDate(member.getRegDate())
                 .modDate(member.getModDate())
                 .roleSet(member.getRoleSet())
+                .identificationUrl(member.getIdentificationUrl())
+                .introduce(member.getIntroduce())
+                .nickName(member.getNickName())
+                .approval(member.isApproval())
                 .build();
     }
 
