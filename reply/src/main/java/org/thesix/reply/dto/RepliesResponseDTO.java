@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class RepliesResponseDTO {
     private Long rno;
     private String writer;
+    private String email;
     private String content;
     private boolean removed;
     private Long groupId;

@@ -17,7 +17,7 @@ public class ListRequestDTO {
     @Builder.Default // Builder로 값을 넣을 때 값이 없으면 default값이 들어감
     private int page = 1;
     @Builder.Default
-    private int size = 10;
+    private int size = 12;
 
     private String keyword;
 
