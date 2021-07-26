@@ -9,6 +9,8 @@ import org.thesix.board.dto.BoardListRequestDTO;
 import org.thesix.board.dto.BoardListResponseDTO;
 import org.thesix.board.service.BoardService;
 
+import java.util.Map;
+
 import static org.thesix.board.util.ApiUtil.ApiResult;
 
 import static org.thesix.board.util.ApiUtil.success;
@@ -111,5 +113,10 @@ public class BoardController {
     public ApiResult<BoardDTO> replyCountDown(@PathVariable Long bno) {
         BoardDTO countDownDTO = boardService.replyCountDown(bno);
         return success(countDownDTO);
+    }
+
+    @GetMapping("/allcount")
+    public ApiResult<Map<String,Long>> allBoardCount() {
+        return success(boardService.allBoardCount());
     }
 }

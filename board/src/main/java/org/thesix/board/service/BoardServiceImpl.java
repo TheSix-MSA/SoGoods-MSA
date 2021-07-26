@@ -6,15 +6,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.thesix.board.dto.BoardDTO;
-import org.thesix.board.dto.BoardListRequestDTO;
-import org.thesix.board.dto.BoardListResponseDTO;
-import org.thesix.board.dto.PageMaker;
+import org.thesix.board.dto.*;
 import org.thesix.board.entity.Board;
 import org.thesix.board.entity.BoardType;
 import org.thesix.board.repository.BoardRepository;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -135,6 +134,7 @@ public class BoardServiceImpl implements BoardService {
     public BoardDTO replyCountUp(Long bno) {
         Board result = boardRepository.findById(bno).orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
         result.replyCountUp(result.getReplyCnt());
+
         Board countResult = boardRepository.save(result);
         return entityToDTO(countResult);
     }
@@ -142,9 +142,21 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public BoardDTO replyCountDown(Long bno) {
         Board result = boardRepository.findById(bno).orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
-        result.replyCountDown(result.getReplyCnt());
+        if( result.getReplyCnt()>0 ) {
+            result.replyCountDown(result.getReplyCnt());
+        }
         Board countResult = boardRepository.save(result);
         return entityToDTO(countResult);
+    }
+
+    @Override
+    public Map<String,Long> allBoardCount() {
+        Long[] result = boardRepository.countTotalBoard();
+        Map<String,Long> resultDTO = new HashMap<>();
+        resultDTO.put("FREE",result[0]);
+        resultDTO.put("NOTICE",result[1]);
+        resultDTO.put("NOVELIST",result[2]);
+        return resultDTO;
     }
 
 }

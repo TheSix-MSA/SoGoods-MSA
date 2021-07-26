@@ -32,4 +32,7 @@ public interface BoardRepository extends JpaRepository<Board, Long>, BoardSearch
     @Query("select b from Board b where b.email = :email and b.boardType = :boardType and b.removed = false")
     Page<Board> findByBoardWith(String email, BoardType boardType, Pageable pageable);
 
+    @Query("SELECT COUNT(b.bno) FROM Board b GROUP BY b.boardType")
+    Long[] countTotalBoard();
+
 }

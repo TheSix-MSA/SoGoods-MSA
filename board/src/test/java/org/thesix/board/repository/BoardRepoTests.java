@@ -14,7 +14,9 @@ import org.thesix.board.entity.BoardType;
 import org.thesix.board.service.BoardService;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 @SpringBootTest
@@ -66,9 +68,19 @@ public class BoardRepoTests {
     public void testWriter() {
         String boardType = "NOTICE";
         BoardType boardCate = BoardType.valueOf(boardType);
-        String writer = "석현일";
+        String writer = "테스트 작성자 1";
 
         Page<Board> list = boardRepository.findByBoardWith(writer,boardCate,PageRequest.of(0, 10, Sort.by("bno").descending()));
         list.getContent().forEach(i -> System.out.println(i));
+    }
+
+    @Test
+    public void countTest() {
+        Long[] result = boardRepository.countTotalBoard();
+        Map<String,Long> resultDto = new HashMap<>();
+        resultDto.put("FREE",result[0]);
+        resultDto.put("NOTICE",result[1]);
+        resultDto.put("NOVELIST",result[2]);
+        System.out.println(Arrays.toString(result));
     }
 }

@@ -6,6 +6,8 @@ import org.thesix.board.dto.BoardListResponseDTO;
 import org.thesix.board.entity.Board;
 import org.thesix.board.entity.BoardType;
 
+import java.util.Map;
+
 public interface BoardService {
 
     /*
@@ -53,9 +55,14 @@ public interface BoardService {
      */
     BoardDTO replyCountDown(Long bno);
 
+    /**
+     *  Board의 카운트
+     */
+    Map<String,Long> allBoardCount();
     /*
         DTO 객체를 ENTITY로 변환
      */
+
     default Board dtoToEntity(BoardDTO dto, String board_type) {
         Board board = Board.builder()
                 .bno(dto.getBno())
