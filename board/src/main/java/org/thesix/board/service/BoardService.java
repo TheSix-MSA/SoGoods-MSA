@@ -46,12 +46,12 @@ public interface BoardService {
     /*
         댓글 증가
      */
-    BoardDTO replyCountUp(Long bno, BoardDTO dto);
+    BoardDTO replyCountUp(Long bno);
 
     /*
         댓글 감소
      */
-    BoardDTO replyCountDown(Long bno, BoardDTO dto);
+    BoardDTO replyCountDown(Long bno);
 
     /*
         DTO 객체를 ENTITY로 변환

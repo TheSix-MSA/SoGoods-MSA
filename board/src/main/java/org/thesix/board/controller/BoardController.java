@@ -96,22 +96,20 @@ public class BoardController {
     }
 
     /*
-        댓글 증가("/board/countUp/{bno}")
+        댓글 증가("/board/countup/{bno}")
      */
-    @PutMapping("/countUp/{bno}")
-    public ApiResult<BoardDTO> replyCountUp(@PathVariable Long bno, @RequestBody BoardDTO dto) {
-        dto.setBno(bno);
-        BoardDTO countUpDTO = boardService.replyCountUp(bno, dto);
+    @PutMapping("/countup/{bno}")
+    public ApiResult<BoardDTO> replyCountUp(@PathVariable Long bno) {
+        BoardDTO countUpDTO = boardService.replyCountUp(bno);
         return success(countUpDTO);
     }
 
     /*
-        댓글 감소("/board/countDown/{bno}")
+        댓글 감소("/board/countdown/{bno}")
      */
-    @PutMapping("/countDown/{bno}")
-    public ApiResult<BoardDTO> replyCountDown(@PathVariable Long bno, @RequestBody BoardDTO dto) {
-        dto.setBno(bno);
-        BoardDTO countDownDTO = boardService.replyCountDown(bno, dto);
+    @PutMapping("/countdown/{bno}")
+    public ApiResult<BoardDTO> replyCountDown(@PathVariable Long bno) {
+        BoardDTO countDownDTO = boardService.replyCountDown(bno);
         return success(countDownDTO);
     }
 }

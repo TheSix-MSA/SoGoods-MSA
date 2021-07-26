@@ -3,10 +3,8 @@
 package org.thesix.board.dto;
 
 import lombok.*;
-import org.thesix.board.entity.BoardType;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Data
 @ToString

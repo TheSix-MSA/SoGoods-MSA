@@ -132,16 +132,16 @@ public class BoardServiceImpl implements BoardService {
         댓글 증가
      */
     @Override
-    public BoardDTO replyCountUp(Long bno, BoardDTO dto) {
-        Board result = boardRepository.findById(dto.getBno()).orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
+    public BoardDTO replyCountUp(Long bno) {
+        Board result = boardRepository.findById(bno).orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
         result.replyCountUp(result.getReplyCnt());
         Board countResult = boardRepository.save(result);
         return entityToDTO(countResult);
     }
 
     @Override
-    public BoardDTO replyCountDown(Long bno, BoardDTO dto) {
-        Board result = boardRepository.findById(dto.getBno()).orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
+    public BoardDTO replyCountDown(Long bno) {
+        Board result = boardRepository.findById(bno).orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
         result.replyCountDown(result.getReplyCnt());
         Board countResult = boardRepository.save(result);
         return entityToDTO(countResult);
