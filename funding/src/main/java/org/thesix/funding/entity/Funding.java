@@ -42,8 +42,11 @@ public class Funding extends BaseEntity {
     @Column(nullable = false)
     private long targetAmount; // 목표 금액
 
-        @Column(nullable = false)
+    @Column(nullable = false)
     private boolean authorized;  // 관리자 승인 여부
+
+    @Column(nullable = false)
+    private boolean requestApproval; // 승인 신청 여부
 
 
     /**
@@ -70,6 +73,8 @@ public class Funding extends BaseEntity {
     public void changeAuthorized(boolean authorized){
         this.authorized = authorized;
     }
+
+    public void changeRequestApproval(boolean requestApproval){this.requestApproval = requestApproval;};
 
 
 }
