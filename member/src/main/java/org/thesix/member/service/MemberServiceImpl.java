@@ -72,7 +72,11 @@ public class MemberServiceImpl implements MemberService{
 
         member.changeRemoved(!member.isRemoved());
 
-        memberRepository.save(member);
+        log.info(member.isRemoved());
+
+        Member save = memberRepository.save(member);
+
+        log.info(save);
 
         return email;
     }

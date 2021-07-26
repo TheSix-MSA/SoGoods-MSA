@@ -44,7 +44,9 @@ public class LoginServiceImpl implements LoginService{
     @Override
     public TokenDTO Login(LoginInfoDTO dto) {
         Member member = memberRepository.findById(dto.getEmail()).orElseThrow(() -> new NullPointerException("해당하는 사용자가 없습니다."));
-
+        if(member.isRemoved() == true){
+            throw new IllegalArgumentException("삭제된 회원입니다");
+        }
         boolean matchResult = encoder.matches(dto.getPassword(), member.getPassword());
 
         if (matchResult) {
