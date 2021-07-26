@@ -77,7 +77,7 @@ public class OrderServiceImpl implements OrderService{
     public OrderPagingResponseDTO getUsersOrders(OrderPageRequestDTO dto) {
         if(dto.getPage() < 1) dto.setPage(1);
 
-        Pageable pageable = PageRequest.of((dto.getPage()-1),10);
+        Pageable pageable = PageRequest.of((dto.getPage()-1),5);
         Page<Object[]> res = orderRepository.getSearchedOrder(dto.getEmail(),dto.getSortCondition(),pageable);
 
         res.getContent().forEach(objects -> log.info(Arrays.toString(objects)));
