@@ -148,6 +148,10 @@ public class FundingController {
     }
 
 
+    @GetMapping("/total")
+    public ApiResult<Long> getCurrentTotal(){
+        return success(fundingService.getCurrentTotalPrice());
+    }
 
 
 

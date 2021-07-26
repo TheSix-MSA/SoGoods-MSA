@@ -501,6 +501,11 @@ public class FundingServiceImpl implements FundingService {
                 .dtoList(dtoList).pageMaker(pageMaker).build();
     }
 
+    @Override
+    public long getCurrentTotalPrice() {
+        return fundingRepository.getTotalCurrent();
+    }
+
 
 }
 
