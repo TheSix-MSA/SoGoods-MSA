@@ -11,6 +11,8 @@ import org.thesix.member.dto.*;
 import org.thesix.member.entity.Member;
 import org.thesix.member.entity.MemberRole;
 import org.thesix.member.repository.MemberRepository;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -187,5 +189,19 @@ public class MemberServiceImpl implements MemberService{
 
         return entityToMeberDTO(result);
     }
+
+    @Override
+    public AnalysisDTO countUser() {
+
+        Object result = memberRepository.findAnalysisInfo();
+
+        Object[] arr = (Object[])result;
+
+        return AnalysisDTO.builder()
+                .total(Integer.parseInt(String.valueOf(arr[0])))
+                .author(Integer.parseInt(String.valueOf(arr[1])))
+                .build();
+    }
+
 
 }

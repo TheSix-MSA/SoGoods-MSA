@@ -92,4 +92,5 @@ public class MemberSearchImpl extends QuerydslRepositorySupport implements Membe
         return new PageImpl(result, pageable, query.fetchCount());
     }
 
+
 }

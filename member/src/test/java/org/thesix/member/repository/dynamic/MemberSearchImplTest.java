@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
+import org.thesix.member.dto.AnalysisDTO;
 import org.thesix.member.dto.MemberDTO;
 import org.thesix.member.entity.Member;
 import org.thesix.member.entity.MemberRole;
@@ -17,7 +18,11 @@ import org.thesix.member.entity.Novels;
 import org.thesix.member.repository.MemberRepository;
 import org.thesix.member.repository.NovelRepository;
 
+import javax.management.Query;
+import javax.persistence.EntityManager;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 @SpringBootTest
 @Log4j2
@@ -88,6 +93,20 @@ class MemberSearchImplTest {
         Page<Novels> onesNovels = novelRepository.getOnesNovels(pageable, Member.builder().email("diqksk@naver.com").build());
         log.info("악앙강ㄱ@@@@@@@@@@@@@@@@@@@@");
         onesNovels.getContent().forEach(novels -> log.info(novels));
+
+    }
+
+    @Test
+    public void testAnalysis(){
+
+        Object result = memberRepository.findAnalysisInfo();
+
+        Object[] arr = (Object[])result;
+
+        log.info(Arrays.toString(arr));
+
+        log.info(String.valueOf(arr[0]));
+        log.info(String.valueOf(arr[1]));
 
     }
 

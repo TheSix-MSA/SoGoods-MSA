@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.*;
+import org.thesix.member.dto.AnalysisDTO;
 import org.thesix.member.dto.MemberDTO;
 import org.thesix.member.dto.RequestListDTO;
 import org.thesix.member.dto.ResponseListDTO;
@@ -117,6 +118,11 @@ public class MemberController {
     @PutMapping("/reject/{email}")
     public ApiResult<MemberDTO> rejectApproval(@PathVariable("email") String email) {
         return success(memberService.rejectRequest(email));
+    }
+
+    @GetMapping("/analysis")
+    public ApiResult<AnalysisDTO> countUser(){
+        return success(memberService.countUser());
     }
 
 }

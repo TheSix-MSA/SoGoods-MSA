@@ -1,5 +1,6 @@
 package org.thesix.member.service;
 
+import org.thesix.member.dto.AnalysisDTO;
 import org.thesix.member.dto.MemberDTO;
 import org.thesix.member.dto.RequestListDTO;
 import org.thesix.member.dto.ResponseListDTO;
@@ -26,6 +27,8 @@ public interface MemberService {
     MemberDTO changeBanned(String email);
 
     MemberDTO rejectRequest(String email);
+
+    AnalysisDTO countUser();
 
     /**
      *
