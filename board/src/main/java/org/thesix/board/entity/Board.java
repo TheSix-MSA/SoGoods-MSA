@@ -66,6 +66,7 @@ public class Board extends BoardDateEntity {
         해당 글의 댓글개수
      */
     @Builder.Default
+    @Column(nullable = false)
     private Long replyCnt=0L;
 
     /*

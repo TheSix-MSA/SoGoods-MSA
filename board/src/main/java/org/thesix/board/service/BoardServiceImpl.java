@@ -142,7 +142,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public BoardDTO replyCountDown(Long bno) {
         Board result = boardRepository.findById(bno).orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
-        if( result.getReplyCnt()>0 ) {
+        if( result.getReplyCnt () > 0 ) {
             result.replyCountDown(result.getReplyCnt());
         }
         Board countResult = boardRepository.save(result);
