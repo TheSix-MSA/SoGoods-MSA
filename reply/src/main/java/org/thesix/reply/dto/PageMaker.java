@@ -11,7 +11,6 @@ import java.util.stream.IntStream;
 //전체 개수
 @Data
 public class PageMaker {
-
     private int page;
     private int size;
     private int totalCount;
@@ -19,6 +18,9 @@ public class PageMaker {
     private boolean prev,next;
 
     public PageMaker(int page,int size, int totalCount){
+        /**
+         * 강사님과 함께한 페이 정보 만드는 클래스
+         */
         this.page = page;
         this.size = size;
         this.totalCount = totalCount;

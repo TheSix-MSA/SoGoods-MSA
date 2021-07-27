@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.thesix.member.entity.Member;
 
 @Data
 @Builder
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RefreshDTO {
 
-    private String email;
-
-    private long expireDate;
+    private long rno;
+    private Member member;
+    private String refreshToken;
 }

@@ -2,6 +2,7 @@ config.properties
 application.properties
 config.yml
 application.yml
+application-dev.yml
 
 generated
 

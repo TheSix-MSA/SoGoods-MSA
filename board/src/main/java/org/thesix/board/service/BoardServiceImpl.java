@@ -2,12 +2,19 @@ package org.thesix.board.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.thesix.board.dto.BoardDTO;
+import org.springframework.transaction.annotation.Transactional;
+import org.thesix.board.dto.*;
 import org.thesix.board.entity.Board;
+import org.thesix.board.entity.BoardType;
 import org.thesix.board.repository.BoardRepository;
 
-import java.util.Optional;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,50 +23,140 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
 
-    // 게시판 글등록("/board/register")
+    /*
+        게시판 글등록("/board/{boardType}")
+     */
     @Override
-    public Long register(BoardDTO dto) {
-        Board board = dtoToEntity(dto);
-        boardRepository.save(board);
-        return board.getBno();
+    public BoardDTO register(BoardDTO dto, String boardType) {
+        Board register = dtoToEntity(dto, boardType);
+        Board registerResult = boardRepository.save(register);
+        return entityToDTO(registerResult);
     }
 
-    // 게시판 글수정("/board/modify/{bno}")
+    /*
+        게시판 글수정("/board/{boardType}/{bno}")
+     */
     @Override
     public BoardDTO modify(BoardDTO dto) {
-        Optional<Board> result = boardRepository.findById(dto.getBno());
-        if(result.isPresent() && dto.isRemoved() == false) {
-            Board entity = result.get();
-            entity.changeTitle(dto.getTitle());
-            entity.changeContent(dto.getContent());
-            Board modifyResult = boardRepository.save(entity);
+        Board result = boardRepository.findById(dto.getBno()).orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
+        if(dto.isRemoved() == false) {
+            result.changeTitle(dto.getTitle());
+            result.changeContent(dto.getContent());
+
+            Board modifyResult = boardRepository.save(result);
             return entityToDTO(modifyResult);
         }
-        return null;
+        throw new RuntimeException("이미 삭제된 게시글입니다.");
     }
 
-    // 게시판 글삭제("/board/remove/{bno}")
+    /*
+        게시판 글삭제("/board/{bno}")
+     */
     @Override
-    public BoardDTO remove(BoardDTO dto) {
-        Optional<Board> result = boardRepository.findById(dto.getBno());
-        if(result.isPresent() && dto.isRemoved() == false) {
-            Board entity = result.get();
-            entity.changeRemoved(true);
-            Board removeResult = boardRepository.save(entity);
-            return entityToDTO(removeResult);
+    @Transactional
+    public BoardDTO remove(Long bno, String boardType) {
+        Board result = boardRepository.findById(bno).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+        result.changeRemoved(true);
+        Board removeResult = boardRepository.save(result);
+        return entityToDTO(removeResult);
+    }
+    /*
+        공지사항 공개/비공개 처리
+     */
+    @Override
+    public BoardDTO changeIsPrivate(BoardDTO dto, String boardType) {
+        Board result = boardRepository.findById(dto.getBno()).orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
+        if(boardType.equals("NOTICE")) {
+            result.changeIsPrivate(!result.isPrivate());
+            Board noticeResult = boardRepository.save(result);
+            return entityToDTO(noticeResult);
         }
-        return null;
+        throw new RuntimeException("공개되지 않는 게시글입니다.");
     }
 
-    // 게시판 특정 글조회("/board/read/{bno}")
+    /*
+        게시판 특정 글조회("/board/{board_type}/{bno}")
+     */
     @Override
     public BoardDTO read(Long bno) {
-        Optional<Board> result = boardRepository.findById(bno);
-        log.info(result);
-        if(result.isPresent()){
-            Board board = result.get();
-            return entityToDTO(board);
-        }
-        return null;
+
+        Board result = boardRepository.findById(bno).orElseThrow(()-> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+        return entityToDTO(result);
+
     }
+
+    /*
+        특정 게시판의 목록("/board/{board_type}/list")
+     */
+    @Override
+    public BoardListResponseDTO<BoardDTO> getList(BoardListRequestDTO boardListRequestDTO, String boardType) {
+        log.info(boardListRequestDTO + " : " + boardType);
+        Page<Board> list = boardRepository.getBoardList(
+                boardType,
+                boardListRequestDTO.getType(),
+                boardListRequestDTO.getKeyword(),
+                boardListRequestDTO.getPageable()
+        );
+        BoardListResponseDTO boardListResponseDTO = BoardListResponseDTO.builder()
+                .pageMaker(new PageMaker(boardListRequestDTO.getPageable(), (int) list.getTotalElements()))
+                .boardDtoList(list.stream().map((board) -> entityToDTO(board)).collect(Collectors.toList()))
+                .boardListRequestDTO(boardListRequestDTO)
+                .build();
+        return boardListResponseDTO;
+    }
+
+    /*
+        자신이 작성한 게시글 목록("/board/{writer}")
+     */
+    @Override
+    public BoardListResponseDTO<BoardDTO> writerList(BoardListRequestDTO boardListRequestDTO, String email, String boardType) {
+        BoardType boardCate = BoardType.valueOf(boardType);
+        log.info(boardListRequestDTO + " : " + email);
+        Page<Board> list = boardRepository.findByBoardWith(
+                email,
+                boardCate,
+                boardListRequestDTO.getPageable()
+                );
+
+        BoardListResponseDTO boardListResponseDTO = BoardListResponseDTO.builder()
+                .pageMaker(new PageMaker(boardListRequestDTO.getPageable(), (int) list.getTotalElements()))
+                .boardDtoList(list.stream().map((board)->entityToDTO(board)).collect(Collectors.toList()))
+                .boardListRequestDTO(boardListRequestDTO)
+                .build();
+
+        return boardListResponseDTO;
+    }
+
+    /*
+        댓글 증가
+     */
+    @Override
+    public BoardDTO replyCountUp(Long bno) {
+        Board result = boardRepository.findById(bno).orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
+        result.replyCountUp(result.getReplyCnt());
+
+        Board countResult = boardRepository.save(result);
+        return entityToDTO(countResult);
+    }
+
+    @Override
+    public BoardDTO replyCountDown(Long bno) {
+        Board result = boardRepository.findById(bno).orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
+        if( result.getReplyCnt () > 0 ) {
+            result.replyCountDown(result.getReplyCnt());
+        }
+        Board countResult = boardRepository.save(result);
+        return entityToDTO(countResult);
+    }
+
+    @Override
+    public Map<String,Long> allBoardCount() {
+        Long[] result = boardRepository.countTotalBoard();
+        Map<String,Long> resultDTO = new HashMap<>();
+        resultDTO.put("FREE",result[0]);
+        resultDTO.put("NOTICE",result[1]);
+        resultDTO.put("NOVELIST",result[2]);
+        return resultDTO;
+    }
+
 }

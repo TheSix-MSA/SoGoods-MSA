@@ -4,6 +4,8 @@ import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.thesix.member.dto.MemberDTO;
 import org.thesix.member.repository.MemberRepository;
 
 import java.util.Optional;
@@ -17,6 +19,9 @@ class MemberRoleTest {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private PasswordEncoder encoder;
 
     @Test
     public void testInsertMember(){
@@ -33,6 +38,7 @@ class MemberRoleTest {
             int ranYear=(int) (Math.random() * 49) + 50;
             String ranMonthStr = Integer.toString(ranMonth);
             String ranDateStr = Integer.toString(ranDate);
+
             if(ranMonthStr.length()<2){
                 ranMonthStr = "0" + ranMonthStr;
             }
@@ -40,9 +46,7 @@ class MemberRoleTest {
                 ranDateStr = "0" + ranDateStr;
             }
 
-
             int ranNum=(int) (Math.random() * 9999) + 1;
-
 
             String randomBirth = Integer.toString(ranYear) +
                     ranMonthStr +
@@ -51,6 +55,7 @@ class MemberRoleTest {
 
             Member member = Member.builder()
                     .email("aaa"+i+"@aaa.aa")
+                    .password(encoder.encode(""+i))
                     .name("이름..."+i)
                     .gender(sex)
                     .birth(randomBirth)
@@ -76,7 +81,7 @@ class MemberRoleTest {
     @Test
     public void testRead(){
 
-        Optional<Member> member = memberRepository.findById("aaa90@aaa.aa");
+        Optional<Member> member = memberRepository.findByEmail("aaa90@aaa.aa");
         member.ifPresent(member1 -> {
             log.info(member1);
         });
@@ -84,6 +89,36 @@ class MemberRoleTest {
 
     }
 
+    @Test
+    public void testDelete(){
+        Member member = Member.builder()
+                .email("aaa100@aaa.aa")
+                .build();
+
+
+        memberRepository.delete(member);
+
+    }
+
+    @Test
+    public void testModify(){
+        Optional<Member> result = memberRepository.findById("aaa101@aaa.aa");
+
+        result.ifPresent(member -> {
+
+            Member temp = Member.builder()
+                    .address("수정된 어드레스")
+                    .phone("010-0000-0001")
+                    .detailAddress("수정된 디테일 어드레스")
+                    .build();
+
+            member.changeMemberInfo(temp);
+
+            Member save = memberRepository.save(member);
+            log.info(save);
+
+        });
+    }
 
 
 }

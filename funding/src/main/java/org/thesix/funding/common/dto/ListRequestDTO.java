@@ -17,9 +17,11 @@ public class ListRequestDTO {
     @Builder.Default // Builder로 값을 넣을 때 값이 없으면 default값이 들어감
     private int page = 1;
     @Builder.Default
-    private int size = 10;
+    private int size = 12;
 
     private String keyword;
+
+    private String state;
 
     // 파라미터로 들어오는 page, size 값이 음수일 경우 디폴트값으로 정의
     public void setPage(int page) {
@@ -29,7 +31,7 @@ public class ListRequestDTO {
 
     public void setSize(int size) {
 
-        this.size = size < 10 ? size : 10;
+        this.size = size < 10 ? size : 12;
     }
 
     @JsonIgnore

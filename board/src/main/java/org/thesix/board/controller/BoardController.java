@@ -3,15 +3,19 @@ package org.thesix.board.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.thesix.board.dto.BoardDTO;
+import org.thesix.board.dto.BoardListRequestDTO;
+import org.thesix.board.dto.BoardListResponseDTO;
 import org.thesix.board.service.BoardService;
 
-@Controller
+import java.util.Map;
+
+import static org.thesix.board.util.ApiUtil.ApiResult;
+
+import static org.thesix.board.util.ApiUtil.success;
+
+@RestController
 @RequestMapping("/board")
 @Log4j2
 @RequiredArgsConstructor
@@ -19,41 +23,100 @@ public class BoardController {
 
     private final BoardService boardService;
 
-    // 게시판 글등록("/board/register")
-    @PostMapping("/register")
-    public ResponseEntity<Long> register(@RequestBody BoardDTO dto) {
-        Long bno = boardService.register(dto);
-        log.info("Register BNO:" + bno);
-        return ResponseEntity.ok().body(bno);
+    /*
+        게시판 글등록("/board/{boardType}")
+     */
+    @PostMapping("/{boardType}")
+    public ApiResult<BoardDTO> register(@RequestBody BoardDTO dto, @PathVariable String boardType) {
+        BoardDTO registerDTO = boardService.register(dto, boardType);
+        log.info(boardType + "   00000000000");
+        log.info("Register BNO:" + registerDTO);
+        return success(registerDTO);
     }
 
-    // 게시판 글수정("/board/modify/{bno}")
-    @PutMapping("/modify/{bno}")
-    public ResponseEntity<BoardDTO> modify(@PathVariable Long bno, @RequestBody BoardDTO dto) {
+    /*
+        게시판 글수정("/board/{boardType}/{bno}")
+     */
+    @PutMapping("/{boardType}/{bno}")
+    public ApiResult<BoardDTO> modify(@PathVariable Long bno, @PathVariable String boardType, @RequestBody BoardDTO dto) {
         dto.setBno(bno);
         log.info("Modify BNO: " + bno);
         BoardDTO modifyDTO = boardService.modify(dto);
-        return ResponseEntity.ok(modifyDTO);
+        return success(modifyDTO);
     }
 
-    // 게시판 글삭제("/board/remove/{bno}")
-    @DeleteMapping("/remove/{bno}")
-    public ResponseEntity<BoardDTO> removed(@PathVariable Long bno, @RequestBody BoardDTO dto) {
-        dto.setBno(bno);
-        BoardDTO removedDTO = boardService.remove(dto);
+    /*
+        게시판 글삭제("/board/{boardType}/{bno}")
+     */
+    @DeleteMapping("/{boardType}/{bno}")
+    public ApiResult<BoardDTO> removed(@PathVariable Long bno, @PathVariable String boardType) {
+        BoardDTO removedDTO = boardService.remove(bno, boardType);
         log.info("Remove BNO: " + bno);
-        return ResponseEntity.ok().body(removedDTO);
+        return success(removedDTO);
     }
 
-    // 게시판 특정 글조회("/board/read/{bno}")
-    @GetMapping("/read/{bno}")
-    public ResponseEntity<BoardDTO> read(@PathVariable Long bno) {
+    /*
+        게시판 특정 글조회("/board/{boardType}/{bno}")
+     */
+    @GetMapping("/{boardType}/{bno}")
+    public ApiResult<BoardDTO> read(@PathVariable Long bno, @PathVariable String boardType) {
         BoardDTO readDTO  = boardService.read(bno);
         log.info("Read DTO: " + readDTO);
-        return ResponseEntity.ok().body(readDTO);
+        return success(readDTO);
     }
 
-    // 게시판 글목록("/board/list")
-    // @GetMapping("/list")
+    /*
+        공지사항 공개/비공개
+     */
+    @PutMapping("/{boardType}/isPrivate/{bno}")
+    public ApiResult<BoardDTO> notice(@PathVariable String boardType, @PathVariable Long bno, @RequestBody BoardDTO dto) {
+        dto.setBno(bno);
+        BoardDTO noticeDTO = boardService.changeIsPrivate(dto, boardType);
+        return success(noticeDTO);
+    }
 
+    /*
+        게시판 글목록("/board/{boardType}/list")
+     */
+    @GetMapping("/{boardType}/list")
+    public ApiResult<BoardListResponseDTO<BoardDTO>> getList(BoardListRequestDTO boardListRequestDTO,
+                                                             @PathVariable String boardType) {
+        BoardListResponseDTO<BoardDTO> boardListDTO = boardService.getList(boardListRequestDTO, boardType);
+        log.info("BoardListDTO: " + boardListDTO);
+        return success(boardService.getList(boardListRequestDTO, boardType));
+    }
+
+
+    /*
+        자신이 작성한 게시글 목록("/board/{writer}")
+     */
+    @GetMapping("/member/{boardType}/{email}")
+    public ApiResult<BoardListResponseDTO<BoardDTO>> writerList(BoardListRequestDTO boardListRequestDTO, @PathVariable String boardType, @PathVariable String email) {
+        BoardListResponseDTO<BoardDTO> writerListDTO = boardService.writerList(boardListRequestDTO, email, boardType);
+        log.info("WriterBoardDTO: " + writerListDTO);
+        return success(writerListDTO);
+    }
+
+    /*
+        댓글 증가("/board/countup/{bno}")
+     */
+    @PutMapping("/countup/{bno}")
+    public ApiResult<BoardDTO> replyCountUp(@PathVariable Long bno) {
+        BoardDTO countUpDTO = boardService.replyCountUp(bno);
+        return success(countUpDTO);
+    }
+
+    /*
+        댓글 감소("/board/countdown/{bno}")
+     */
+    @PutMapping("/countdown/{bno}")
+    public ApiResult<BoardDTO> replyCountDown(@PathVariable Long bno) {
+        BoardDTO countDownDTO = boardService.replyCountDown(bno);
+        return success(countDownDTO);
+    }
+
+    @GetMapping("/allcount")
+    public ApiResult<Map<String,Long>> allBoardCount() {
+        return success(boardService.allBoardCount());
+    }
 }

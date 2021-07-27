@@ -1,165 +1,135 @@
 package org.thesix.attach.controller;
 
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import net.coobird.thumbnailator.Thumbnailator;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.thesix.attach.dto.AttachConfimRequestDTO;
 import org.thesix.attach.dto.UploadResultDTO;
+import org.thesix.attach.dto.UuidRequestDTO;
+import org.thesix.attach.dto.UuidResponseDTO;
+import org.thesix.attach.service.AttachService;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 
+
+import static org.thesix.util.ApiUtil.*;
 /**
  * @author 도원진
  */
 @RestController
-
 @Log4j2
 @RequestMapping("/attach")
+@RequiredArgsConstructor
 public class UploadController {
     @Value("${spring.servlet.multipart.location}")
     private String uploadPath;
 
 
 
+    private final AttachService attachService;
 
     /**
      * 클라이언트에서 전종해준 파일의 업로드 처리
-     * @param files
+     *
+     * @param files URL: http://localhost:8022/attach/upload/temp
      */
-    @PostMapping("/uploadTemp")
-    public ResponseEntity<List<UploadResultDTO>> uplaodTemp(MultipartFile[] files){
-
-        List<UploadResultDTO> resultDTOList = new ArrayList<>();
-
-        for(MultipartFile file : files){
-
-            if(file.getContentType().startsWith("image") == false) {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-
-            //브라우저별 파일 오리지널파일이름 처리
-            String originalName = file.getOriginalFilename();
-            int pos =  originalName.lastIndexOf("\\") + 1;
-            String fileName = originalName.substring(pos);
-
-            //날짜 폴더 생성
-            //String folderPath = makeFolder();
-
-            //UUID
-            String uuid = UUID.randomUUID().toString();
-
-            //저장할 파일 이름 중간에 "_"
-            String commonPath = uploadPath + File.separator + "temp" + File.separator;
-            String uuidFileName =  uuid + "_" + fileName;
-
-            String severSideOriginFilePath = commonPath + uuidFileName;
-
-            Path savePath = Paths.get(severSideOriginFilePath);
-
-            try{
-                //서버에 저장
-                //  1. 원본
-                file.transferTo(savePath);
-                //  2. 썸네일
-                String serverSideThumbnailFilePath = commonPath + "s_" + uuidFileName;
-                File thumbnailFile = new File(serverSideThumbnailFilePath);
-                Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 100, 100);
-
-                //응답해줄 업로드 정보 추가
-                resultDTOList.add(new UploadResultDTO("temp", uuid, fileName));
-            }catch (IOException e){
-                e.printStackTrace();
-            }
+    @PostMapping("/upload")
+    public ApiResult<List<UuidResponseDTO>> uplaodtemp(MultipartFile[] files, String tableName, String keyValue, Integer mainIdx) {
+        makeFolder();
+        List<UuidResponseDTO> res = null;
+        try {
+            res = attachService.uplaodtemp(files, tableName, keyValue, mainIdx);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         //클라이언트가 업로드 된 이미지에 접근할 수 있도록 정보 응답
-        return new ResponseEntity<>(resultDTOList, HttpStatus.OK);
-
+        return success(res);
     }
 
-    @PostMapping("/uploadConfirm")
-    public ResponseEntity<String> uplaodConfirm(AttachConfimRequestDTO requestDTO) throws IOException {
+    /**
+     * 글 등록 확정시 첨부파일을 임시폴더에서 영구폴더로 이동및 데이터베이스 INSERT
+     *
+     * @param requestDTO
+     * @return
+     * @throws IOException 요청JSON 포멧은 아래 파라미터 AttachConfimRequestDTO 클래스 주석참고
+     */
+    @PostMapping("/upload/confirm")
+    public ApiResult<List<UuidResponseDTO>> uplaodConfirm(@RequestBody AttachConfimRequestDTO requestDTO) throws IOException {
 
-        List<UploadResultDTO> resultDTOList = new ArrayList<>();
-
-        log.info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-        log.info(resultDTOList);
-        log.info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-
-
+        List<UuidResponseDTO> res =  attachService.registerConfimedImages(requestDTO);
 
         //클라이언트가 업로드 된 이미지에 접근할 수 있도록 정보 응답
-        return new ResponseEntity<String>("STRING", HttpStatus.OK);
+        return success(res);
 
     }
 
     /**
      * 클라이언트 이미지 요청에 대한 이미지응답
-     * @param filename
-     * @return
+     *
+     * @param fileName
+     * @return opt: ["temp", "saved"] 중 하나
+     * API URL예시
+     * http://localhost:8022/attach/display/temp?
+     * filename=s_b0246ab4-c3f6-43a7-9c3f-616955046ea9_%ED%95%9C%EA%B8%80.png
      */
-    @GetMapping("/display")
-    public ResponseEntity<byte[]> getFile(String filename){
-        ResponseEntity<byte[]> result = null;
-        try {
-            String srcFileName = URLDecoder.decode(filename, "UTF-8");
+    @GetMapping("/display/temp")
+    public ResponseEntity<byte[]> getTempFile(String fileName) {
 
-            File file = new File(uploadPath + File.separator + srcFileName);
+        ResponseEntity<byte[]> result = attachService.getTempFile(fileName);
 
-            HttpHeaders headers = new HttpHeaders();
-
-            headers.add("Content-Type", Files.probeContentType(file.toPath()));
-
-            result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file), headers, HttpStatus.OK);
-
-        }catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
         return result;
     }
 
 
+    //s3 삭제
+    @DeleteMapping("/remove")
+    public ApiResult<Boolean> removeFile(String[] fileNames) {
 
+        attachService.removeFile(fileNames);
+
+        return success(true);
+    }
+
+    //s3 조회 One to One
+    @GetMapping("/list/uuid")
+    public ApiResult<List<UuidResponseDTO>> getUuidInList(UuidRequestDTO requestDTO){
+        List<UuidResponseDTO> res = attachService.getUuidInBoardList(requestDTO);
+        return success(res);
+    }
+
+    //s3 조회 One to Many
+    @GetMapping("/list/uuidlist")
+    public ApiResult<List<List<UuidResponseDTO>>> getUuidList(UuidRequestDTO requestDTO){
+        List<List<UuidResponseDTO>> res = attachService.getUuidList(requestDTO);
+        return success(res);
+    }
 
     /**
-     *  연/월 폴더생성
-      * @return
+     * 연/월 폴더생성
+     *
+     * @return
      */
-    private String makeFolder(){
+    private void makeFolder() {
 
-        String str = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-        log.info("str: " + str);
+        File uploadPathFolder = new File(uploadPath);
+        File tempPathFolder = new File(uploadPath, "temp");
+        File savedPathFolder = new File(uploadPath, "saved");
 
-        String folderPath = str.replace("/", File.separator);
-        log.info("folderPath : " + folderPath);
-
-        File uploadPathFolder = new File(uploadPath, folderPath);
-
-        if(!uploadPathFolder.exists()){
+        if (!uploadPathFolder.exists()) {
             uploadPathFolder.mkdirs();
         }
 
-        return folderPath;
+        if (!tempPathFolder.exists()) {
+            tempPathFolder.mkdirs();
+        }
     }
 }

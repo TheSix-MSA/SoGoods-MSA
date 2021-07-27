@@ -14,4 +14,5 @@ import java.util.List;
 public class ListResponseRepliesDTO {
     private List<RepliesResponseDTO> repliesDTOList;
     private PageMaker pageMaker;
+    private Long bno;
 }

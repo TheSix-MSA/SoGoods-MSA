@@ -40,7 +40,7 @@ public class ReplyRepositoryTests {
     public void testPagingReplies(){
         Pageable pageable = PageRequest.of(0,10, Sort.by("groupId"));
 
-        Page<Replies> res = repliesRepository.getList(pageable);
+        Page<Replies> res = repliesRepository.getList(1L ,pageable);
 
         res.getContent().forEach(replies -> {
             log.info(replies);

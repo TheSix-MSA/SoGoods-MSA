@@ -2,9 +2,7 @@ package org.thesix.funding.entity;
 
 import lombok.*;
 import org.thesix.funding.common.entity.BaseEntity;
-
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Builder
@@ -19,21 +17,36 @@ public class Funding extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long fno;  // 펀딩 식별번호
 
+    @Column(nullable = false)
     private String title;  // 펀딩글 제목
 
+    @Column(nullable = false)
     private String writer;  // 펀딩글 작성자
 
+    @Column(nullable = false)
     private String email;  // 작성자 이메일
 
+    @Lob
+    @Column(nullable = false)
     private String content;  // 펀딩글 내용
 
-    private LocalDateTime dueDate;  // 펀딩 만료일
+    @Column(nullable = false)
+    private String dueDate;  // 펀딩 만료일
 
     private boolean success;  // 펀딩 성공여부
 
     private boolean removed;  // 펀딩 삭제여부
 
-    private int totalAmount; // 토탈 모금 금액
+    private long totalAmount; // 토탈 모금 금액
+
+    @Column(nullable = false)
+    private long targetAmount; // 목표 금액
+
+    @Column(nullable = false)
+    private boolean authorized;  // 관리자 승인 여부
+
+    @Column(nullable = false)
+    private boolean requestApproval; // 승인 신청 여부
 
 
     /**
@@ -48,11 +61,20 @@ public class Funding extends BaseEntity {
         this.content = content;
     }
 
-    public void changeDueDate(LocalDateTime modDate){
-        this.dueDate = modDate;
-    }
+    public void addTotalAmount(Long totalAmount){this.totalAmount += totalAmount;}
+    public void subtractTotalAmount(Long totalAmount){this.totalAmount -= totalAmount;}
 
     public void changeRemoved(boolean removed){
         this.removed = removed;
     }
+
+    public void changeSuccessed(boolean success){ this.success = success;}
+
+    public void changeAuthorized(boolean authorized){
+        this.authorized = authorized;
+    }
+
+    public void changeRequestApproval(boolean requestApproval){this.requestApproval = requestApproval;};
+
+
 }

@@ -2,7 +2,9 @@ package org.thesix.member.entity;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedDate;
+import org.thesix.member.common.BaseEntity;
+import org.thesix.member.dto.AuthorInfoDTO;
+import org.thesix.member.dto.MemberDTO;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,11 +17,14 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
-public class Member {
+@ToString  (exclude = "roleSet")
+public class Member extends BaseEntity {
 
     @Id
     private String email; //이메일 (pk값)
+
+    @Column(nullable = false)
+    private String password;
 
     @Column(nullable = false)
     private String name; // 사용자 실명
@@ -49,21 +54,51 @@ public class Member {
     @Column(nullable = false)
     private boolean social; // 소셜로그인 여부 (0: 일반로그인, 1: 소셜로그인)
 
-    @CreationTimestamp
-    @Column(name = "regdate", updatable = false)
-    private LocalDateTime regDate;
+    @Builder.Default
+    private boolean approval = false;
 
-    @CreationTimestamp
-    @Column(name="loginDate", updatable = false)
-    private LocalDateTime loginDate;
+    private String identificationUrl; // 작가등록시 신분증 주소
+
+    private String nickName; // 작가의 필명(혹은 본명)
+
+    @Column(length = 200)
+    private String introduce; // 작가 본인소개 (50자제한)
 
     @Builder.Default
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     private Set<MemberRole> roleSet = new HashSet<>();
 
     public void addMemberRole(MemberRole role) {
         roleSet.add(role);
     }
 
+    public void changeMemberInfo(Member member){
+        this.phone = member.getPhone();
+        this.address = member.getAddress();
+        this.detailAddress = member.getDetailAddress();
+
+    }
+
+    public void changeApproval(boolean request){
+        this.approval = request;
+    }
+
+    public void changePassword(Member member) {
+        this.password = member.getPassword();
+    }
+
+    public void changeRemoved(boolean removed) {
+        this.removed = removed;
+    }
+
+    public void changeBanned(boolean banned) {
+        this.banned = banned;
+    }
+
+    public void changeAuthor(AuthorInfoDTO dto){
+        this.identificationUrl = dto.getIdentificationUrl();
+        this.nickName = dto.getNickName();
+        this.introduce = dto.getIntroduce();
+    }
 
 }

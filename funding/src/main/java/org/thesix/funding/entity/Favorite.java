@@ -17,8 +17,7 @@ public class Favorite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long favno;
 
-    private boolean mark;
-
+    @Column(nullable = false)
     private String actor;
 
     @JoinColumn

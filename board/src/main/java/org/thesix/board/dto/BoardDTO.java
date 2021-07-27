@@ -19,8 +19,11 @@ public class BoardDTO {
     private String email; // 게시글 글쓴이이메일
     private String content; // 게시글 내용
     private boolean removed; // 게시글 삭제여부
-    private String type; // 게시글 종류
     private LocalDateTime regDate; // 게시글 작성일
     private LocalDateTime modDate; // 게시글 수정일
+    private boolean isPrivate;
+
+    @Builder.Default
+    private Long replyCnt = 0L;
 
 }

@@ -1,13 +1,8 @@
 package org.thesix.member.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,10 +11,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@ToString(exclude = "member")
 public class RefreshToken {
 
     @Id
-    private String email;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long rno;
 
-    private long expireDate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
+
+    @Column(nullable = false, length = 500)
+    private String refreshToken;
+
+
 }
