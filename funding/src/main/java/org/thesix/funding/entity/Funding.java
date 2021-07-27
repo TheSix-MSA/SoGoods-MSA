@@ -2,9 +2,7 @@ package org.thesix.funding.entity;
 
 import lombok.*;
 import org.thesix.funding.common.entity.BaseEntity;
-
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Builder
@@ -33,7 +31,7 @@ public class Funding extends BaseEntity {
     private String content;  // 펀딩글 내용
 
     @Column(nullable = false)
-    private LocalDateTime dueDate;  // 펀딩 만료일
+    private String dueDate;  // 펀딩 만료일
 
     private boolean success;  // 펀딩 성공여부
 
@@ -44,7 +42,7 @@ public class Funding extends BaseEntity {
     @Column(nullable = false)
     private long targetAmount; // 목표 금액
 
-    @Column(nullable = false)
+        @Column(nullable = false)
     private boolean authorized;  // 관리자 승인 여부
 
 
@@ -60,14 +58,17 @@ public class Funding extends BaseEntity {
         this.content = content;
     }
 
-    public void changeDueDate(LocalDateTime dueDate){
-        this.dueDate = dueDate;
-    }
-
-    public void changeTotalAmount(Long totalAmount){this.totalAmount = totalAmount;}
+    public void addTotalAmount(Long totalAmount){this.totalAmount += totalAmount;}
+    public void subtractTotalAmount(Long totalAmount){this.totalAmount -= totalAmount;}
 
     public void changeRemoved(boolean removed){
         this.removed = removed;
+    }
+
+    public void changeSuccessed(boolean success){ this.success = success;}
+
+    public void changeAuthorized(boolean authorized){
+        this.authorized = authorized;
     }
 
 

@@ -6,13 +6,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.thesix.funding.entity.Favorite;
 import org.thesix.funding.entity.Funding;
 import org.thesix.funding.entity.Product;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @SpringBootTest
@@ -35,17 +38,17 @@ public class FundingRepoTests {
             LocalDateTime ldt = LocalDateTime.now();
             ldt.plusYears(1);
 
-            Funding funding = Funding.builder()
-                    .title("제목.." + i)
-                    .writer("작성자" + i)
-                    .email("user" + i + "@aaa.com")
-                    .content("내용...." + i)
-                    .dueDate(ldt)
-                    .success(false)
-                    .removed(false)
-                    .build();
+//            Funding funding = Funding.builder()
+//                    .title("제목.." + i)
+//                    .writer("작성자" + i)
+//                    .email("user" + i + "@aaa.com")
+//                    .content("내용...." + i)
+//                    .dueDate(ldt)
+//                    .success(false)
+//                    .removed(false)
+//                    .build();
 
-            fundingRepository.save(funding);
+            //fundingRepository.save(funding);
         });
     }
 
@@ -86,7 +89,6 @@ public class FundingRepoTests {
                     .fno(fno).build();
 
             Favorite favorite = Favorite.builder()
-                    .mark(true)
                     .actor("사용자.."+i)
                     .funding(funding).build();
 
@@ -134,9 +136,9 @@ public class FundingRepoTests {
         String keyword = "10";
         String type = "tcw";
 
-        Page<Object[]> list = fundingRepository.getListSearch(keyword, type, pageable);
+       // Page<Object[]> list = fundingRepository.getListSearch(keyword, type, pageable);
 
-        list.getContent().forEach(list1-> System.out.println(Arrays.toString(list1)));
+        //list.getContent().forEach(list1-> System.out.println(Arrays.toString(list1)));
 
     }
 
@@ -165,7 +167,7 @@ public class FundingRepoTests {
 
             funding.changeTitle("change Title");
             funding.changeContent("change Content");
-            funding.changeDueDate(ldt);
+            //funding.changeDueDate(ldt);
 
             fundingRepository.save(funding);
         });
@@ -186,6 +188,19 @@ public class FundingRepoTests {
             fundingRepository.save(result1);
         });
     }
+
+
+    @Test
+    public void testGetDetail() {
+        List<Object[]> result = fundingRepository.getFundingALLData(5L).orElseThrow();
+        List<Object> res = new ArrayList<>();
+        List<Product> proList = result.stream().map(obj -> (Product)obj[0]).collect(Collectors.toList());
+        res.add(proList);
+        res.add(result.get(0)[1]);
+        proList.forEach(r-> System.out.println(r));
+    }
+
+
 
 
 }

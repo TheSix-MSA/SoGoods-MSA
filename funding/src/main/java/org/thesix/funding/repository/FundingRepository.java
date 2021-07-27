@@ -21,11 +21,24 @@ public interface FundingRepository extends JpaRepository<Funding, Long>, Funding
     @Query("select f from Funding f where f.fno=:fno and f.removed=false and f.authorized=true")
     Optional<Funding> getFundingById(Long fno);
 
+    @Query("select f from Funding f where f.fno=:fno and f.removed=false and f.success=false")
+    Optional<Funding> getFunding(Long fno);
 
     @Query("select f from Funding f inner join Favorite fa on f.fno=fa.funding.fno where fa.actor=:email")
     Optional<List<Funding>> getFavoriteFundingByEmail(String email);
 
 
-    @Query("select f from Funding f where f.email=:email")
+    @Query("select f from Funding f where f.email=:email and f.removed=false")
     Optional<List<Funding>> getFundingListByEmail(String email);
+
+    @Query("select p,f " +
+            "from Product p " +
+            "left join Funding f on p.funding.fno =f.fno " +
+            "where p.funding.fno = :fno and p.removed=false group by p")
+    Optional<List<Object[]>> getFundingALLData(Long fno);
+
+    Page<Funding> findAllByAuthorizedFalseAndRemovedFalse(Pageable pageable);
+
+    @Query("select SUM(f.totalAmount) from Funding f where f.success=false")
+    long getTotalCurrent();
 }

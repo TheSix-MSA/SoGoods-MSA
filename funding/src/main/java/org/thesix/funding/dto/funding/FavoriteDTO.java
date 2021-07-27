@@ -1,10 +1,9 @@
-package org.thesix.funding.dto;
+package org.thesix.funding.dto.funding;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.thesix.funding.entity.Funding;
 
 @Data
 @Builder
@@ -13,8 +12,6 @@ import org.thesix.funding.entity.Funding;
 public class FavoriteDTO {
 
     private Long favno;  // 찜 식별 번호
-
-    private boolean mark;  // 찜 여부
 
     private String actor;  // 찜한 주체
 

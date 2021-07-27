@@ -13,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @ToString(exclude = "funding")
 @Table(name = "tbl_product", indexes = @Index(name = "idx_funding", columnList = "funding_fno"))
-public class Product {
+public class Product extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -3,8 +3,12 @@ package org.thesix.funding.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.*;
+import org.thesix.funding.common.dto.ListRequestDTO;
 import org.thesix.funding.common.dto.ListResponseDTO;
-import org.thesix.funding.dto.*;
+import org.thesix.funding.dto.FavoriteRequestDTO;
+import org.thesix.funding.dto.FavoriteResponseDTO;
+import org.thesix.funding.dto.FundingRegResponseDTO;
+import org.thesix.funding.dto.funding.*;
 import org.thesix.funding.service.FundingService;
 import static org.thesix.funding.util.ApiUtil.ApiResult;
 import static org.thesix.funding.util.ApiUtil.success;
@@ -21,34 +25,35 @@ public class FundingController {
     /**
      * 글 정보를 입력받아 저장하는 메서드
      * @param registerDTO
-     * @return ApiResult<FundingDTO>
+     * @return ApiResult<FundingRegResponseDTO>
      */
     @PostMapping("/")
-    public ApiResult<FundingDTO> register(@RequestBody FundingRegisterDTO registerDTO){
+    public ApiResult<FundingRegResponseDTO> register(@RequestBody FundingRegisterDTO registerDTO){
 
         return success(fundingService.register(registerDTO));
     }
 
     /**
-     * 전체 글 리스트와 상품 수, 찜 수를 가져올 메서드
+     * 펀딩의 글 리스트와 상품 수, 찜 수를 가져올 메서드
+     * param state : open -> 진행중인 펀딩, close => 종료된 펀딩
      * @param fundingRequestDTO
      * @return ApiResult<ListResponseDTO<ListFundingDTO>>
      */
     @GetMapping("/list")
-    public ApiResult<ListResponseDTO<ListFundingDTO>> getList(FundingRequestDTO fundingRequestDTO){
+    public ApiResult<ListResponseDTO<ListFundingDTO>> getOpenList(FundingRequestDTO fundingRequestDTO){
 
         return success(fundingService.getSearchList(fundingRequestDTO));
     }
 
     /**
-     * 클릭한 글 번호를 받아 세부화면에 필요한 정보를 불러올 메서드
+     * 글 번호를 받아 세부화면에 필요한 정보를 불러올 메서드
      * @param fno
      * @return ApiResult<FundingResponseDTO>
      */
     @GetMapping("/{fno}")
     public ApiResult<FundingResponseDTO> getOneFundingData(@PathVariable Long fno){
 
-        return success(fundingService.getData(fno));
+        return success(fundingService.getDetailFundingData(fno));
     }
 
     /**
@@ -56,8 +61,8 @@ public class FundingController {
      * @param email
      * @return List<FundingDTO>
      */
-    @GetMapping("/user/list")
-    public ApiResult<List<FundingDTO>> getFundingList(@RequestParam String email){
+    @GetMapping("/user/list/{email}")
+    public ApiResult<List<FundingDTO>> getFundingList(@PathVariable String email){
 
         return success(fundingService.getFundingList(email));
     }
@@ -65,13 +70,13 @@ public class FundingController {
     /**
      * 펀딩 글을 수정하는 메서드 (제목, 내용, 만기일, 모금 금액만 수정가능)
      * @param fno
-     * @param registerDTO
+     * @param fundingModDTO
      * @return ApiResult<FundingResponseDTO>
      */
     @PutMapping("/{fno}")
-    public ApiResult<FundingResponseDTO> Modify(@PathVariable Long fno, @RequestBody FundingRegisterDTO registerDTO){
+    public ApiResult<FundingResponseDTO> Modify(@PathVariable Long fno, @RequestBody FundingModDTO fundingModDTO){
 
-        return success(fundingService.modify(fno, registerDTO));
+        return success(fundingService.modify(fno, fundingModDTO));
     }
 
     /**
@@ -80,20 +85,32 @@ public class FundingController {
      * @return ApiResult<FundingResponseDTO>
      */
     @DeleteMapping("/{fno}")
-    public ApiResult<FundingResponseDTO> changeRemoved(@PathVariable Long fno){
+    public ApiResult<FundingDeletionResponseDTO> changeRemoved(@PathVariable Long fno){
 
         return success(fundingService.remove(fno));
     }
 
+
+    /**
+     * 해당 게시글의 찜 리스트 가져오기
+     * @param fno
+     * @return ApiResult<FavoriteResponseDTO>
+     */
+    @GetMapping("/fav/{fno}")
+     public ApiResult<FavoriteResponseDTO> getFavoriteList(@PathVariable Long fno){
+
+        return success(fundingService.getFavoriteList(fno));
+     }
+
     /**
      * 찜하기 기능
-     * @param favoriteDTO
-     * @return ApiResult<Long>  => 추가된 게시판의 총 좋아요 수 반환
+     * @param favoriteRequestDTO
+     * @return FavoriteResponseDTO
      */
     @PostMapping("/fav")
-    public ApiResult<Long> changeFavorite(@RequestBody FavoriteDTO favoriteDTO){
+    public ApiResult<FavoriteResponseDTO> changeFavorite(@RequestBody FavoriteRequestDTO favoriteRequestDTO){
 
-        return success(fundingService.insertFavorite(favoriteDTO));
+        return success(fundingService.insertFavorite(favoriteRequestDTO));
     }
 
     /**
@@ -101,14 +118,40 @@ public class FundingController {
      * @param email
      * @return ApiResult<List<FundingDTO>>
      */
-    @GetMapping("/fav/list")
-    public ApiResult<List<FundingDTO>> getFavoriteFunding(@RequestParam String email){
+    @GetMapping("/fav/list/{email}")
+    public ApiResult<List<FundingDTO>> getFavoriteFunding(@PathVariable String email){
 
       return success(fundingService.getFavoriteFunding(email));
     }
 
 
+    /**
+     * 게시글 승인처리를 하는 메서드
+     * @param fno
+     * @return FundingDTO
+     */
+    @PutMapping("/req/{fno}")
+    public ApiResult<FundingDTO> changeAuthorized(@PathVariable Long fno){
 
+        return success(fundingService.updateAuthorized(fno));
+    }
+
+    /**
+     * 승인되지 않은 게시물 리스트를 가져오는 메서드
+     * + 페이징처리
+     * @return List<FundingDTO>
+     */
+    @GetMapping("/false/list")
+    public ApiResult<ListResponseDTO<FundingDTO>> getAuthorizedFalse(ListRequestDTO dto){
+
+        return success(fundingService.getNotAuthorizedFunding(dto));
+    }
+
+
+    @GetMapping("/total")
+    public ApiResult<Long> getCurrentTotal(){
+        return success(fundingService.getCurrentTotalPrice());
+    }
 
 
 

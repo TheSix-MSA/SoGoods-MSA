@@ -7,10 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
-import org.thesix.funding.entity.Funding;
-import org.thesix.funding.entity.QFavorite;
-import org.thesix.funding.entity.QFunding;
-import org.thesix.funding.entity.QProduct;
+import org.thesix.funding.entity.*;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,14 +24,14 @@ public class FundingSearchImpl extends QuerydslRepositorySupport implements Fund
     }
 
     /**
-     * 검색 + 페이징 기능을 구현한 메서드
+     * 펀딩 리스트를 출력하고 검색 + 페이징 기능을 구현한 메서드
      * @param keyword
      * @param type
      * @param pageable
-     * @return
+     * @return Page<Object[]>
      */
     @Override
-    public Page<Object[]> getListSearch(String keyword, String type, Pageable pageable) {
+    public Page<Object[]> getListSearch(String keyword, String type, String state, Pageable pageable) {
 
         // querydsl을 이용해 쿼리 처리
         QFunding funding = QFunding.funding;
@@ -40,11 +40,11 @@ public class FundingSearchImpl extends QuerydslRepositorySupport implements Fund
 
         JPQLQuery<Funding> query = from(funding);
 
-        query.leftJoin(product).on(product.funding.eq(funding));
+        query.leftJoin(product).on(product.funding.eq(funding), product.removed.eq(false));
         query.leftJoin(favorite).on(favorite.funding.eq(funding));
 
         // 원하는 값만 select
-        JPQLQuery<Tuple> tuple = query.select(funding, product.countDistinct(), favorite.countDistinct());
+        JPQLQuery<Tuple> tuple = query.select(funding, favorite.countDistinct());
 
         // 동적 쿼리
         if(keyword != null && type != null) {
@@ -69,9 +69,21 @@ public class FundingSearchImpl extends QuerydslRepositorySupport implements Fund
             tuple.where(condition);
         }
 
+       if(state != null){
+
+           BooleanBuilder stateCondition = new BooleanBuilder();
+
+            if(state.equals("open")){
+                stateCondition.or(funding.success.eq(false));
+            } else if(state.equals("close")){
+                stateCondition.or(funding.success.eq(true));
+            }
+            tuple.where(stateCondition);
+        }
+
         tuple.where(funding.fno.gt(0L));
         tuple.where(funding.removed.eq(false));
-        tuple.where(funding.authorized.eq(true));
+        //tuple.where(funding.authorized.eq(true));
         tuple.groupBy(funding);
         tuple.orderBy(funding.fno.desc());
 
@@ -87,7 +99,5 @@ public class FundingSearchImpl extends QuerydslRepositorySupport implements Fund
 
         return new PageImpl<>(arrList, pageable, totalCount);
     }
-
-
 
 }

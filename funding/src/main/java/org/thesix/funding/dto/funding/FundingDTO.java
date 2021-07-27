@@ -1,11 +1,10 @@
-package org.thesix.funding.dto;
+package org.thesix.funding.dto.funding;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.Lob;
 import java.time.LocalDateTime;
 
@@ -26,11 +25,13 @@ public class FundingDTO {
     @Lob
     private String content;  // 펀딩글 내용
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime regDate; // 펀딩글 등록일
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime dueDate;  // 펀딩 만료일
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDateTime modDate; // 펀딩글 수정일
+
+    private String dueDate;  // 펀딩 만료일
 
     private boolean success;  // 펀딩 성공여부
 

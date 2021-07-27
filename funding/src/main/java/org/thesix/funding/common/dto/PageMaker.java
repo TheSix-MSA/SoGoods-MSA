@@ -14,6 +14,7 @@ public class PageMaker {
     private int totalCount;  // 전체 데이터 수
     private List<Integer> pageList;  // 페이지 리스트
     private boolean prev, next;  // 이전페이지, 다음페이지가 있는지
+    private int start, end; // 첫 페이지, 마지막 페이지
 
 
     public PageMaker(int page, int size, int totalCount) {
@@ -26,11 +27,11 @@ public class PageMaker {
         // 임시 끝 페이지 번호
         int tempEnd = (int) (Math.ceil(page / 10.0)) * 10;
 
-        int start = tempEnd - 9;
+        start = tempEnd - 9;
 
         prev = start > 1;
 
-        int end = totalPage > tempEnd ? tempEnd : totalPage;
+        end = totalPage > tempEnd ? tempEnd : totalPage;
 
         next = totalPage > tempEnd;
 

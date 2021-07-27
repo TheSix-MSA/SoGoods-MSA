@@ -4,17 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.thesix.funding.dto.funding.FundingDTO;
+
+import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListFundingDTO {
+public class FundingRegResponseDTO {
 
-    private FundingDTO fundingDTO;  // 펀딩 글 객체
+    private FundingDTO fundingDTO;
 
-    private long productCnt;  // 제품 객체
-
-    private long favoriteCnt;  // 찜 여부
-
+    private List<Long> productNums;
 }

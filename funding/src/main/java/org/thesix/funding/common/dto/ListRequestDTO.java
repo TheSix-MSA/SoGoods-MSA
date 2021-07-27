@@ -21,6 +21,8 @@ public class ListRequestDTO {
 
     private String keyword;
 
+    private String state;
+
     // 파라미터로 들어오는 page, size 값이 음수일 경우 디폴트값으로 정의
     public void setPage(int page) {
 

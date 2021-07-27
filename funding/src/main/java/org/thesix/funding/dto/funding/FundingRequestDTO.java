@@ -1,4 +1,4 @@
-package org.thesix.funding.dto;
+package org.thesix.funding.dto.funding;
 
 import lombok.Data;
 import org.thesix.funding.common.dto.ListRequestDTO;
