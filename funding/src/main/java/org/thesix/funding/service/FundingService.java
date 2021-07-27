@@ -37,6 +37,7 @@ public interface FundingService {
                 .totalAmount(funding.getTotalAmount())
                 .targetAmount(funding.getTargetAmount())
                 .authorized(funding.isAuthorized())
+                .requestApproval(funding.isRequestApproval())
                 .build();
     }
 
@@ -118,6 +119,7 @@ public interface FundingService {
                 .totalAmount(registerDTO.getTotalAmount())
                 .targetAmount(registerDTO.getTargetAmount())
                 .authorized(registerDTO.isAuthorized())
+                .requestApproval(registerDTO.isRequestApproval())
                 .build();
     }
 
@@ -214,7 +216,7 @@ public interface FundingService {
      * @param fno
      * @return Long
      */
-    FundingDTO updateAuthorized(Long fno);
+    FundingDTO updateAuthorized(Long fno, String result);
 
     /**
      * 승인되지 않은 게시글만 출력하는 추상메서드

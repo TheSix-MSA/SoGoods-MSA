@@ -8,9 +8,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.thesix.funding.entity.*;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,7 +80,7 @@ public class FundingSearchImpl extends QuerydslRepositorySupport implements Fund
 
         tuple.where(funding.fno.gt(0L));
         tuple.where(funding.removed.eq(false));
-        //tuple.where(funding.authorized.eq(true));
+        tuple.where(funding.authorized.eq(true));
         tuple.groupBy(funding);
         tuple.orderBy(funding.fno.desc());
 

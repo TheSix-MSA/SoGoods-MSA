@@ -130,10 +130,10 @@ public class FundingController {
      * @param fno
      * @return FundingDTO
      */
-    @PutMapping("/req/{fno}")
-    public ApiResult<FundingDTO> changeAuthorized(@PathVariable Long fno){
+    @PutMapping("/req/{fno}/{result}")
+    public ApiResult<FundingDTO> changeAuthorized(@PathVariable Long fno, @PathVariable String result){
 
-        return success(fundingService.updateAuthorized(fno));
+        return success(fundingService.updateAuthorized(fno, result));
     }
 
     /**
@@ -141,7 +141,7 @@ public class FundingController {
      * + 페이징처리
      * @return List<FundingDTO>
      */
-    @GetMapping("/false/list")
+    @GetMapping("/req/list")
     public ApiResult<ListResponseDTO<FundingDTO>> getAuthorizedFalse(ListRequestDTO dto){
 
         return success(fundingService.getNotAuthorizedFunding(dto));

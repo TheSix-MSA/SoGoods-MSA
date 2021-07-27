@@ -37,7 +37,7 @@ public interface FundingRepository extends JpaRepository<Funding, Long>, Funding
             "where p.funding.fno = :fno and p.removed=false group by p")
     Optional<List<Object[]>> getFundingALLData(Long fno);
 
-    Page<Funding> findAllByAuthorizedFalseAndRemovedFalse(Pageable pageable);
+    Page<Funding> findAllByAuthorizedFalseAndRemovedFalseAndRequestApprovalTrue(Pageable pageable);
 
     @Query("select SUM(f.totalAmount) from Funding f where f.success=false")
     long getTotalCurrent();

@@ -92,6 +92,8 @@ public class FundingServiceImpl implements FundingService {
 
         // FundingDTO -> Entity
         Funding funding = dtoToEntity(registerDTO);
+        // 게시글 승인 요청 -> true
+        funding.changeRequestApproval(true);
 
         fundingRepository.save(funding);
 
@@ -461,16 +463,23 @@ public class FundingServiceImpl implements FundingService {
      * @return FundingDTO
      */
     @Override
-    public FundingDTO updateAuthorized(Long fno) {
+    public FundingDTO updateAuthorized(Long fno, String result) {
 
         Funding funding = fundingRepository.getFunding(fno).orElseThrow
                 (()->new NullPointerException("요청하신 정보를 찾을 수 없습니다."));
-
+        log.info(result);
+        // 요청에 대한 결과가 true일 때만 승인처리
+        if(result.equals("true")){
             funding.changeAuthorized(true);
-            Funding result = fundingRepository.save(funding);
+            funding.changeRequestApproval(false);
+        } else if(result.equals("false")) {
+            funding.changeRequestApproval(false);
+        }
+            Funding fundingResult = fundingRepository.save(funding);
 
-        return entityToDTO(result);
+        return entityToDTO(fundingResult);
     }
+
 
     /**
      * 승인되지 않은 게시글 리스트를 반환하는 기능
@@ -482,7 +491,7 @@ public class FundingServiceImpl implements FundingService {
 
         Pageable pageable = dto.getPageable();
 
-        Page<Funding> fundingList = fundingRepository.findAllByAuthorizedFalseAndRemovedFalse(pageable);
+        Page<Funding> fundingList = fundingRepository.findAllByAuthorizedFalseAndRemovedFalseAndRequestApprovalTrue(pageable);
 
         List<FundingDTO> dtoList = fundingList.getContent().stream().map(list -> entityToDTO(list)).collect(Collectors.toList());
 

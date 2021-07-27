@@ -43,4 +43,6 @@ public class FundingDTO {
 
     private boolean authorized;  // 관리자 승인 여부
 
+    private boolean requestApproval; // 승인 신청 여부
+
 }
