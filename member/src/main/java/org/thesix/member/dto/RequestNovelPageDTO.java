@@ -5,15 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class ResponseListDTO {
+public class RequestNovelPageDTO {
 
-    private RequestListDTO requestListDTO;
-    private PageMaker pageMaker;
-    private List<Object> memberList;
+    private String email;
+    @Builder.Default
+    private int page = 1;
+    @Builder.Default
+    private int size = 5;
 }

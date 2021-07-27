@@ -7,4 +7,7 @@ public interface LoginService {
     TokenDTO Login(LoginInfoDTO dto);
 
     String emailVerify(String userName);
+
+    TokenDTO refreshToken(TokenDTO token);
+
 }

@@ -34,13 +34,29 @@ public class LoginController {
         return success(loginService.Login(dto));
     }
 
-    @PostMapping("/login/{email}")
-    public ApiResult<Map<String, Object>> verifyEmail(@PathVariable("email") String email) {
-        String result = loginService.emailVerify(email);
+    @PutMapping("/login")
+    public ApiResult<Map<String, Object>> verifyEmail(@RequestBody LoginInfoDTO email) {
+        log.info(email.getEmail());
+        String result = loginService.emailVerify(email.getEmail());
         Map<String, Object> map = new HashMap<>();
         map.put("msg", "확인코드");
         map.put("code", result);
 
         return success(map);
     }
+
+
+    /**
+     * localstorage에 저장될 dto발급
+     *
+     * @param token
+     * @return
+     */
+    @PostMapping("/refresh")
+    public ApiResult<TokenDTO> refresh(@RequestBody TokenDTO token){
+
+        return success(loginService.refreshToken(token));
+    }
+
+
 }

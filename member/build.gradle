@@ -83,3 +83,6 @@ configurations {
 compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
 }
+test {
+    exclude '**/*'
+}

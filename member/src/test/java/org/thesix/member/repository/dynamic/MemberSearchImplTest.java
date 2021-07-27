@@ -8,11 +8,21 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
+import org.thesix.member.dto.AnalysisDTO;
+import org.thesix.member.dto.MemberDTO;
 import org.thesix.member.entity.Member;
 import org.thesix.member.entity.MemberRole;
+import org.thesix.member.entity.Novels;
 import org.thesix.member.repository.MemberRepository;
+import org.thesix.member.repository.NovelRepository;
 
+import javax.management.Query;
+import javax.persistence.EntityManager;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 @SpringBootTest
 @Log4j2
@@ -21,6 +31,9 @@ class MemberSearchImplTest {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Autowired
+    private NovelRepository novelRepository;
+
     @Value("${org.secret.key}")
     private String sk;
 
@@ -28,9 +41,9 @@ class MemberSearchImplTest {
     public void test1(){
         Pageable pageable = PageRequest.of(1, 10);
 
-        Page<Object[]> members = memberRepository.getMemberList("n", "11", pageable);
+        Page<Object> members = memberRepository.getMemberList("n", "11", pageable,false);
 
-        members.getContent().forEach(arr -> log.info(Arrays.toString(arr)));
+        members.getContent().forEach(arr -> log.info("ㅎㅎ"));
     }
 
 
@@ -51,11 +64,52 @@ class MemberSearchImplTest {
 
         Member save = memberRepository.save(member);
         log.info(save);
+    }
 
+    @Test
+    public void registerNovel(){
 
+        Novels novels = Novels.builder()
+                .image("https://image.aladin.co.kr/product/61/50/coversum/8970127240_2.jpg")
+                .isbn("9788970127248")
+                .member(Member.builder().email("aaa100@aaa.aa").build())
+                .title("총 균 쇠 (반양장) - 무기.병균.금속은 인류의 운명을 어떻게 바꿨는가, 개정증보판")
+                .publisher("문학사상사")
+                .build();
 
+        novelRepository.save(novels);
+    }
+
+    @Test
+    public void approveAuthor(){
+        Member member = memberRepository.findByEmail("diqksk@naver.com").orElseThrow(() -> new IllegalArgumentException());
 
     }
+
+    @Test
+    public void test4(){
+        Pageable pageable = PageRequest.of(1, 5, Sort.by("nno").descending());
+
+        Page<Novels> onesNovels = novelRepository.getOnesNovels(pageable, Member.builder().email("diqksk@naver.com").build());
+        log.info("악앙강ㄱ@@@@@@@@@@@@@@@@@@@@");
+        onesNovels.getContent().forEach(novels -> log.info(novels));
+
+    }
+
+    @Test
+    public void testAnalysis(){
+
+        Object result = memberRepository.findAnalysisInfo();
+
+        Object[] arr = (Object[])result;
+
+        log.info(Arrays.toString(arr));
+
+        log.info(String.valueOf(arr[0]));
+        log.info(String.valueOf(arr[1]));
+
+    }
+
 
 
 }

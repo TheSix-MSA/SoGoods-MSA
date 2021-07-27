@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import org.thesix.member.dto.MemberDTO;
 import org.thesix.member.entity.Member;
 import org.thesix.member.entity.MemberRole;
 import org.thesix.member.entity.QMember;
@@ -22,7 +23,7 @@ public class MemberSearchImpl extends QuerydslRepositorySupport implements Membe
     }
 
     /**
-     * 동적쿼리 적용 paging 회원목록리스트 반환
+     * 동적쿼리 적용 paging 회원목록리스트 반환함.
      *
      * @param type
      * @param keyword
@@ -30,13 +31,11 @@ public class MemberSearchImpl extends QuerydslRepositorySupport implements Membe
      * @return
      */
     @Override
-    public Page<Object[]> getMemberList(String type, String keyword, Pageable pageable) {
+    public Page<Object> getMemberList(String type, String keyword, Pageable pageable, boolean approval) {
 
         QMember member = QMember.member;
 
         JPQLQuery<Member> query = from(member);
-
-        JPQLQuery<Tuple>  tuple = query.select(member, member.roleSet.size());
 
         if(keyword != null && type != null){
             BooleanBuilder condition = new BooleanBuilder();
@@ -53,17 +52,45 @@ public class MemberSearchImpl extends QuerydslRepositorySupport implements Membe
                 }
             }
 
-            tuple.where(condition);
+            query.where(condition);
         }
 
+        if(approval == true){
+            query.where(member.approval.eq(true));
+        }
 
-        tuple.orderBy(member.email.desc());
+        query.orderBy(member.regDate.desc());
 
-        tuple.limit(pageable.getPageSize());
-        tuple.offset(pageable.getOffset());
+        query.limit(pageable.getPageSize());
+        query.offset(pageable.getOffset());
+        System.out.println(pageable.getPageSize());
+        System.out.println(pageable.getOffset());
+        List<MemberDTO> result = query.fetch().stream().map(memberObj ->
+                MemberDTO.builder()
+                        .email(memberObj.getEmail())
+                        .name(memberObj.getName())
+                        .gender(memberObj.getGender())
+                        .birth(memberObj.getBirth())
+                        .phone(memberObj.getPhone())
+                        .address(memberObj.getAddress())
+                        .detailAddress(memberObj.getDetailAddress())
+                        .removed(memberObj.isRemoved())
+                        .banned(memberObj.isBanned())
+                        .provider(memberObj.getProvider())
+                        .social(memberObj.isSocial())
+                        .regDate(memberObj.getRegDate())
+                        .modDate(memberObj.getModDate())
+                        .approval(memberObj.isApproval())
+                        .roleSet(memberObj.getRoleSet())
+                        .introduce(memberObj.getIntroduce())
+                        .nickName(memberObj.getNickName())
+                        .identificationUrl(memberObj.getIdentificationUrl())
+                        .build()
+        ).collect(Collectors.toList());
 
-        List<Object[]> result = tuple.fetch().stream().map(t -> t.toArray()).collect(Collectors.toList());
 
-        return new PageImpl<>(result,pageable,query.fetchCount());
+        return new PageImpl(result, pageable, query.fetchCount());
     }
+
+
 }

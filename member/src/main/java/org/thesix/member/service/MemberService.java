@@ -1,5 +1,6 @@
 package org.thesix.member.service;
 
+import org.thesix.member.dto.AnalysisDTO;
 import org.thesix.member.dto.MemberDTO;
 import org.thesix.member.dto.RequestListDTO;
 import org.thesix.member.dto.ResponseListDTO;
@@ -25,6 +26,10 @@ public interface MemberService {
 
     MemberDTO changeBanned(String email);
 
+    MemberDTO rejectRequest(String email);
+
+    AnalysisDTO countUser();
+
     /**
      *
      * @param dto 가입입력정보
@@ -44,9 +49,11 @@ public interface MemberService {
                 .banned(dto.isBanned())
                 .provider(dto.getProvider())
                 .social(dto.isSocial())
-                .regDate(dto.getRegDate())
-                .loginDate(dto.getLoginDate())
                 .roleSet(dto.getRoleSet())
+                .approval(dto.isApproval())
+                .identificationUrl(dto.getIdentificationUrl())
+                .introduce(dto.getIntroduce())
+                .nickName(dto.getNickName())
                 .build();
 
         return member;
@@ -60,7 +67,6 @@ public interface MemberService {
     default MemberDTO entityToMeberDTO(Member member) {
         return MemberDTO.builder()
                 .email(member.getEmail())
-                .password(member.getPassword())
                 .name(member.getName())
                 .gender(member.getGender())
                 .birth(member.getBirth())
@@ -72,8 +78,12 @@ public interface MemberService {
                 .provider(member.getProvider())
                 .social(member.isSocial())
                 .regDate(member.getRegDate())
-                .loginDate(member.getLoginDate())
+                .modDate(member.getModDate())
                 .roleSet(member.getRoleSet())
+                .identificationUrl(member.getIdentificationUrl())
+                .introduce(member.getIntroduce())
+                .nickName(member.getNickName())
+                .approval(member.isApproval())
                 .build();
     }
 

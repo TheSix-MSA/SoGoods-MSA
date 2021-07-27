@@ -7,13 +7,11 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class ResponseListDTO {
-
-    private RequestListDTO requestListDTO;
-    private PageMaker pageMaker;
-    private List<Object> memberList;
+public class ResponseNovelList {
+    List<NovelsDTO> novelsDTO;
+    PageMaker pageMaker;
 }

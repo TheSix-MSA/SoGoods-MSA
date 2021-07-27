@@ -5,15 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import javax.persistence.Column;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ResponseListDTO {
-
-    private RequestListDTO requestListDTO;
-    private PageMaker pageMaker;
-    private List<Object> memberList;
+public class AuthorInfoDTO {
+    private String identificationUrl;
+    private String nickName;
+    private String introduce;
 }

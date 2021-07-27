@@ -2,6 +2,9 @@ package org.thesix.member.entity;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.thesix.member.common.BaseEntity;
+import org.thesix.member.dto.AuthorInfoDTO;
+import org.thesix.member.dto.MemberDTO;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,7 +18,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString  (exclude = "roleSet")
-public class Member {
+public class Member extends BaseEntity {
 
     @Id
     private String email; //이메일 (pk값)
@@ -51,13 +54,15 @@ public class Member {
     @Column(nullable = false)
     private boolean social; // 소셜로그인 여부 (0: 일반로그인, 1: 소셜로그인)
 
-    @CreationTimestamp
-    @Column(name = "regdate", updatable = false)
-    private LocalDateTime regDate;
+    @Builder.Default
+    private boolean approval = false;
 
-    @CreationTimestamp
-    @Column(name="loginDate", updatable = false)
-    private LocalDateTime loginDate;
+    private String identificationUrl; // 작가등록시 신분증 주소
+
+    private String nickName; // 작가의 필명(혹은 본명)
+
+    @Column(length = 200)
+    private String introduce; // 작가 본인소개 (50자제한)
 
     @Builder.Default
     @ElementCollection(fetch = FetchType.LAZY)
@@ -71,10 +76,15 @@ public class Member {
         this.phone = member.getPhone();
         this.address = member.getAddress();
         this.detailAddress = member.getDetailAddress();
+
     }
 
-    public void changeRoleSet(Set<MemberRole> role){
-        this.roleSet = role;
+    public void changeApproval(boolean request){
+        this.approval = request;
+    }
+
+    public void changePassword(Member member) {
+        this.password = member.getPassword();
     }
 
     public void changeRemoved(boolean removed) {
@@ -85,7 +95,10 @@ public class Member {
         this.banned = banned;
     }
 
-    public void changeLoginDate(LocalDateTime loginDate) {
-        this.loginDate = loginDate;
+    public void changeAuthor(AuthorInfoDTO dto){
+        this.identificationUrl = dto.getIdentificationUrl();
+        this.nickName = dto.getNickName();
+        this.introduce = dto.getIntroduce();
     }
+
 }

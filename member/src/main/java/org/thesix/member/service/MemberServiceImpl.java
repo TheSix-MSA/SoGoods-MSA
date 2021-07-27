@@ -7,13 +7,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.thesix.member.dto.MemberDTO;
-import org.thesix.member.dto.PageMaker;
-import org.thesix.member.dto.RequestListDTO;
-import org.thesix.member.dto.ResponseListDTO;
+import org.thesix.member.dto.*;
 import org.thesix.member.entity.Member;
 import org.thesix.member.entity.MemberRole;
 import org.thesix.member.repository.MemberRepository;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -27,6 +26,7 @@ public class MemberServiceImpl implements MemberService{
     private final PasswordEncoder encoder;
 
     /**
+     * 회원가입
      *
      * @param dto
      * @return true: MemberDTO
@@ -71,7 +71,11 @@ public class MemberServiceImpl implements MemberService{
 
         member.changeRemoved(!member.isRemoved());
 
-        memberRepository.save(member);
+        log.info(member.isRemoved());
+
+        Member save = memberRepository.save(member);
+
+        log.info(save);
 
         return email;
     }
@@ -87,7 +91,13 @@ public class MemberServiceImpl implements MemberService{
 
         Member member = memberRepository.findById(dto.getEmail()).orElseThrow(() -> new NullPointerException("해당하는 사용자가 없습니다."));
 
-        member.changeMemberInfo(memberDTOToEntity(dto));
+        if(dto.getPassword() != null) {
+            dto.setPassword(encoder.encode(dto.getPassword()));
+            member.changePassword(memberDTOToEntity(dto));
+        }else{
+            dto.setPassword(member.getPassword());
+            member.changeMemberInfo(memberDTOToEntity(dto));
+        }
 
         Member inputResult = memberRepository.save(member);
 
@@ -104,11 +114,11 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public ResponseListDTO readList(RequestListDTO dto) {
 
-        Pageable pageable = PageRequest.of(dto.getPage(), dto.getSize());
+        Pageable pageable = PageRequest.of(dto.getPage()-1, dto.getSize());
 
-        Page<Object[]> memberList = memberRepository.getMemberList(dto.getType(), dto.getKeyword(), pageable);
+        Page<Object> memberList = memberRepository.getMemberList(dto.getType(), dto.getKeyword(), pageable, dto.isApproval());
 
-        List<Object[]> memberListResult = memberList.toList();
+        List<Object> memberListResult = memberList.toList();
 
         PageMaker pageMaker = new PageMaker(pageable, dto, (int) memberList.getTotalElements());
 
@@ -139,6 +149,7 @@ public class MemberServiceImpl implements MemberService{
         } else {
             roleSet.add(MemberRole.AUTHOR);
         }
+        memberResult.changeApproval(false);
 
         return entityToMeberDTO(memberRepository.save(memberResult));
     }
@@ -164,5 +175,33 @@ public class MemberServiceImpl implements MemberService{
 
         return entityToMeberDTO(memberRepository.save(memberResult));
     }
+
+    @Override
+    public MemberDTO rejectRequest(String email) {
+
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("잘못된 동작입니다."));
+
+        member.changeApproval(false);
+
+        member.changeAuthor(AuthorInfoDTO.builder().build());
+
+        Member result = memberRepository.save(member);
+
+        return entityToMeberDTO(result);
+    }
+
+    @Override
+    public AnalysisDTO countUser() {
+
+        Object result = memberRepository.findAnalysisInfo();
+
+        Object[] arr = (Object[])result;
+
+        return AnalysisDTO.builder()
+                .total(Integer.parseInt(String.valueOf(arr[0])))
+                .author(Integer.parseInt(String.valueOf(arr[1])))
+                .build();
+    }
+
 
 }
