@@ -3,10 +3,8 @@
 package org.thesix.board.dto;
 
 import lombok.*;
-import org.thesix.board.entity.BoardType;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Data
 @ToString
@@ -23,4 +21,9 @@ public class BoardDTO {
     private boolean removed; // 게시글 삭제여부
     private LocalDateTime regDate; // 게시글 작성일
     private LocalDateTime modDate; // 게시글 수정일
+    private boolean isPrivate;
+
+    @Builder.Default
+    private Long replyCnt = 0L;
+
 }

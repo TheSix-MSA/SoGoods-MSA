@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.thesix.board.entity.BoardType;
 
 @Data
 @Builder
@@ -20,14 +21,13 @@ public class BoardListRequestDTO {
     private int page = 1;
 
     @Builder.Default
-    private int size = 10;
+    private int size = 12;
     private String keyword;
     private String type;
 
-
     @JsonIgnore
     public Pageable getPageable() {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("bno").descending());
+        Pageable pageable = PageRequest.of(page-1, size, Sort.by("bno").descending());
         return pageable;
     }
 }

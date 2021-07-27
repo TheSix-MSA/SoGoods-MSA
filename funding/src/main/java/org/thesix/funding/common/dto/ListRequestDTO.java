@@ -29,7 +29,7 @@ public class ListRequestDTO {
 
     public void setSize(int size) {
 
-        this.size = size < 10 ? size : 10;
+        this.size = size < 10 ? size : 12;
     }
 
     @JsonIgnore

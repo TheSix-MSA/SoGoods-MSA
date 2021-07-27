@@ -14,7 +14,9 @@ import org.thesix.board.entity.BoardType;
 import org.thesix.board.service.BoardService;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 @SpringBootTest
@@ -39,14 +41,14 @@ public class BoardRepoTests {
 
     @Test
     public void registerTest() {
-        IntStream.rangeClosed(1, 25).forEach(i-> {
+        IntStream.rangeClosed(1, 10).forEach(i-> {
             BoardDTO dto = BoardDTO.builder()
                     .title("테스트 제목 " + i)
                     .writer("테스트 작성자 " + i)
                     .email("테스트 이메일 " + i)
                     .content("테스트 내용 " + i)
                     .build();
-            BoardDTO registerDTO = boardService.register(dto, "WRITER");
+            BoardDTO registerDTO = boardService.register(dto, "NOVELIST");
         });
     }
 
@@ -59,5 +61,25 @@ public class BoardRepoTests {
 
         Page<Board> list = boardRepository.getBoardList(boardType, type, keyword, pageable);
         list.getContent().forEach(i -> System.out.println(i));
+    }
+
+    @Test
+    public void testWriter() {
+        String boardType = "NOTICE";
+        BoardType boardCate = BoardType.valueOf(boardType);
+        String writer = "테스트 작성자 1";
+
+        Page<Board> list = boardRepository.findByBoardWith(writer,boardCate,PageRequest.of(0, 10, Sort.by("bno").descending()));
+        list.getContent().forEach(i -> System.out.println(i));
+    }
+
+    @Test
+    public void countTest() {
+        Long[] result = boardRepository.countTotalBoard();
+        Map<String,Long> resultDto = new HashMap<>();
+        resultDto.put("FREE",result[0]);
+        resultDto.put("NOTICE",result[1]);
+        resultDto.put("NOVELIST",result[2]);
+        System.out.println(Arrays.toString(result));
     }
 }

@@ -8,6 +8,9 @@ import org.thesix.board.dto.BoardDTO;
 import org.thesix.board.dto.BoardListRequestDTO;
 import org.thesix.board.dto.BoardListResponseDTO;
 import org.thesix.board.service.BoardService;
+
+import java.util.Map;
+
 import static org.thesix.board.util.ApiUtil.ApiResult;
 
 import static org.thesix.board.util.ApiUtil.success;
@@ -20,7 +23,9 @@ public class BoardController {
 
     private final BoardService boardService;
 
-    // 게시판 글등록("/board/{boardType}")
+    /*
+        게시판 글등록("/board/{boardType}")
+     */
     @PostMapping("/{boardType}")
     public ApiResult<BoardDTO> register(@RequestBody BoardDTO dto, @PathVariable String boardType) {
         BoardDTO registerDTO = boardService.register(dto, boardType);
@@ -29,7 +34,9 @@ public class BoardController {
         return success(registerDTO);
     }
 
-    // 게시판 글수정("/board/modify/{bno}")
+    /*
+        게시판 글수정("/board/{boardType}/{bno}")
+     */
     @PutMapping("/{boardType}/{bno}")
     public ApiResult<BoardDTO> modify(@PathVariable Long bno, @PathVariable String boardType, @RequestBody BoardDTO dto) {
         dto.setBno(bno);
@@ -38,16 +45,19 @@ public class BoardController {
         return success(modifyDTO);
     }
 
-    // 게시판 글삭제("/board/remove/{bno}")
+    /*
+        게시판 글삭제("/board/{boardType}/{bno}")
+     */
     @DeleteMapping("/{boardType}/{bno}")
-    public ApiResult<BoardDTO> removed(@PathVariable Long bno, @PathVariable String boardType, @RequestBody BoardDTO dto) {
-        dto.setBno(bno);
-        BoardDTO removedDTO = boardService.remove(dto);
+    public ApiResult<BoardDTO> removed(@PathVariable Long bno, @PathVariable String boardType) {
+        BoardDTO removedDTO = boardService.remove(bno, boardType);
         log.info("Remove BNO: " + bno);
         return success(removedDTO);
     }
 
-    // 게시판 특정 글조회("/board/board_type/read/{bno}")
+    /*
+        게시판 특정 글조회("/board/{boardType}/{bno}")
+     */
     @GetMapping("/{boardType}/{bno}")
     public ApiResult<BoardDTO> read(@PathVariable Long bno, @PathVariable String boardType) {
         BoardDTO readDTO  = boardService.read(bno);
@@ -55,13 +65,58 @@ public class BoardController {
         return success(readDTO);
     }
 
-    // 게시판 글목록("/board/board_type/list")
+    /*
+        공지사항 공개/비공개
+     */
+    @PutMapping("/{boardType}/isPrivate/{bno}")
+    public ApiResult<BoardDTO> notice(@PathVariable String boardType, @PathVariable Long bno, @RequestBody BoardDTO dto) {
+        dto.setBno(bno);
+        BoardDTO noticeDTO = boardService.changeIsPrivate(dto, boardType);
+        return success(noticeDTO);
+    }
+
+    /*
+        게시판 글목록("/board/{boardType}/list")
+     */
     @GetMapping("/{boardType}/list")
     public ApiResult<BoardListResponseDTO<BoardDTO>> getList(BoardListRequestDTO boardListRequestDTO,
-                                                                  @PathVariable String boardType) {
+                                                             @PathVariable String boardType) {
         BoardListResponseDTO<BoardDTO> boardListDTO = boardService.getList(boardListRequestDTO, boardType);
         log.info("BoardListDTO: " + boardListDTO);
         return success(boardService.getList(boardListRequestDTO, boardType));
     }
 
+
+    /*
+        자신이 작성한 게시글 목록("/board/{writer}")
+     */
+    @GetMapping("/member/{boardType}/{email}")
+    public ApiResult<BoardListResponseDTO<BoardDTO>> writerList(BoardListRequestDTO boardListRequestDTO, @PathVariable String boardType, @PathVariable String email) {
+        BoardListResponseDTO<BoardDTO> writerListDTO = boardService.writerList(boardListRequestDTO, email, boardType);
+        log.info("WriterBoardDTO: " + writerListDTO);
+        return success(writerListDTO);
+    }
+
+    /*
+        댓글 증가("/board/countup/{bno}")
+     */
+    @PutMapping("/countup/{bno}")
+    public ApiResult<BoardDTO> replyCountUp(@PathVariable Long bno) {
+        BoardDTO countUpDTO = boardService.replyCountUp(bno);
+        return success(countUpDTO);
+    }
+
+    /*
+        댓글 감소("/board/countdown/{bno}")
+     */
+    @PutMapping("/countdown/{bno}")
+    public ApiResult<BoardDTO> replyCountDown(@PathVariable Long bno) {
+        BoardDTO countDownDTO = boardService.replyCountDown(bno);
+        return success(countDownDTO);
+    }
+
+    @GetMapping("/allcount")
+    public ApiResult<Map<String,Long>> allBoardCount() {
+        return success(boardService.allBoardCount());
+    }
 }
