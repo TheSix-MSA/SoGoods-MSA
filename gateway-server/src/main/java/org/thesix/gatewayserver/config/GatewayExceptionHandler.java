@@ -16,8 +16,8 @@ import java.nio.charset.StandardCharsets;
 
 @Log4j2
 public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
-    private String errorJSON(String msg) {
-        return "{\"success\":"+false+",\"response\":"+null+",\"error\":\""+msg+"\"}";
+    private String errorJSON(String msg,int status) {
+        return "{\"success\":"+false+",\"response\":"+null+",\"error\": {\"message\":\""+msg+"\",\"status\":"+status+"}}";
     }
 
     @Override
@@ -49,7 +49,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
 //            res.setStatusCode(HttpStatus.UNAUTHORIZED);
 
         res.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
-        byte[] bytes = errorJSON(errorMsg).getBytes(StandardCharsets.UTF_8);
+        byte[] bytes = errorJSON(errorMsg,res.getStatusCode().value()).getBytes(StandardCharsets.UTF_8);
         DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
         return res.writeWith(Flux.just(buffer));
     }

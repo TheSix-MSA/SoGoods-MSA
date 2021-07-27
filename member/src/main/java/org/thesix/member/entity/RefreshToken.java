@@ -21,7 +21,8 @@ public class RefreshToken {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    private long expireDate;
+    @Column(nullable = false, length = 500)
+    private String refreshToken;
 
 
 }

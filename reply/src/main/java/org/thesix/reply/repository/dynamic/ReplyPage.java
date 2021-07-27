@@ -6,4 +6,5 @@ import org.thesix.reply.entity.Replies;
 
 public interface ReplyPage {
     Page<Replies> getList(Long bno, Pageable pageable);
+    Page<Replies> getListUserWrote(String email, Pageable pageable);
 }

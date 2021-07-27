@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.thesix.board.entity.Board;
+import org.thesix.board.entity.BoardType;
 import org.thesix.board.entity.QBoard;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
     }
 
     @Override
-    public Page<Board> getBoardList(String type, String keyword, Pageable pageable) {
+    public Page<Board> getBoardList(String boardType, String type, String keyword, Pageable pageable) {
         QBoard board = QBoard.board;
         JPQLQuery<Board> query = from(board);
 
@@ -47,7 +48,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
             query.where(condition);
         }
 
-        query.where(board.bno.gt(0L));
+        query.where(board.bno.gt(0L), board.boardType.eq(BoardType.valueOf(boardType)));
         query.groupBy(board);
         query.offset(pageable.getOffset());
         query.limit(pageable.getPageSize());
