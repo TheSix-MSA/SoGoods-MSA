@@ -9,7 +9,7 @@
 
 ## 개요<a id="chapter1"></a>
 ### <서비스 요약>
-![image](https://user-images.githubusercontent.com/77711322/128452453-878f8974-8cf1-4d19-a37e-1deb67c2da4a.png)
+![image](https://user-images.githubusercontent.com/77711322/128454862-2539b10e-c0fe-41c9-a093-28cc8a28bba0.png)
 ## 개발배경<a id="chapter2"></a>
 새로운 소비 주도층인 MZ세대들이 굿즈에 열광하고 있다. 이러한 굿즈 열광은 책 분야에서도 찾아 볼 수있다.<br>
 하지만 책 굿즈는 현재 대형 책 쇼핑몰에서만 활성화 되어 개인 작가나 소수 팬덤 독자들에게는 여전히 거리감이 있는게 사실이다.<br>
